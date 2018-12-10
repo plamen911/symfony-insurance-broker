@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Редактиране на полица {{ policy.policyType.name }}</h1>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row">
+        <div class="col-md-12">
+            {% include 'policy/partials/form-fields.html.twig' %}
+        </div>
+        <div class="col-md-12 mt-3">
+            <a href="{{ path('policy_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
+            <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Редактирай</button>
+            <a href="#"
+               onclick="event.preventDefault(); document.getElementById('delete-policy-form').submit();"
+               class="btn btn-danger float-right mr-2"><i class="far fa-trash-alt"></i> Изтрий</a>
+        </div>
+    </div>
+    {{ form_end(form) }}
+    {{ form_start(delete_form, {'attr': {'id': 'delete-policy-form', 'class': 'd-none'}}) }}
+    {{ form_end(delete_form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/policy-form.js') }}"></script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .payments > li > div:first-child {
+            display: flex;
+        }
+    </style>
+{% endblock %}

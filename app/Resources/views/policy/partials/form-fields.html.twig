@@ -1,0 +1,150 @@
+<div class="row">
+    <div class="col-md-3">
+        {% if isNew %}
+            {{ form_row(form.insurer) }}
+            {{ form_row(form.idNumber) }}
+            {{ form_row(form.agent) }}
+        {% else %}
+            <div class="card mb-2">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        No: {{ policy.idNumber }}
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Застраховател:</strong> {{ policy.insurer.name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Агент:</strong> {{ policy.agent.fullName }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {{ form_row(form.isCancelled) }}
+        {% endif %}
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.issuedAt) }}
+        {{ form_row(form.startsAt) }}
+        {{ form_row(form.expiresAt) }}
+        {{ form_row(form.currency) }}
+        {{ form_row(form.notes) }}
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.amount) }}
+        {{ form_row(form.taxes) }}
+        {{ form_row(form.amountGf) }}
+        {{ form_row(form.officeDiscount) }}
+        {{ form_row(form.clientDiscount) }}
+        {{ form_row(form.total) }}
+    </div>
+    <div class="col-md-3">
+        <div class="accordion" id="accordionCar">
+            <div class="card">
+                <div class="card-header p-1" id="headingCar">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseCar"
+                                aria-expanded="true" aria-controls="collapseCar">
+                            <i class="fas fa-car"></i> {{ car.carType.name }}
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseCar" class="collapse show" aria-labelledby="headingCar" data-parent="#accordionCar">
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Рег. No:</strong> {{ car.idNumber }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Марка:</strong> {{ car.carMake }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Модел:</strong> {{ car.carModel }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Волан:</strong> {{ car.isRightSteeringWheel ? 'Десен' : 'Ляв' }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Рама No:</strong> {{ car.idFrame }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Двиг. обем (см3):</strong> {{ car.engineVol }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Общо тегло:</strong> {{ car.grossWeight }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Пол. товар:</strong> {{ car.newWeight }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Цвят:</strong> {{ car.color }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Година на произв.:</strong> {{ car.yearMade }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header p-1" id="headingOwner">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOwner"
+                                aria-expanded="true" aria-controls="collapseOwner">
+                            <i class="fas fa-user-tie"></i> {{ car.owner.firstName }} {{ car.owner.middleName }} {{ car.owner.lastName }}
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseOwner" class="collapse" aria-labelledby="headingOwner" data-parent="#accordionCar">
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>ЕГН/ЕИК/БУЛСТАТ:</strong> {{ car.owner.idNumber }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Нас. място (гр./с.):</strong> {{ car.owner.city }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Адрес (ул./жк.):</strong> {{ car.owner.street }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Телефон:</strong> {{ car.owner.phone }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Телефон 2:</strong> {{ car.owner.phone2 }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>И-мейл:</strong> {{ car.owner.email }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>И-мейл 2:</strong> {{ car.owner.email2 }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Падежи и плащания</h3>
+        <div class="table-responsive">
+            <ul class="payments pl-0" data-prototype="{{ form_widget(form.payments.vars.prototype)|e('html_attr') }}">
+                {% for key, payment in form.payments %}
+                    <li class="form-inline mb-1">
+                        <div id="policy_payments_{{ key }}">
+                            {{ form_row(payment.dueAt) }}
+                            {{ form_row(payment.amountDue) }}
+                            {{ form_row(payment.paidAt) }}
+                            {{ form_row(payment.amountPaid) }}
+                            {{ form_row(payment.isDeferred) }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

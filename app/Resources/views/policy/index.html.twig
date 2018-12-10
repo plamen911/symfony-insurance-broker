@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Policies list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Idnumber</th>
+                <th>Iscancelled</th>
+                <th>Notes</th>
+                <th>Issuedat</th>
+                <th>Startsat</th>
+                <th>Expiresat</th>
+                <th>Amount</th>
+                <th>Taxes</th>
+                <th>Amountgf</th>
+                <th>Officediscount</th>
+                <th>Clientdiscount</th>
+                <th>Total</th>
+                <th>Currency</th>
+                <th>Createdat</th>
+                <th>Updatedat</th>
+                <th>Isdeleted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for policy in policies %}
+            <tr>
+                <td><a href="{{ path('policy_show', { 'id': policy.id }) }}">{{ policy.id }}</a></td>
+                <td>{{ policy.idNumber }}</td>
+                <td>{% if policy.isCancelled %}Yes{% else %}No{% endif %}</td>
+                <td>{{ policy.notes }}</td>
+                <td>{% if policy.issuedAt %}{{ policy.issuedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if policy.startsAt %}{{ policy.startsAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if policy.expiresAt %}{{ policy.expiresAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ policy.amount }}</td>
+                <td>{{ policy.taxes }}</td>
+                <td>{{ policy.amountGf }}</td>
+                <td>{{ policy.officeDiscount }}</td>
+                <td>{{ policy.clientDiscount }}</td>
+                <td>{{ policy.total }}</td>
+                <td>{{ policy.currency }}</td>
+                <td>{% if policy.createdAt %}{{ policy.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if policy.updatedAt %}{{ policy.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if policy.isDeleted %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('policy_show', { 'id': policy.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('policy_edit', { 'id': policy.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('policy_new') }}">Create a new policy</a>
+        </li>
+    </ul>
+{% endblock %}

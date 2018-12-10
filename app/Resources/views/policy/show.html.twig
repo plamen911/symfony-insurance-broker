@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Policy</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ policy.id }}</td>
+            </tr>
+            <tr>
+                <th>Idnumber</th>
+                <td>{{ policy.idNumber }}</td>
+            </tr>
+            <tr>
+                <th>Iscancelled</th>
+                <td>{% if policy.isCancelled %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Notes</th>
+                <td>{{ policy.notes }}</td>
+            </tr>
+            <tr>
+                <th>Issuedat</th>
+                <td>{% if policy.issuedAt %}{{ policy.issuedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Startsat</th>
+                <td>{% if policy.startsAt %}{{ policy.startsAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Expiresat</th>
+                <td>{% if policy.expiresAt %}{{ policy.expiresAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Amount</th>
+                <td>{{ policy.amount }}</td>
+            </tr>
+            <tr>
+                <th>Taxes</th>
+                <td>{{ policy.taxes }}</td>
+            </tr>
+            <tr>
+                <th>Amountgf</th>
+                <td>{{ policy.amountGf }}</td>
+            </tr>
+            <tr>
+                <th>Officediscount</th>
+                <td>{{ policy.officeDiscount }}</td>
+            </tr>
+            <tr>
+                <th>Clientdiscount</th>
+                <td>{{ policy.clientDiscount }}</td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td>{{ policy.total }}</td>
+            </tr>
+            <tr>
+                <th>Currency</th>
+                <td>{{ policy.currency }}</td>
+            </tr>
+            <tr>
+                <th>Createdat</th>
+                <td>{% if policy.createdAt %}{{ policy.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updatedat</th>
+                <td>{% if policy.updatedAt %}{{ policy.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Isdeleted</th>
+                <td>{% if policy.isDeleted %}Yes{% else %}No{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('policy_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('policy_edit', { 'id': policy.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,612 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use AppBundle\Utils\Cyr2Lat;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Car
+ *
+ * @ORM\Table(name="cars")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CarRepository")
+ */
+class Car
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="id_number", type="string", length=191, unique=true)
+     */
+    private $idNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="id_frame", type="string", length=191, nullable=true)
+     */
+    private $idFrame;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="car_make", type="string", length=191, nullable=true)
+     */
+    private $carMake;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="car_model", type="string", length=191, nullable=true)
+     */
+    private $carModel;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_right_steering_wheel", type="boolean")
+     */
+    private $isRightSteeringWheel;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="engine_vol", type="string", length=191, nullable=true)
+     */
+    private $engineVol;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="pow_kw", type="integer", nullable=true)
+     */
+    private $powKw;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="pow_hp", type="integer", nullable=true)
+     */
+    private $powHp;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="new_weight", type="string", length=191, nullable=true)
+     */
+    private $newWeight;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="gross_weight", type="string", length=191, nullable=true)
+     */
+    private $grossWeight;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="color", type="string", length=191, nullable=true)
+     */
+    private $color;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="year_made", type="string", length=191, nullable=true)
+     */
+    private $yearMade;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     */
+    private $updatedAt;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="notes", type="text", nullable=true)
+     */
+    private $notes;
+
+    /**
+     * @var Client
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="ownerCars")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=true)
+     */
+    private $owner;
+
+    /**
+     * @var Client
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="representativeCars")
+     */
+    private $representative;
+
+    /**
+     * @var ArrayCollection|Policy[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Policy", mappedBy="car")
+     */
+    private $policies;
+
+    /**
+     * @var TypeOfCar
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\TypeOfCar", inversedBy="cars")
+     * @ORM\JoinColumn(name="car_type_id", referencedColumnName="id")
+     */
+    private $carType;
+
+    /** @var Cyr2Lat $cyr2Lat */
+    private $cyr2Lat;
+
+    /**
+     * Car constructor.
+     * @param Cyr2Lat $cyr2Lat
+     */
+    public function __construct(Cyr2Lat $cyr2Lat)
+    {
+        $this->isRightSteeringWheel = false;
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+        $this->cyr2Lat = $cyr2Lat;
+        $this->policies = new ArrayCollection();
+    }
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idNumber.
+     *
+     * @param string $idNumber
+     *
+     * @return Car
+     */
+    public function setIdNumber($idNumber)
+    {
+        $idNumber = $this->cyr2Lat->transliterate($idNumber);
+        $this->idNumber = $idNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get idNumber.
+     *
+     * @return string
+     */
+    public function getIdNumber()
+    {
+        return $this->idNumber;
+    }
+
+    /**
+     * Set idFrame.
+     *
+     * @param string|null $idFrame
+     *
+     * @return Car
+     */
+    public function setIdFrame($idFrame = null)
+    {
+        $this->idFrame = $this->cyr2Lat->transliterate($idFrame);
+
+        return $this;
+    }
+
+    /**
+     * Get idFrame.
+     *
+     * @return string|null
+     */
+    public function getIdFrame()
+    {
+        return $this->idFrame;
+    }
+
+    /**
+     * Set isRightSteeringWheel.
+     *
+     * @param bool $isRightSteeringWheel
+     *
+     * @return Car
+     */
+    public function setIsRightSteeringWheel($isRightSteeringWheel)
+    {
+        $this->isRightSteeringWheel = $isRightSteeringWheel;
+
+        return $this;
+    }
+
+    /**
+     * Get isRightSteeringWheel.
+     *
+     * @return bool
+     */
+    public function getIsRightSteeringWheel()
+    {
+        return $this->isRightSteeringWheel;
+    }
+
+    /**
+     * Set engineVol.
+     *
+     * @param string|null $engineVol
+     *
+     * @return Car
+     */
+    public function setEngineVol($engineVol = null)
+    {
+        $this->engineVol = $engineVol;
+
+        return $this;
+    }
+
+    /**
+     * Get engineVol.
+     *
+     * @return string|null
+     */
+    public function getEngineVol()
+    {
+        return $this->engineVol;
+    }
+
+    /**
+     * Set powKw.
+     *
+     * @param int|null $powKw
+     *
+     * @return Car
+     */
+    public function setPowKw($powKw = null)
+    {
+        $this->powKw = $powKw;
+
+        return $this;
+    }
+
+    /**
+     * Get powKw.
+     *
+     * @return int|null
+     */
+    public function getPowKw()
+    {
+        return $this->powKw;
+    }
+
+    /**
+     * Set powHp.
+     *
+     * @param int|null $powHp
+     *
+     * @return Car
+     */
+    public function setPowHp($powHp = null)
+    {
+        $this->powHp = $powHp;
+
+        return $this;
+    }
+
+    /**
+     * Get powHp.
+     *
+     * @return int|null
+     */
+    public function getPowHp()
+    {
+        return $this->powHp;
+    }
+
+    /**
+     * Set newWeight.
+     *
+     * @param string|null $newWeight
+     *
+     * @return Car
+     */
+    public function setNewWeight($newWeight = null)
+    {
+        $this->newWeight = $newWeight;
+
+        return $this;
+    }
+
+    /**
+     * Get newWeight.
+     *
+     * @return string|null
+     */
+    public function getNewWeight()
+    {
+        return $this->newWeight;
+    }
+
+    /**
+     * Set grossWeight.
+     *
+     * @param string|null $grossWeight
+     *
+     * @return Car
+     */
+    public function setGrossWeight($grossWeight = null)
+    {
+        $this->grossWeight = $grossWeight;
+
+        return $this;
+    }
+
+    /**
+     * Get grossWeight.
+     *
+     * @return string|null
+     */
+    public function getGrossWeight()
+    {
+        return $this->grossWeight;
+    }
+
+    /**
+     * Set color.
+     *
+     * @param string|null $color
+     *
+     * @return Car
+     */
+    public function setColor($color = null)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color.
+     *
+     * @return string|null
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Set madeAt.
+     *
+     * @param string|null $yearMade
+     *
+     * @return Car
+     */
+    public function setYearMade($yearMade = null)
+    {
+        $this->yearMade = $yearMade;
+
+        return $this;
+    }
+
+    /**
+     * Get madeAt.
+     *
+     * @return string|null
+     */
+    public function getYearMade()
+    {
+        return $this->yearMade;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCarMake()
+    {
+        return $this->carMake;
+    }
+
+    /**
+     * @param string $carMake
+     * @return Car
+     */
+    public function setCarMake(string $carMake)
+    {
+        $this->carMake = $carMake;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCarModel()
+    {
+        return $this->carModel;
+    }
+
+    /**
+     * @param string $carModel
+     * @return Car
+     */
+    public function setCarModel(string $carModel): Car
+    {
+        $this->carModel = $carModel;
+
+        return $this;
+    }
+
+    /**
+     * @return Client
+     */
+    public function getOwner(): Client
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param Client $owner
+     * @return Car
+     */
+    public function setOwner(Client $owner): Car
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Client
+     */
+    public function getRepresentative()
+    {
+        return $this->representative;
+    }
+
+    /**
+     * @param Client $representative
+     * @return Car
+     */
+    public function setRepresentative(Client $representative)
+    {
+        $this->representative = $representative;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return Car
+     */
+    public function setCreatedAt(\DateTime $createdAt): Car
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return Car
+     */
+    public function setUpdatedAt(\DateTime $updatedAt): Car
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param null|string $notes
+     * @return Car
+     */
+    public function setNotes(?string $notes): Car
+    {
+        $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * @return Policy[]|ArrayCollection
+     */
+    public function getPolicies()
+    {
+        return $this->policies;
+    }
+
+    /**
+     * @param Policy[]|ArrayCollection $policies
+     * @return Car
+     */
+    public function setPolicies($policies)
+    {
+        foreach ($policies as $policy) {
+            $this->addPolicy($policy);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Policy $policy
+     * @return $this
+     */
+    public function addPolicy(Policy $policy)
+    {
+        $this->policies->add($policy);
+        $policy->setCar($this);
+
+        return $this;
+    }
+
+    /**
+     * @return TypeOfCar
+     */
+    public function getCarType()
+    {
+        return $this->carType;
+    }
+
+    /**
+     * @param TypeOfCar $carType
+     * @return Car
+     */
+    public function setCarType(TypeOfCar $carType)
+    {
+        $this->carType = $carType;
+
+        return $this;
+    }
+}

@@ -1,0 +1,21 @@
+.checkbox_container {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+}
+
+.checkbox_container > .form-check {
+    width: 33%;
+}
+
+@media (max-width: 780px) {
+    .checkbox_container > .form-check {
+        width: 50%;
+    }
+}
+
+@media (max-width: 560px) {
+    .checkbox_container > .form-check {
+        width: 100%;
+    }
+}
