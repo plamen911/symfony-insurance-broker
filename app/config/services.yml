@@ -33,14 +33,3 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
-
-ct_file_store.s3:
-    class: Aws\S3\S3Client
-    factory: [Aws\S3\S3Client, 'factory']
-    arguments:
-    -
-        version: YOUR_AWS_S3_VERSION
-        region: YOUR_AWS_S3_REGION
-        credentials:
-            key: '%env(AWS_KEY)%'
-            secret: '%env(AWS_SECRET_KEY)%'
