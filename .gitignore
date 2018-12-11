@@ -18,3 +18,4 @@
 .idea/
 myreadme.md
 composer.lock
+.env
