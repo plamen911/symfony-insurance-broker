@@ -29,6 +29,11 @@
       // add a new payment form (see next code block)
       addPaymentForm($collectionHolder, $newLinkLi)
     })
+
+    $('#calc-payments').on('click', function (e) {
+      e.preventDefault();
+      alert('Coming soon')
+    })
   })
 
   function addPaymentForm ($collectionHolder, $newLinkLi) {

@@ -130,7 +130,9 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <h3>Падежи и плащания</h3>
+        <h3>Падежи и плащания
+            <a id="calc-payments" href="#" class="btn btn-primary btn-sm"><i class="fas fa-calculator"></i></a>
+        </h3>
         <div class="table-responsive">
             <ul class="payments pl-0" data-prototype="{{ form_widget(form.payments.vars.prototype)|e('html_attr') }}">
                 {% for key, payment in form.payments %}
