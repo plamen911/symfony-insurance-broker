@@ -2,6 +2,13 @@
 # https://symfony.com/doc/current/service_container.html
 parameters:
     #parameter_name: value
+    # AWS SDK
+    aws_sdk:
+        version: 'latest'
+        region: '%aws_default_region%'
+        credentials:
+            key: '%aws_key%'
+            secret: '%aws_secret%'
 
 services:
     # default configuration for services in *this* file
@@ -33,3 +40,7 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    Aws\Sdk:
+        arguments:
+            - '%aws_sdk%'

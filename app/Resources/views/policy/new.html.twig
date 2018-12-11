@@ -2,7 +2,7 @@
 
 {% block body %}
     <h1>Създаване на полица {{ policyType.name }}</h1>
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
     <div class="row">
         <div class="col-md-12">
             {% include 'policy/partials/form-fields.html.twig' %}

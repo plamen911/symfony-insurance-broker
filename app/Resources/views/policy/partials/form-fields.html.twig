@@ -24,6 +24,29 @@
             </div>
             {{ form_row(form.isCancelled) }}
         {% endif %}
+
+        <div class="card mb-2">
+            <div class="card-header">
+                <h5 class="mb-0">Документи на МПС</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="form-group pl-3 pt-2">
+                    <label for="documents">Избери файл</label>
+                    <input type="file" id="documents" name="documents[]" class="form-control1" placeholder="Документи на МПС..."
+                           multiple>
+                </div>
+                {% if policy.car.documents|length > 0 %}
+                    <ul class="list-group list-group-flush">
+                        {% for document in policy.car.documents %}
+                            <li class="list-group-item">
+                                <a href="{{ document.fileUrl }}" target="_blank">{{ document.fileName }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
     <div class="col-md-3">
         {{ form_row(form.issuedAt) }}

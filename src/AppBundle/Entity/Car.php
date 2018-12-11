@@ -158,6 +158,13 @@ class Car
      */
     private $carType;
 
+    /**
+     * @var ArrayCollection|Document[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="car", cascade={"persist"})
+     */
+    private $documents;
+
     /** @var Cyr2Lat $cyr2Lat */
     private $cyr2Lat;
 
@@ -172,6 +179,7 @@ class Car
         $this->updatedAt = new \DateTime();
         $this->cyr2Lat = $cyr2Lat;
         $this->policies = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     /**
@@ -606,6 +614,55 @@ class Car
     public function setCarType(TypeOfCar $carType)
     {
         $this->carType = $carType;
+
+        return $this;
+    }
+
+    /**
+     * @return Document[]|ArrayCollection
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
+    }
+
+    /**
+     * @param Document[]|ArrayCollection $documents
+     * @return Car
+     */
+    public function setDocuments($documents)
+    {
+        foreach ($documents as $document) {
+            $this->addDocument($document);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Document $document
+     * @return $this
+     */
+    public function addDocument(Document $document)
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents->add($document);
+            $document->setCar($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Document $document
+     * @return $this
+     */
+    public function removeDocument(Document $document)
+    {
+        if ($this->documents->contains($document)) {
+            $this->documents->removeElement($document);
+            $document->setCar(null);
+        }
 
         return $this;
     }

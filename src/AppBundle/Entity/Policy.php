@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Policy
@@ -772,9 +773,9 @@ class Policy
      */
     public function addPayment(Payment $payment)
     {
-        $payment->setPolicy($this);
         if (!$this->payments->contains($payment)) {
             $this->payments->add($payment);
+            $payment->setPolicy($this);
         }
 
         return $this;

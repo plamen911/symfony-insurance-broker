@@ -3,15 +3,19 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Car;
+use AppBundle\Entity\Document;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\PolicyType;
+use AppBundle\Utils\Aws\AwsS3Util;
 use Exception;
 use http\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PolicyController
@@ -23,6 +27,18 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  */
 class PolicyController extends Controller
 {
+    /** @var AwsS3Util $uploadService */
+    private $uploadService;
+
+    /**
+     * PolicyController constructor.
+     * @param AwsS3Util $uploadService
+     */
+    public function __construct(AwsS3Util $uploadService)
+    {
+        $this->uploadService = $uploadService;
+    }
+
     /**
      * Lists all policy entities.
      *
@@ -88,6 +104,24 @@ class PolicyController extends Controller
                 return $this->render('policy/new.html.twig', $tplData);
             }
 
+            if (null !== $request->files->get('documents')) {
+                /** @var UploadedFile $file */
+                foreach ($request->files->get('documents') as $file) {
+                    $fileUrl = $this->uploadService->putObject(
+                        $this->getParameter('aws_bucket_name'),
+                        $file->getPathname(),
+                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
+                        $file->getClientMimeType()
+                    );
+
+                    $document = new Document();
+                    $document->setFileUrl($fileUrl);
+                    $document->setFileName($file->getClientOriginalName());
+                    $document->setMimeType($file->getClientMimeType());
+                    $policy->getCar()->addDocument($document);
+                }
+            }
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($policy);
             $em->flush();
@@ -146,6 +180,24 @@ class PolicyController extends Controller
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
                 return $this->render('policy/edit.html.twig', $tplData);
+            }
+
+            if (null !== $request->files->get('documents')) {
+                /** @var UploadedFile $file */
+                foreach ($request->files->get('documents') as $file) {
+                    $fileUrl = $this->uploadService->putObject(
+                        $this->getParameter('aws_bucket_name'),
+                        $file->getPathname(),
+                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
+                        $file->getClientMimeType()
+                    );
+
+                    $document = new Document();
+                    $document->setFileUrl($fileUrl);
+                    $document->setFileName($file->getClientOriginalName());
+                    $document->setMimeType($file->getClientMimeType());
+                    $policy->getCar()->addDocument($document);
+                }
             }
 
             $this->getDoctrine()->getManager()->flush();

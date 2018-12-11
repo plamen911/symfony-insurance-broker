@@ -17,3 +17,9 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    aws_key: your_aws_key
+    aws_secret: your_aws_secret
+    aws_default_region: your_aws_default_region
+    aws_bucket_name: your_aws_bucket_name
+    aws_base_url: your_aws_base_url
