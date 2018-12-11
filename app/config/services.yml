@@ -44,3 +44,10 @@ services:
     Aws\Sdk:
         arguments:
             - '%aws_sdk%'
+
+    AppBundle\Utils\Aws\AwsS3Util:
+        arguments:
+            - '@Aws\Sdk'
+            - '%aws_bucket_name%'
+
+    AppBundle\Utils\Aws\UploadInterface: '@AppBundle\Utils\Aws\AwsS3Util'

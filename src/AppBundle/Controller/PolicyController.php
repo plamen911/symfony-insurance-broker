@@ -8,9 +8,8 @@ use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\PolicyType;
-use AppBundle\Utils\Aws\AwsS3Util;
+use AppBundle\Utils\Aws\UploadInterface;
 use Exception;
-use http\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,14 +26,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PolicyController extends Controller
 {
-    /** @var AwsS3Util $uploadService */
+    /** @var UploadInterface $uploadService */
     private $uploadService;
 
     /**
      * PolicyController constructor.
-     * @param AwsS3Util $uploadService
+     * @param UploadInterface $uploadService
      */
-    public function __construct(AwsS3Util $uploadService)
+    public function __construct(UploadInterface $uploadService)
     {
         $this->uploadService = $uploadService;
     }
@@ -107,8 +106,7 @@ class PolicyController extends Controller
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */
                 foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->putObject(
-                        $this->getParameter('aws_bucket_name'),
+                    $fileUrl = $this->uploadService->upload(
                         $file->getPathname(),
                         $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
                         $file->getClientMimeType()
@@ -185,8 +183,7 @@ class PolicyController extends Controller
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */
                 foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->putObject(
-                        $this->getParameter('aws_bucket_name'),
+                    $fileUrl = $this->uploadService->upload(
                         $file->getPathname(),
                         $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
                         $file->getClientMimeType()
