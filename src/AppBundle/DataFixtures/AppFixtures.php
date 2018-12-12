@@ -209,8 +209,8 @@ class AppFixtures extends Fixture
     {
         return [
             // $roleData = [$name, $title, $position];
-            ['ROLE_ADMIN', 'Администратор', 1],
-            ['ROLE_BROKER', 'Брокер', 2],
+            ['ROLE_SUPER_ADMIN', 'Главен админ', 1],
+            ['ROLE_ADMIN', 'Администратор', 2],
             ['ROLE_OFFICE', 'Офис-мениджър', 3],
             ['ROLE_USER', 'Клиент', 4]
         ];
