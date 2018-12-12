@@ -9,6 +9,7 @@ use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,15 +29,19 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PolicyController extends Controller
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
 
     /**
      * PolicyController constructor.
+     * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
      */
-    public function __construct(UploadInterface $uploadService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService)
     {
+        $this->em = $em;
         $this->uploadService = $uploadService;
     }
 
@@ -44,10 +49,9 @@ class PolicyController extends Controller
      * @Route("/", name="policy_index", methods={"GET"})
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function defaultPolicyAction()
+    public function redirectToListAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        $typeOfPolicy = $em->getRepository(TypeOfPolicy::class)
+        $typeOfPolicy = $this->em->getRepository(TypeOfPolicy::class)
             ->findOneBy(['isDeleted' => 0], ['position' => 'ASC']);
 
         return $this->redirectToRoute("policy_list", ['typeOfPolicy' => $typeOfPolicy->getId()]);
@@ -62,8 +66,7 @@ class PolicyController extends Controller
      */
     public function indexAction(TypeOfPolicy $typeOfPolicy)
     {
-        $em = $this->getDoctrine()->getManager();
-        $policies = $em->getRepository(Policy::class)->findBy(['policyType' => $typeOfPolicy->getId()]);
+        $policies = $this->em->getRepository(Policy::class)->findBy(['policyType' => $typeOfPolicy->getId()]);
 
         return $this->render('policy/index.html.twig', [
             'policies' => $policies,
@@ -111,7 +114,7 @@ class PolicyController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->validateForm($policy);
+                $this->validatePayments($policy);
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
                 return $this->render('policy/new.html.twig', $tplData);
@@ -134,9 +137,10 @@ class PolicyController extends Controller
                 }
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($policy);
-            $em->flush();
+            $policy->setAuthor($this->getUser());
+            $policy->setUpdater($this->getUser());
+            $this->em->persist($policy);
+            $this->em->flush();
 
             $this->addFlash('success', 'Полицата бе успешно създадена.');
 
@@ -188,7 +192,7 @@ class PolicyController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->validateForm($policy);
+                $this->validatePayments($policy);
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
                 return $this->render('policy/edit.html.twig', $tplData);
@@ -212,7 +216,8 @@ class PolicyController extends Controller
             }
 
             $policy->setUpdatedAt(new \DateTime());
-            $this->getDoctrine()->getManager()->flush();
+            $policy->setUpdater($this->getUser());
+            $this->em->flush();
 
             $this->addFlash('success', 'Данните бяха успешно записани.');
 
@@ -236,9 +241,8 @@ class PolicyController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($policy);
-            $em->flush();
+            $this->em->remove($policy);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute('policy_index');
@@ -254,9 +258,8 @@ class PolicyController extends Controller
     {
         try {
             $this->uploadService->delete(basename($document->getFileUrl()));
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($document);
-            $em->flush();
+            $this->em->remove($document);
+            $this->em->flush();
             $this->addFlash('success', 'Документът бе успешно изтрит.');
 
         } catch (Exception $ex) {
@@ -286,7 +289,7 @@ class PolicyController extends Controller
      * @param Policy $policy
      * @throws Exception
      */
-    private function validateForm(Policy $policy)
+    private function validatePayments(Policy $policy)
     {
         $totalDue = 0;
         foreach ($policy->getPayments() as $payment) {
