@@ -59,6 +59,20 @@ class User implements AdvancedUserInterface
     private $enabled;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     */
+    private $updatedAt;
+
+    /**
      * @var ArrayCollection|Role[]
      *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Role", inversedBy="users")
@@ -100,6 +114,8 @@ class User implements AdvancedUserInterface
         $this->createdPolicies = new ArrayCollection();
         $this->updatedPolicies = new ArrayCollection();
         $this->setEnabled(true);
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     /**
@@ -451,6 +467,44 @@ class User implements AdvancedUserInterface
     {
         $this->assignedPolicies->add($policy);
         $policy->setAgent($this);
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return User
+     */
+    public function setCreatedAt(\DateTime $createdAt): User
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return User
+     */
+    public function setUpdatedAt(\DateTime $updatedAt): User
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

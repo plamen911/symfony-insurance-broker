@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id 'login' %}
-
 {% block body %}
-
     <div class="container">
         <div class="card card-login mx-auto mt-3">
             <div class="card-header">Вход</div>
@@ -24,10 +21,9 @@
                     <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-lock"></i> Вход</button>
                 </form>
                 <div class="text-center">
-                    <a class="d-block small mt-3" href="register.html">Регистрирай акаунт</a>
+                    <a class="d-block small mt-3" href="{{ path('user_register') }}">Регистрирай акаунт</a>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
