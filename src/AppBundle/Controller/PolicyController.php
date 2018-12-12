@@ -194,6 +194,7 @@ class PolicyController extends Controller
                 }
             }
 
+            $policy->setUpdatedAt(new \DateTime());
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'Данните бяха успешно записани.');
