@@ -104,7 +104,7 @@ class PolicyController extends Controller
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
-        $tplData = [
+        $data = [
             'policy' => $policy,
             'form' => $form->createView(),
             'policyType' => $typeOfPolicy,
@@ -117,7 +117,7 @@ class PolicyController extends Controller
                 $this->validatePayments($policy);
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
-                return $this->render('policy/new.html.twig', $tplData);
+                return $this->render('policy/new.html.twig', $data);
             }
 
             if (null !== $request->files->get('documents')) {
@@ -147,7 +147,7 @@ class PolicyController extends Controller
             return $this->redirectToRoute('policy_show', ['id' => $policy->getId()]);
         }
 
-        return $this->render('policy/new.html.twig', $tplData);
+        return $this->render('policy/new.html.twig', $data);
     }
 
     /**
@@ -182,7 +182,7 @@ class PolicyController extends Controller
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
-        $tplData = [
+        $data = [
             'policy' => $policy,
             'form' => $form->createView(),
             'car' => $policy->getCar(),
@@ -195,7 +195,7 @@ class PolicyController extends Controller
                 $this->validatePayments($policy);
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
-                return $this->render('policy/edit.html.twig', $tplData);
+                return $this->render('policy/edit.html.twig', $data);
             }
 
             if (null !== $request->files->get('documents')) {
@@ -224,7 +224,7 @@ class PolicyController extends Controller
             return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
         }
 
-        return $this->render('policy/edit.html.twig', $tplData);
+        return $this->render('policy/edit.html.twig', $data);
     }
 
     /**
