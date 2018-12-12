@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <img src="{{ asset('images/SoftUni2.png') }}" width="30" height="30" class="d-inline-block align-top" alt=""/>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse my-2 my-md-0 mr-md-3" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            {% if app.user %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="policyDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Полици
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="policyDropdown">
+                        {% for policy_type in policy_types.getAll %}
+                            <a class="dropdown-item" href="{{ path('policy_list', {'typeOfPolicy': policy_type.id}) }}">{{ policy_type.name }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+            {% endif %}
+        </ul>
+        <ul class="navbar-nav mr-0">
+            {% if app.user %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-tie"></i> {{ app.user.fullName }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <a class="dropdown-item" href="#">Профил</a>
+                    </div>
+                </li>
+                {#<li class="nav-item">
+                    <a href="#" class="nav-link"><i class="fas fa-user-tie"></i> {{ app.user.fullName }}</a>
+                </li>#}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_logout') }}">Изход</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_login') }}">Вход</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

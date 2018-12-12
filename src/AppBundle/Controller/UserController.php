@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Class UserController
@@ -42,14 +43,19 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
 
-//            return $this->get('security.authentication.guard_handler')
-//                ->authenticateUserAndHandleSuccess(
-//                    $user,
-//                    $request,
-//
-//                );
+            $token = new UsernamePasswordToken(
+                $user,
+                $password,
+                'main',
+                $user->getRoles()
+            );
 
-            return $this->redirectToRoute('security_login');
+            $this->get('security.token_storage')->setToken($token);
+            $this->get('session')->set('_security_main', serialize($token));
+
+            $this->addFlash('success', 'Сега сте успешно регистриран.');
+
+            return $this->redirectToRoute('policy_index');
         }
 
         return $this->render('user/register.html.twig', [

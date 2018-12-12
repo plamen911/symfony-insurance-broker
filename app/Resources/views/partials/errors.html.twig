@@ -1,0 +1,27 @@
+{% if form is defined and not form.vars.valid %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span>
+        </button>
+        <ul class="mb-0">
+            {% for child in form.children %}
+                {% for error in child.vars.errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% for type, messages in app.session.flashbag.all() %}
+    <div class="alert alert-{{ type }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span>
+        </button>
+        <ul class="mb-0">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
