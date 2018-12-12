@@ -8,7 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends Controller
 {
     /**
-     * @Route("/register", name="user_register", methods={"GET","POST"})
+     * @Route("/register", name="user_register")
      * @param Request $request
      * @param EntityManagerInterface $em
      * @return \Symfony\Component\HttpFoundation\Response

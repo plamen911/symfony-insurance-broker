@@ -5,9 +5,8 @@
         <div class="card card-register mx-auto mt-3">
             <div class="card-header">Регистрация на акаунт</div>
             <div class="card-body">
-                <form name="authenticate" class="form-horizontal" action="{{ path('user_register') }}" method="post">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                    <input type="hidden" name="_target_path" value="{{ path('policy_index') }}"/>
+                <form name="user" class="form-horizontal" action="{{ path('user_register') }}" method="post">
+                    <input type="hidden" name="user[_token]" value="{{ csrf_token('user') }}"/>
                     <div class="form-group">
                         <label class="control-label" for="user_full_name">Име</label>
                         <input type="text" class="form-control" id="user_full_name" placeholder="Име, презиме, фамилия"
