@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace AppBundle\Service;
 
 /**
  * Class Cyr2Lat
- * @package AppBundle\Utils
+ * @package AppBundle\Service
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class Cyr2Lat

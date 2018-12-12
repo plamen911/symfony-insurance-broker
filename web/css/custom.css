@@ -19,3 +19,7 @@
         width: 100%;
     }
 }
+
+.card-login, .card-register {
+    max-width: 25rem;
+}

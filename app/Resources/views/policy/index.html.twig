@@ -16,8 +16,8 @@
                 <th>Amount</th>
                 <th>Taxes</th>
                 <th>Amountgf</th>
-                <th>Officediscount</th>
-                <th>Clientdiscount</th>
+                <th>OfficeCommission</th>
+                <th>ClientCommission</th>
                 <th>Total</th>
                 <th>Currency</th>
                 <th>Createdat</th>
@@ -39,8 +39,8 @@
                 <td>{{ policy.amount }}</td>
                 <td>{{ policy.taxes }}</td>
                 <td>{{ policy.amountGf }}</td>
-                <td>{{ policy.officeDiscount }}</td>
-                <td>{{ policy.clientDiscount }}</td>
+                <td>{{ policy.officeCommission }}</td>
+                <td>{{ policy.clientCommission }}</td>
                 <td>{{ policy.total }}</td>
                 <td>{{ policy.currency }}</td>
                 <td>{% if policy.createdAt %}{{ policy.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
@@ -63,7 +63,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('policy_new') }}">Create a new policy</a>
+            <a href="#">Create a new policy</a>
         </li>
     </ul>
 {% endblock %}

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Utils\Aws;
+namespace AppBundle\Service\Aws;
 
 /**
  * Interface UploadInterface

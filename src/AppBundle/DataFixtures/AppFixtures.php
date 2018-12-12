@@ -9,7 +9,7 @@ use AppBundle\Entity\TypeOfCar;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
-use AppBundle\Utils\Cyr2Lat;
+use AppBundle\Service\Cyr2Lat;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;

@@ -2,36 +2,32 @@
 
 {% block body_id 'login' %}
 
-{% block main %}
+{% block body %}
 
-    <div class="container body-content span=8 offset=2">
-        <div class="well">
-            <form name="authenticate" class="form-horizontal" action="{{ path('security_login') }}" method="post">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                <input type="hidden" name="_target_path" value="{{ path('homepage') }}" />
-                <fieldset>
-                    <legend>Login</legend>
+    <div class="container">
+        <div class="card card-login mx-auto mt-3">
+            <div class="card-header">Вход</div>
+            <div class="card-body">
+                <form name="authenticate" class="form-horizontal" action="{{ path('security_login') }}" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                    <input type="hidden" name="_target_path" value="{{ path('policy_index') }}"/>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="user_email">Email</label>
-                        <div class="col-sm-4 ">
-                            <input type="email" id="user_email" name="_username" placeholder="Email" class="form-control">
-                        </div>
+                        <label class="control-label" for="user_email">И-мейл</label>
+                        <input type="email" id="user_email" name="_username" placeholder="И-мейл"
+                               class="form-control" required="required" autofocus="autofocus">
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="password">Password</label>
-                        <div class="col-sm-4">
-                            <input type="password" id="password" name="_password" placeholder="Password" class="form-control">
-                        </div>
+                        <label class="control-label" for="password">Парола</label>
+                        <input type="password" id="password" name="_password" placeholder="Парола"
+                               class="form-control" required="required">
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" href="{{ path('homepage') }}">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-                    </div>
-
-                </fieldset>
-            </form>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-lock"></i> Вход</button>
+                </form>
+                <div class="text-center">
+                    <a class="d-block small mt-3" href="register.html">Регистрирай акаунт</a>
+                </div>
+            </div>
         </div>
     </div>
+
 {% endblock %}

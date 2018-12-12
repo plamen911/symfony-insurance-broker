@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Utils\Aws;
+namespace AppBundle\Service\Aws;
 
 use Aws\Sdk;
 

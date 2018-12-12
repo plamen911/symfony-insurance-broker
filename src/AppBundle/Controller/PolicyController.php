@@ -8,8 +8,9 @@ use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\PolicyType;
-use AppBundle\Utils\Aws\UploadInterface;
+use AppBundle\Service\Aws\UploadInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("policy")
+ * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class PolicyController extends Controller
 {
@@ -39,25 +41,40 @@ class PolicyController extends Controller
     }
 
     /**
-     * Lists all policy entities.
-     *
      * @Route("/", name="policy_index", methods={"GET"})
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function indexAction()
+    public function defaultPolicyAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $typeOfPolicy = $em->getRepository(TypeOfPolicy::class)
+            ->findOneBy(['isDeleted' => 0], ['position' => 'ASC']);
 
-        $policies = $em->getRepository('AppBundle:Policy')->findAll();
+        return $this->redirectToRoute("policy_list", ['typeOfPolicy' => $typeOfPolicy->getId()]);
+    }
 
-        return $this->render('policy/index.html.twig', array(
+    /**
+     * Lists all policy entities.
+     *
+     * @Route("/{typeOfPolicy}", name="policy_list", methods={"GET"}, requirements={"typeOfPolicy": "\d+"})
+     * @param TypeOfPolicy $typeOfPolicy
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function indexAction(TypeOfPolicy $typeOfPolicy)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $policies = $em->getRepository(Policy::class)->findBy(['policyType' => $typeOfPolicy->getId()]);
+
+        return $this->render('policy/index.html.twig', [
             'policies' => $policies,
-        ));
+            'typeOfPolicy' => $typeOfPolicy
+        ]);
     }
 
     /**
      * Creates a new policy entity.
      *
-     * @Route("/new/type/{typeOfPolicy}/car/{car}", name="policy_new", methods={"GET", "POST"}, requirements={"typeOfPolicy": "\d+", "car": "\d+"})*
+     * @Route("/new/type/{typeOfPolicy}/car/{car}", name="policy_new", methods={"GET", "POST"}, requirements={"typeOfPolicy": "\d+", "car": "\d+"})
      * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
      * @param Car $car
