@@ -111,11 +111,12 @@ class AppFixtures extends Fixture
      */
     private function loadInsurers(ObjectManager $manager)
     {
-        foreach ($this->getInsurerData() as [$name, $longName, $logo, $position, $policyTypes]) {
+        foreach ($this->getInsurerData() as [$name, $longName, $logo, $amountGf, $position, $policyTypes]) {
             $insurer = new Insurer();
             $insurer->setName($name);
             $insurer->setLongName($longName);
             $insurer->setLogo($logo);
+            $insurer->setAmountGf($amountGf);
             $insurer->setPosition($position);
 
             $policyTypeArray = [];
@@ -246,10 +247,10 @@ class AppFixtures extends Fixture
     private function getInsurerData()
     {
         return [
-            // $insurerData = [$name, $longName, $logo, $position, $policyTypes];
-            ['Алианц', 'ЗАД "Алианц България" АД', '', 1, ['Г.О.', 'Каско']],
-            ['ОЗК', 'ЗАД "ОЗК Застраховане"', '', 2, ['Г.О.', 'Каско']],
-            ['БУЛСТРАД', 'ЗАД "БУЛСТРАД ВИЕНА ИНШУРЪНС ГРУП"', '', 3, ['Г.О.', 'Каско']],
+            // $insurerData = [$name, $longName, $logo, $amountGf, $position, $policyTypes];
+            ['Алианц', 'ЗАД "Алианц България" АД', '', 11.5, 1, ['Г.О.', 'Каско']],
+            ['ОЗК', 'ЗАД "ОЗК Застраховане"', '', 11.5, 2, ['Г.О.', 'Каско']],
+            ['БУЛСТРАД', 'ЗАД "БУЛСТРАД ВИЕНА ИНШУРЪНС ГРУП"', '', 11.5, 3, ['Г.О.', 'Каско']],
         ];
     }
 

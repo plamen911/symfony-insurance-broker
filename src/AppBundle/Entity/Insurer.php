@@ -45,6 +45,13 @@ class Insurer
     private $logo;
 
     /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_gf", type="decimal", precision=10, scale=2, nullable=true)
+     */
+    private $amountGf;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="position", type="integer")
@@ -84,6 +91,7 @@ class Insurer
         $this->isDeleted = false;
         $this->policyTypes = new ArrayCollection();
         $this->policies = new ArrayCollection();
+        $this->amountGf = 0;
     }
 
     /**
@@ -265,6 +273,25 @@ class Insurer
     {
         $this->policies->add($policy);
         $policy->setIdNumber($this);
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getAmountGf(): ?float
+    {
+        return $this->amountGf;
+    }
+
+    /**
+     * @param float|null $amountGf
+     * @return Insurer
+     */
+    public function setAmountGf(?float $amountGf): Insurer
+    {
+        $this->amountGf = $amountGf;
 
         return $this;
     }

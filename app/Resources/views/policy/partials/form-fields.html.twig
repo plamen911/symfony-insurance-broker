@@ -60,15 +60,15 @@
         {{ form_row(form.issuedAt) }}
         {{ form_row(form.startsAt) }}
         {{ form_row(form.expiresAt) }}
-        {{ form_row(form.currency) }}
+        {{ form_row(form.officeCommission) }}
+        {{ form_row(form.clientCommission) }}
         {{ form_row(form.notes) }}
     </div>
     <div class="col-md-3">
+        {{ form_row(form.currency) }}
         {{ form_row(form.amount) }}
         {{ form_row(form.taxes) }}
         {{ form_row(form.amountGf) }}
-        {{ form_row(form.officeDiscount) }}
-        {{ form_row(form.clientDiscount) }}
         {{ form_row(form.total) }}
     </div>
     <div class="col-md-3">
@@ -162,7 +162,10 @@
 <div class="row">
     <div class="col-md-12">
         <h3>Падежи и плащания
-            <a id="calc-payments" href="#" class="btn btn-primary btn-sm"><i class="fas fa-calculator"></i></a>
+            <a id="calc-payments"
+               href="#"
+               title="Изчисли вноските"
+               class="btn btn-primary btn-sm"><i class="fas fa-calculator"></i></a>
         </h3>
         <div class="table-responsive">
             <ul class="payments pl-0" data-prototype="{{ form_widget(form.payments.vars.prototype)|e('html_attr') }}">

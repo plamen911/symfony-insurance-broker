@@ -89,16 +89,16 @@ class Policy
     /**
      * @var float|null
      *
-     * @ORM\Column(name="office_discount", type="decimal", precision=10, scale=2, nullable=true)
+     * @ORM\Column(name="office_commission", type="decimal", precision=10, scale=2, nullable=true)
      */
-    private $officeDiscount;
+    private $officeCommission;
 
     /**
      * @var float|null
      *
-     * @ORM\Column(name="client_discount", type="decimal", precision=10, scale=2, nullable=true)
+     * @ORM\Column(name="client_commission", type="decimal", precision=10, scale=2, nullable=true)
      */
-    private $clientDiscount;
+    private $clientCommission;
 
     /**
      * @var float|null
@@ -217,10 +217,10 @@ class Policy
         $this->startsAt = new \DateTime();
         $this->expiresAt = (new \DateTime())->add(new \DateInterval('P1Y'));
         $this->amount = 0;
-        $this->taxes = 0;
+        $this->taxes = 2;
         $this->amountGf = 0;
-        $this->officeDiscount = 0;
-        $this->clientDiscount = 0;
+        $this->officeCommission = 0;
+        $this->clientCommission = 0;
         $this->total = 0;
         $this->currency = 'BGN';
         $this->createdAt = new \DateTime();
@@ -711,18 +711,18 @@ class Policy
     /**
      * @return float|null
      */
-    public function getOfficeDiscount()
+    public function getOfficeCommission()
     {
-        return $this->officeDiscount;
+        return $this->officeCommission;
     }
 
     /**
-     * @param float|null $officeDiscount
+     * @param float|null $officeCommission
      * @return Policy
      */
-    public function setOfficeDiscount(?float $officeDiscount)
+    public function setOfficeCommission(?float $officeCommission)
     {
-        $this->officeDiscount = $officeDiscount;
+        $this->officeCommission = $officeCommission;
 
         return $this;
     }
@@ -730,18 +730,18 @@ class Policy
     /**
      * @return float|null
      */
-    public function getClientDiscount()
+    public function getClientCommission()
     {
-        return $this->clientDiscount;
+        return $this->clientCommission;
     }
 
     /**
-     * @param float|null $clientDiscount
+     * @param float|null $clientCommission
      * @return Policy
      */
-    public function setClientDiscount(?float $clientDiscount)
+    public function setClientCommission(?float $clientCommission)
     {
-        $this->clientDiscount = $clientDiscount;
+        $this->clientCommission = $clientCommission;
 
         return $this;
     }

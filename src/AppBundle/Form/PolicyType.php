@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -57,11 +56,11 @@ class PolicyType extends AbstractType
                 'label' => 'Изтича на'
             ])
             ->add('amount', NumberType::class, ['label' => 'Цена Г.О.'])
-            ->add('taxes', NumberType::class, ['label' => 'Данък %'])
-            ->add('amountGf', NumberType::class, ['label' => 'Г.Ф.'])
-            ->add('officeDiscount', NumberType::class, ['label' => '% на офиса'])
-            ->add('clientDiscount', NumberType::class, ['label' => '% на клиента'])
-            ->add('total', NumberType::class, ['label' => 'Общо дължима премия'])
+            ->add('taxes', NumberType::class, ['label' => 'Данък %', 'attr' => ['readonly' => true]])
+            ->add('amountGf', NumberType::class, ['label' => 'Г.Ф.', 'attr' => ['readonly' => true]])
+            ->add('officeCommission', NumberType::class, ['label' => '% на офиса'])
+            ->add('clientCommission', NumberType::class, ['label' => '% на клиента'])
+            ->add('total', NumberType::class, ['label' => 'Общо дължима премия', 'attr' => ['readonly' => true]])
             ->add('notes', TextareaType::class, ['label' => 'Бележки'])
             ->add('currency', ChoiceType::class, [
                     'choices' => [

@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, toastr) {
   'use strict'
   var $collectionHolder
 
@@ -32,7 +32,11 @@
 
     $('#calc-payments').on('click', function (e) {
       e.preventDefault();
-      alert('Coming soon')
+      distributePayments()
+    })
+
+    $('#policy_amount').on('keyup', function (e) {
+      calcTotalAmount()
     })
   })
 
@@ -77,4 +81,52 @@
       $paymentFormLi.remove()
     })
   }
-})(jQuery)
+
+  function calcTotalAmount () {
+    var policyAmount = $('#policy_amount').val()
+    var policyTaxes = $('#policy_taxes').val()
+    var amountGf = $('#policy_amountGf').val()
+
+    policyAmount = (!policyAmount || isNaN(policyAmount)) ? 0 : parseFloat(policyAmount)
+    policyTaxes = (!policyTaxes || isNaN(policyTaxes)) ? 0 : parseFloat(policyTaxes)
+    amountGf = (!amountGf || isNaN(amountGf)) ? 0 : parseFloat(amountGf)
+
+    var policyTotal = +policyAmount + (policyTaxes * policyAmount / 100) + +amountGf
+    policyTotal = parseFloat(policyTotal.toFixed(2))
+
+    $('#policy_total').val(policyTotal)
+  }
+
+  function calcClientPayments () {
+    var officeCommission = $('#policy_officeCommission').val()
+    var clientCommission = $('#policy_clientCommission').val()
+
+    officeCommission = (!officeCommission || isNaN(officeCommission)) ? 0 : parseFloat(officeCommission)
+    clientCommission = (!clientCommission || isNaN(clientCommission)) ? 0 : parseFloat(clientCommission)
+
+    if (clientCommission > officeCommission) {
+      toastr.error('Процентът на клиента (' + clientCommission + ') не може да е по-голям от процента на офиса (' + officeCommission + ')!', 'Грешка!')
+      return
+    }
+    // todo
+  }
+
+  function distributePayments () {
+    calcTotalAmount()
+    var policyTotal = $('#policy_total').val()
+    policyTotal = (!policyTotal || isNaN(policyTotal)) ? 0 : parseFloat(policyTotal)
+    var paymentsCount = $('.payments').find('li').length - 1
+    if (paymentsCount > 0) {
+      var paymentAmount = parseFloat((policyTotal / paymentsCount).toFixed(2))
+      var firstPaymentAmount = parseFloat(policyTotal - (paymentAmount * (paymentsCount - 1)))
+      $('input[id$="_amountDue"]').each(function (i) {
+        if (i === 0) {
+          $(this).val(firstPaymentAmount)
+        } else {
+          $(this).val(paymentAmount)
+        }
+      })
+    }
+  }
+
+})(jQuery, toastr)
