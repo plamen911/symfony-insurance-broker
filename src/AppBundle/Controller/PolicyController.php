@@ -12,7 +12,7 @@ use AppBundle\Utils\Aws\UploadInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -41,8 +41,7 @@ class PolicyController extends Controller
     /**
      * Lists all policy entities.
      *
-     * @Route("/", name="policy_index")
-     * @Method("GET")
+     * @Route("/", name="policy_index", methods={"GET"})
      */
     public function indexAction()
     {
@@ -58,9 +57,7 @@ class PolicyController extends Controller
     /**
      * Creates a new policy entity.
      *
-     * @Route("/new/type/{typeOfPolicy}/car/{car}", name="policy_new", requirements={"typeOfPolicy": "\d+", "car": "\d+"})
-     * @Method({"GET", "POST"})
-     *
+     * @Route("/new/type/{typeOfPolicy}/car/{car}", name="policy_new", methods={"GET", "POST"}, requirements={"typeOfPolicy": "\d+", "car": "\d+"})*
      * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
      * @param Car $car
@@ -210,8 +207,7 @@ class PolicyController extends Controller
     /**
      * Deletes a policy entity.
      *
-     * @Route("/{id}", name="policy_delete")
-     * @Method("DELETE")
+     * @Route("/{id}", name="policy_delete", methods={"DELETE"}, requirements={"id", "\d+"})
      * @param Request $request
      * @param Policy $policy
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -228,6 +224,28 @@ class PolicyController extends Controller
         }
 
         return $this->redirectToRoute('policy_index');
+    }
+
+    /**
+     * @Route("/{policy}/document/{document}/delete", name="document_delete", methods={"DELETE"}, requirements={"policy": "\d+", "document": "\d+"})
+     * @param Policy $policy
+     * @param Document $document
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteDocument(Policy $policy, Document $document)
+    {
+        try {
+            $this->uploadService->delete(basename($document->getFileUrl()));
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($document);
+            $em->flush();
+            $this->addFlash('success', 'Документът бе успешно изтрит.');
+
+        } catch (Exception $ex) {
+            $this->addFlash('danger', $ex->getMessage());
+        }
+
+        return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
     }
 
     /**

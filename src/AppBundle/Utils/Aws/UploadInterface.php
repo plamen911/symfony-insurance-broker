@@ -17,6 +17,11 @@ interface UploadInterface
     public function upload(string $localPath, string $fileName, string $contentType): string;
 
     /**
+     * @param string $fileName
+     */
+    public function delete(string $fileName): void;
+
+    /**
      * @return string
      */
     public function generateUniqueFileName(): string;

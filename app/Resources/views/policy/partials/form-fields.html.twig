@@ -32,14 +32,22 @@
             <div class="card-body p-0">
                 <div class="form-group pl-3 pt-2">
                     <label for="documents">Избери файл</label>
-                    <input type="file" id="documents" name="documents[]" class="form-control1" placeholder="Документи на МПС..."
+                    <input type="file" id="documents" name="documents[]" class="form-control-file" placeholder="Документи на МПС..."
                            multiple>
                 </div>
                 {% if policy.car.documents|length > 0 %}
                     <ul class="list-group list-group-flush">
                         {% for document in policy.car.documents %}
                             <li class="list-group-item">
-                                <a href="{{ document.fileUrl }}" target="_blank">{{ document.fileName }}</a>
+                                <a href="{{ document.fileUrl }}" class="float-left mt-1" target="_blank">{{ document.fileName }}</a>
+                                <a href="#"
+                                   data-href="{{ path('document_delete', {'policy': policy.id, 'document': document.id}) }}"
+                                   data-toggle="modal"
+                                   data-target="#confirm-delete"
+                                   data-message="Сигурни ли сте, че искате да изтриете документа?"
+                                   title="Изтрий"
+                                   class="btn btn-danger btn-sm ml-2 float-right"
+                                ><i class="far fa-trash-alt"></i></a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -66,12 +74,12 @@
     <div class="col-md-3">
         <div class="accordion" id="accordionCar">
             <div class="card">
-                <div class="card-header p-1" id="headingCar">
+                <div class="card-header" id="headingCar">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseCar"
-                                aria-expanded="true" aria-controls="collapseCar">
+                        <a href="#" data-toggle="collapse" data-target="#collapseCar"
+                           aria-expanded="true" aria-controls="collapseCar">
                             <i class="fas fa-car"></i> {{ car.carType.name }}
-                        </button>
+                        </a>
                     </h5>
                 </div>
                 <div id="collapseCar" class="collapse show" aria-labelledby="headingCar" data-parent="#accordionCar">
@@ -112,12 +120,12 @@
                 </div>
             </div>
             <div class="card">
-                <div class="card-header p-1" id="headingOwner">
+                <div class="card-header" id="headingOwner">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOwner"
-                                aria-expanded="true" aria-controls="collapseOwner">
+                        <a href="#"  data-toggle="collapse" data-target="#collapseOwner"
+                           aria-expanded="true" aria-controls="collapseOwner">
                             <i class="fas fa-user-tie"></i> {{ car.owner.firstName }} {{ car.owner.middleName }} {{ car.owner.lastName }}
-                        </button>
+                        </a>
                     </h5>
                 </div>
                 <div id="collapseOwner" class="collapse" aria-labelledby="headingOwner" data-parent="#accordionCar">

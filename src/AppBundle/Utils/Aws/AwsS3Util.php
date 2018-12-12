@@ -61,4 +61,17 @@ class AwsS3Util implements UploadInterface
         // uniqid(), which is based on timestamps
         return md5(uniqid());
     }
+
+
+    /**
+     * @param string $fileName
+     */
+    public function delete(string $fileName): void
+    {
+        $client = $this->sdk->createS3();
+        $client->deleteObject([
+            'Bucket' => $this->bucket,
+            'Key' => $fileName,
+        ]);
+    }
 }

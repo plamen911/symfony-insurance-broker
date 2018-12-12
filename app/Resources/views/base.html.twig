@@ -74,18 +74,22 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm Delete</h5>
+                        <h5 class="modal-title">Моля, потвърдете</h5>
                         <button type="button" class="close close-confirm" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure? Do you want to proceed?</p>
+                        <p id="confirm-message">Are you sure? Do you want to proceed?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                        ><i class="fas fa-undo-alt"></i> Отмени</button>
                         <a class="btn btn-danger btn-ok" style="color: white"
-                           onclick="event.preventDefault(); document.getElementById('delete-form').submit();">Delete</a>
+                           onclick="event.preventDefault(); document.getElementById('delete-form').submit();"
+                        ><i class="far fa-trash-alt"></i> Изтрий</a>
                         <form id="delete-form" name="delete-form" method="post" action="#" style="display: none">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete-form') }}"/>
