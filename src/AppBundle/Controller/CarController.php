@@ -229,25 +229,32 @@ class CarController extends Controller
      */
     public function newOwnerAction(Request $request, Car $car)
     {
+        $type = (in_array($request->query->get('type'), ['owner', 'representative'])) ? $request->query->get('type') : 'owner';
         $refUrl = $request->query->get('ref');
-        if (!filter_var($refUrl, FILTER_VALIDATE_URL)) {
+        if (null === $refUrl || !filter_var($refUrl, FILTER_VALIDATE_URL)) {
             $this->addFlash('danger', 'Невалиден URL адрес!');
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
 
-        $autoCompleteForm = $this->createAutoCompleteForm($car, $refUrl);
+        $autoCompleteForm = $this->createAutoCompleteForm();
         $autoCompleteForm->handleRequest($request);
 
-        $owner = new Client();
-        $form = $this->createForm(ClientType::class, $owner);
+        $client = new Client();
+        $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $car->setOwner($owner);
-            $this->em->persist($owner);
+            if ('owner' === $type) {
+                $message = 'Собственикът на МПС бе успешно добавен.';
+                $car->setOwner($client);
+            } else {
+                $message = 'Пълномошникът бе успешно добавен.';
+                $car->setRepresentative($client);
+            }
+            $this->em->persist($client);
             $this->em->flush();
 
-            $this->addFlash('success', 'Собственикът на МПС бе успешно добавен.');
+            $this->addFlash('success', $message);
             if (!empty($refUrl)) {
                 return $this->redirect($refUrl);
             }
@@ -256,16 +263,23 @@ class CarController extends Controller
         }
 
         if ($autoCompleteForm->isSubmitted() && $autoCompleteForm->isValid()) {
-            if (null === $owner = $autoCompleteForm['owner']->getData()) {
-                $this->addFlash('danger', 'Невалиден собственик!');
+            if (null === $client = $autoCompleteForm['owner']->getData()) {
+                $this->addFlash('danger', 'Невалиден ' . ('owner' === $type ? 'собственик' : 'пълномошник') . '!');
                 return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'ref' => $refUrl]);
             }
 
-            $car->setOwner($owner);
-            $this->em->persist($owner);
+            if ('owner' === $type) {
+                $message = 'Собственикът на МПС бе успешно променен.';
+                $car->setOwner($client);
+            } else {
+                $message = 'Пълномошникът бе успешно променен.';
+                $car->setRepresentative($client);
+            }
+
+            $this->em->persist($client);
             $this->em->flush();
 
-            $this->addFlash('success', 'Собственикът на МПС бе успешно променен.');
+            $this->addFlash('success', $message);
             if (!empty($refUrl)) {
                 return $this->redirect($refUrl);
             }
@@ -277,6 +291,7 @@ class CarController extends Controller
             'car' => $car,
             'form' => $form->createView(),
             'form_autocomplete' => $autoCompleteForm->createView(),
+            'type' => $type,
             'refUrl' => $refUrl
         ]);
     }
@@ -335,16 +350,14 @@ class CarController extends Controller
     }
 
     /**
-     * @param Car $car
-     * @param string $refUrl
      * @return \Symfony\Component\Form\FormInterface
      */
-    private function createAutoCompleteForm(Car $car, string $refUrl)
+    private function createAutoCompleteForm()
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('car_new_owner', ['car' => $car->getId(), 'ref' => $refUrl]))
             ->setMethod('POST')
-            ->add('owner', AutocompleteType::class, ['class' => Client::class,
+            ->add('owner', AutocompleteType::class, [
+                'class' => Client::class,
                 'label' => 'Изберете съществуващ собственик',
                 'label_attr' => [
                     'class' => 'sr-only'

@@ -9,7 +9,7 @@
         <div class="col-md-12">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Изберете съществуващ собственик</h5>
+                    <h5 class="mb-0">Изберете съществуващ {{ type == 'owner' ? 'собственик' : 'пълномощник' }}</h5>
                 </div>
                 <div class="card-body pb-1">
                     {{ form_start(form_autocomplete, {'attr': {'novalidate': 'novalidate'}}) }}
@@ -18,7 +18,7 @@
                             {{ form_widget(form_autocomplete) }}
                         </div>
                         <div class="col">
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Избери</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-user-check"></i> Избери</button>
                         </div>
                     </div>
                     {{ form_end(form_autocomplete) }}
@@ -30,7 +30,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">...ИЛИ въведете нов собственик</h5>
+                    <h5 class="mb-0">...ИЛИ въведете нов {{ type == 'owner' ? 'собственик' : 'пълномощник' }}</h5>
                 </div>
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                 <div class="card-body pb-1">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="card-footer">
                     <a href="{{ refUrl }}" title="Назад" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
-                    <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i>
+                    <button type="submit" class="btn btn-primary float-right"><i class="fas fa-user-plus"></i>
                         Съхрани
                     </button>
                 </div>

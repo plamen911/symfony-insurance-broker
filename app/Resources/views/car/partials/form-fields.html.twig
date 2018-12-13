@@ -50,7 +50,7 @@
                            aria-expanded="true" aria-controls="collapseOwner">
                             Собственик
                         </a>
-                        <a href="{{ path('car_new_owner', {'car': car.id}) }}?ref={{ relative_path(app.request.uri)|url_encode }}" class="float-right"
+                        <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': relative_path(app.request.uri)}) }}" class="float-right"
                            title="Смяна на собственика"><i class="fas fa-user-edit"></i></a>
                     </h5>
                 </div>
@@ -89,6 +89,61 @@
                                 <strong>И-мейл 2:</strong> {{ car.owner.email2 }}
                             </li>
                         </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingRepresentative">
+                        <h5 class="mb-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapseRepresentative"
+                               aria-expanded="true" aria-controls="collapseRepresentative">
+                                Пълномощник
+                            </a>
+                            <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'representative', 'ref': relative_path(app.request.uri) }) }}" class="float-right"
+                               title="Смяна на пълномощника"><i class="fas fa-user-edit"></i></a>
+                        </h5>
+                    </div>
+                    <div id="collapseRepresentative" class="collapse" aria-labelledby="headingRepresentative"
+                         data-parent="#accordionCar">
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% if car.representative %}
+                                    <li class="list-group-item">
+                                        <strong>Име:</strong> {{ car.representative.firstName }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Презиме:</strong> {{ car.representative.middleName }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Фамилия:</strong> {{ car.representative.lastName }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>ЕГН/ЕИК/БУЛСТАТ:</strong> {{ car.representative.idNumber }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Нас. място (гр./с.):</strong> {{ car.representative.city }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Адрес (ул./жк.):</strong> {{ car.representative.street }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Телефон:</strong> {{ car.representative.phone }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Телефон 2:</strong> {{ car.representative.phone2 }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>И-мейл:</strong> {{ car.representative.email }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>И-мейл 2:</strong> {{ car.representative.email2 }}
+                                    </li>
+                                {% else %}
+                                    <li class="list-group-item">
+                                        Няма данни.
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
