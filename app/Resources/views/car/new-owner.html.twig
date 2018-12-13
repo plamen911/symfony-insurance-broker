@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>{{ car.carType.name }} {{ car.idNumber }}
+        <small class="text-muted">{{ car.carMake }} {{ car.carModel }}</small>
+    </h3>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Изберете съществуващ собственик</h4>
+            <div class="form-group">
+                <label for="client_firstName" class="required">Име</label>
+                <input type="text" id="client_firstName" name="client[firstName]" required="required" placeholder="Име" class="form-control">
+            </div>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="custom-file-input" id="inputGroupFile02">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="inputGroupFileAddon02">Избери</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>...ИЛИ нов собственик на МПС</h4>
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {% include 'owner/partials/form-fields.html.twig' %}
+            <div class="row">
+                <div class="col-md-12 mt-3">
+                    <a href="{{ path('owner_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
+                    <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Съхрани</button>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    <ul>
+        <li>
+            <a href="{{ refUrl }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

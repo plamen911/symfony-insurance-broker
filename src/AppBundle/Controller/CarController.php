@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Car;
+use AppBundle\Entity\Client;
 use AppBundle\Entity\Document;
 use AppBundle\Form\CarType;
+use AppBundle\Form\ClientType;
 use AppBundle\Service\Aws\UploadInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -15,7 +19,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Car controller.
+ * Class CarController
+ * @package AppBundle\Controller
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("car")
  */
@@ -155,6 +161,7 @@ class CarController extends Controller
                 }
             }
 
+            $car->setUpdatedAt(new \DateTime());
             $this->em->flush();
 
             $this->addFlash('success', 'Данните бяха успешно записани.');
@@ -208,6 +215,41 @@ class CarController extends Controller
         }
 
         return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
+    }
+
+    /**
+     * @Route("/{car}/owner/new", name="car_new_owner", methods={"GET","POST"}, requirements={"car": "\d+"})
+     * @param Request $request
+     * @param Car $car
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function newOwnerAction(Request $request, Car $car)
+    {
+        $refUrl = $request->query->get('ref');
+
+        $owner = new Client();
+        $form = $this->createForm(ClientType::class, $owner);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $car->setOwner($owner);
+            $this->em->persist($owner);
+            $this->em->flush();
+
+            $this->addFlash('success', 'Собственикът на МПС бе успешно добавен.');
+
+            if (!empty($refUrl)) {
+                return $this->redirect($refUrl);
+            }
+
+            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
+        }
+
+        return $this->render('car/new-owner.html.twig', [
+            'car' => $car,
+            'form' => $form->createView(),
+            'refUrl' => $refUrl
+        ]);
     }
 
     /**

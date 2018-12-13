@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Редактиране на собственик</h1>
+    {% if not isNew and owner.ownerCars|length == 0 %}
+        <div class="alert alert-danger" role="alert">
+            {{ owner.firstName }} {{ owner.lastName }} няма МПС на негово име!
+        </div>
+    {% endif %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% include 'owner/partials/form-fields.html.twig' %}
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <a href="{{ path('owner_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
+            <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Съхрани</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+    <ul>
+        <li>
+            <a href="{{ path('owner_index') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+            <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -4,12 +4,15 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Client
  *
  * @ORM\Table(name="clients")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ClientRepository")
+ * @UniqueEntity(fields="idNumber", message="Вече съществува клиент с този ЕГН.")
  */
 class Client
 {
@@ -26,6 +29,7 @@ class Client
      * @var string|null
      *
      * @ORM\Column(name="first_name", type="string", length=191, nullable=true)
+     * @Assert\NotBlank(message="Име е задължително поле.")
      */
     private $firstName;
 
@@ -47,6 +51,7 @@ class Client
      * @var string
      *
      * @ORM\Column(name="id_number", type="string", length=191, unique=true)
+     * @Assert\NotBlank(message="ЕГН е задължително поле.")
      */
     private $idNumber;
 
@@ -82,6 +87,8 @@ class Client
      * @var string|null
      *
      * @ORM\Column(name="email", type="string", length=191, nullable=true)
+     * @Assert\NotBlank(message="И-мейл е задължително поле.")
+     * @Assert\Email()
      */
     private $email;
 

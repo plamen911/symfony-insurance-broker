@@ -1,12 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Ново МПС</h1>
+    <h1>Нов собственик на МПС</h1>
+
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-    {% include 'car/partials/form-fields.html.twig' %}
+    {% include 'owner/partials/form-fields.html.twig' %}
     <div class="row">
         <div class="col-md-12 mt-3">
-            <a href="{{ path('car_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
+            <a href="{{ path('owner_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
             <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Съхрани</button>
         </div>
     </div>
@@ -14,7 +15,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('car_index') }}">Back to the list</a>
+            <a href="{{ path('owner_index') }}">Back to the list</a>
         </li>
     </ul>
 {% endblock %}

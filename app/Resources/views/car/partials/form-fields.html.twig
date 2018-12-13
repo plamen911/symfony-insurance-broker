@@ -4,21 +4,18 @@
         {{ form_row(form.idNumber) }}
         {{ form_row(form.carMake) }}
         {{ form_row(form.carModel) }}
-
+        {{ form_row(form.idFrame) }}
     </div>
     <div class="col-md-3">
-        {{ form_row(form.idFrame) }}
         {{ form_row(form.engineVol) }}
         {{ form_row(form.newWeight) }}
         {{ form_row(form.grossWeight) }}
-    </div>
-    <div class="col-md-3">
         {{ form_row(form.color) }}
         {{ form_row(form.yearMade) }}
         {{ form_row(form.isRightSteeringWheel) }}
-        {{ form_row(form.notes) }}
     </div>
     <div class="col-md-3">
+        {{ form_row(form.notes) }}
         <div class="form-group">
             <label for="documents">Документи на МПС</label>
             <input type="file" id="documents" name="documents[]" class="form-control-file"
@@ -29,7 +26,8 @@
             <ul class="list-group list-group-flush">
                 {% for document in car.documents %}
                     <li class="list-group-item">
-                        <a href="{{ document.fileUrl }}" class="float-left mt-1" target="_blank">{{ document.fileName }}</a>
+                        <a href="{{ document.fileUrl }}" class="float-left mt-1"
+                           target="_blank">{{ document.fileName }}</a>
                         <a href="#"
                            data-href="{{ path('car_document_delete', {'car': car.id, 'document': document.id}) }}"
                            data-toggle="modal"
@@ -42,6 +40,58 @@
                 {% endfor %}
             </ul>
         {% endif %}
-
+    </div>
+    <div class="col-md-3">
+        <div class="accordion" id="accordionCar">
+            <div class="card">
+                <div class="card-header" id="headingOwner">
+                    <h5 class="mb-0">
+                        <a href="#" data-toggle="collapse" data-target="#collapseOwner"
+                           aria-expanded="true" aria-controls="collapseOwner">
+                            Собственик
+                        </a>
+                        <a href="{{ path('car_new_owner', {'car': car.id}) }}?ref={{ relative_path(app.request.uri)|url_encode }}" class="float-right"
+                           title="Смяна на собственика"><i class="fas fa-user-edit"></i></a>
+                    </h5>
+                </div>
+                <div id="collapseOwner" class="collapse show" aria-labelledby="headingOwner"
+                     data-parent="#accordionCar">
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Име:</strong> {{ car.owner.firstName }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Презиме:</strong> {{ car.owner.middleName }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Фамилия:</strong> {{ car.owner.lastName }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>ЕГН/ЕИК/БУЛСТАТ:</strong> {{ car.owner.idNumber }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Нас. място (гр./с.):</strong> {{ car.owner.city }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Адрес (ул./жк.):</strong> {{ car.owner.street }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Телефон:</strong> {{ car.owner.phone }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Телефон 2:</strong> {{ car.owner.phone2 }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>И-мейл:</strong> {{ car.owner.email }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>И-мейл 2:</strong> {{ car.owner.email2 }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

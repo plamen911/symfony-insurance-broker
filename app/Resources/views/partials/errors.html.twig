@@ -1,4 +1,4 @@
-{% if form is defined and not form.vars.valid %}
+{% if form is defined and form.vars is defined and not form.vars.valid %}
     <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                     aria-hidden="true">&times;</span>
