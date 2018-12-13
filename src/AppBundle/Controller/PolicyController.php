@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
@@ -120,6 +121,7 @@ class PolicyController extends Controller
                 return $this->render('policy/new.html.twig', $data);
             }
 
+            // upload car documents
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */
                 foreach ($request->files->get('documents') as $file) {
@@ -198,6 +200,7 @@ class PolicyController extends Controller
                 return $this->render('policy/edit.html.twig', $data);
             }
 
+            // upload car documents
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */
                 foreach ($request->files->get('documents') as $file) {

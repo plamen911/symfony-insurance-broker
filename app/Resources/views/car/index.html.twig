@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Cars list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Idnumber</th>
+                <th>Idframe</th>
+                <th>Carmake</th>
+                <th>Carmodel</th>
+                <th>Isrightsteeringwheel</th>
+                <th>Enginevol</th>
+                <th>Powkw</th>
+                <th>Powhp</th>
+                <th>Newweight</th>
+                <th>Grossweight</th>
+                <th>Color</th>
+                <th>Yearmade</th>
+                <th>Createdat</th>
+                <th>Updatedat</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for car in cars %}
+            <tr>
+                <td><a href="{{ path('car_show', { 'id': car.id }) }}">{{ car.id }}</a></td>
+                <td>{{ car.idNumber }}</td>
+                <td>{{ car.idFrame }}</td>
+                <td>{{ car.carMake }}</td>
+                <td>{{ car.carModel }}</td>
+                <td>{% if car.isRightSteeringWheel %}Yes{% else %}No{% endif %}</td>
+                <td>{{ car.engineVol }}</td>
+                <td>{{ car.powKw }}</td>
+                <td>{{ car.powHp }}</td>
+                <td>{{ car.newWeight }}</td>
+                <td>{{ car.grossWeight }}</td>
+                <td>{{ car.color }}</td>
+                <td>{{ car.yearMade }}</td>
+                <td>{% if car.createdAt %}{{ car.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if car.updatedAt %}{{ car.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ car.notes }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('car_show', { 'id': car.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('car_edit', { 'id': car.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('car_new') }}">Create a new car</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Създаване на полица {{ typeOfPolicy.name }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+
+        </div>
+        <div class="col-md-6">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Ново МПС</h5>
+                </div>
+                <div class="card-body">
+                    {% include 'car/partials/form-fields.html.twig' %}
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i>
+                        Съхрани
+                    </button>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}

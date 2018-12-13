@@ -5,12 +5,15 @@ namespace AppBundle\Entity;
 use AppBundle\Service\Cyr2Lat;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Car
  *
  * @ORM\Table(name="cars")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CarRepository")
+ * @UniqueEntity(fields="idNumber", message="Вече съществува МПС с този рег. номер.")
  */
 class Car
 {
@@ -27,6 +30,7 @@ class Car
      * @var string
      *
      * @ORM\Column(name="id_number", type="string", length=191, unique=true)
+     * @Assert\NotBlank(message="Рег. номер е задължително поле.")
      */
     private $idNumber;
 
@@ -41,6 +45,7 @@ class Car
      * @var string
      *
      * @ORM\Column(name="car_make", type="string", length=191, nullable=true)
+     * @Assert\NotBlank(message="Марка на МПС е задължително поле.")
      */
     private $carMake;
 
@@ -155,6 +160,7 @@ class Car
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\TypeOfCar", inversedBy="cars")
      * @ORM\JoinColumn(name="car_type_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="Вид МПС е задължително поле.")
      */
     private $carType;
 
@@ -170,14 +176,14 @@ class Car
 
     /**
      * Car constructor.
-     * @param Cyr2Lat $cyr2Lat
+     * @param Cyr2Lat|null $cyr2Lat
      */
-    public function __construct(Cyr2Lat $cyr2Lat)
+    public function __construct(Cyr2Lat $cyr2Lat = null)
     {
         $this->isRightSteeringWheel = false;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
-        $this->cyr2Lat = $cyr2Lat;
+        $this->cyr2Lat = null === $cyr2Lat ? new Cyr2Lat() : $cyr2Lat;
         $this->policies = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -464,7 +470,7 @@ class Car
      * @param string $carModel
      * @return Car
      */
-    public function setCarModel(string $carModel): Car
+    public function setCarModel(string $carModel)
     {
         $this->carModel = $carModel;
 
@@ -472,9 +478,9 @@ class Car
     }
 
     /**
-     * @return Client
+     * @return Client|null
      */
-    public function getOwner(): Client
+    public function getOwner()
     {
         return $this->owner;
     }
@@ -483,7 +489,7 @@ class Car
      * @param Client $owner
      * @return Car
      */
-    public function setOwner(Client $owner): Car
+    public function setOwner(Client $owner)
     {
         $this->owner = $owner;
 

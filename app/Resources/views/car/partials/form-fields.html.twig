@@ -1,0 +1,47 @@
+<div class="row">
+    <div class="col-md-3">
+        {{ form_row(form.carType) }}
+        {{ form_row(form.idNumber) }}
+        {{ form_row(form.carMake) }}
+        {{ form_row(form.carModel) }}
+
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.idFrame) }}
+        {{ form_row(form.engineVol) }}
+        {{ form_row(form.newWeight) }}
+        {{ form_row(form.grossWeight) }}
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.color) }}
+        {{ form_row(form.yearMade) }}
+        {{ form_row(form.isRightSteeringWheel) }}
+        {{ form_row(form.notes) }}
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="documents">Документи на МПС</label>
+            <input type="file" id="documents" name="documents[]" class="form-control-file"
+                   placeholder="Документи на МПС..." multiple>
+        </div>
+
+        {% if car.documents|length > 0 %}
+            <ul class="list-group list-group-flush">
+                {% for document in car.documents %}
+                    <li class="list-group-item">
+                        <a href="{{ document.fileUrl }}" class="float-left mt-1" target="_blank">{{ document.fileName }}</a>
+                        <a href="#"
+                           data-href="{{ path('car_document_delete', {'car': car.id, 'document': document.id}) }}"
+                           data-toggle="modal"
+                           data-target="#confirm-delete"
+                           data-message="Сигурни ли сте, че искате да изтриете документа?"
+                           title="Изтрий"
+                           class="btn btn-danger btn-sm ml-2 float-right"
+                        ><i class="far fa-trash-alt"></i></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    </div>
+</div>
