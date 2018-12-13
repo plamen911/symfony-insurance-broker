@@ -633,4 +633,12 @@ class Client
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getFullName(): ?string
+    {
+        return trim($this->getFirstName() . ' ' . $this->getMiddleName() . ' ' . $this->getLastName());
+    }
 }

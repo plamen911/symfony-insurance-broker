@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Client;
+
 /**
  * ClientRepository
  *
@@ -10,4 +12,22 @@ namespace AppBundle\Repository;
  */
 class ClientRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param string $keyword
+     * @return Client[]|null
+     */
+    public function findByKeyword(string $keyword)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.idNumber LIKE :keyword')
+            ->orWhere('c.firstName LIKE :keyword')
+            ->orWhere('c.middleName LIKE :keyword')
+            ->orWhere('c.lastName LIKE :keyword')
+            ->setParameter('keyword', $keyword . '%')
+            ->addOrderBy('c.firstName', 'ASC')
+            ->addOrderBy('c.middleName', 'ASC')
+            ->addOrderBy('c.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
