@@ -510,8 +510,10 @@ class Client
      */
     public function addOwnerPolicy(Policy $policy)
     {
-        $this->ownerPolicies->add($policy);
-        $policy->setOwner($this);
+        if (!$this->ownerPolicies->contains($policy)) {
+            $this->ownerPolicies->add($policy);
+            $policy->setOwner($this);
+        }
 
         return $this;
     }
@@ -543,8 +545,10 @@ class Client
      */
     public function addRepresentativePolicy(Policy $policy)
     {
-        $this->representativePolicies->add($policy);
-        $policy->setRepresentative($this);
+        if (!$this->representativePolicies->contains($policy)) {
+            $this->representativePolicies->add($policy);
+            $policy->setRepresentative($this);
+        }
 
         return $this;
     }
@@ -576,8 +580,10 @@ class Client
      */
     public function addOwnerCar(Car $car)
     {
-        $this->ownerCars->add($car);
-        $car->setOwner($this);
+        if (!$this->ownerCars->contains($car)) {
+            $this->ownerCars->add($car);
+            $car->setOwner($this);
+        }
 
         return $this;
     }
@@ -609,8 +615,24 @@ class Client
      */
     public function addRepresentativeCar(Car $car)
     {
-        $this->representativeCars->add($car);
-        $car->setRepresentative($this);
+        if (!$this->representativeCars->contains($car)) {
+            $this->representativeCars->add($car);
+            $car->setRepresentative($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Car $car
+     * @return Client
+     */
+    public function removeRepresentativeCar(Car $car)
+    {
+        if ($this->representativeCars->contains($car)) {
+            $this->representativeCars->removeElement($car);
+            $car->setRepresentative(null);
+        }
 
         return $this;
     }

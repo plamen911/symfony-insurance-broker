@@ -16,10 +16,10 @@
                         <h5 class="mb-0">
                             <a href="#" data-toggle="collapse" data-target="#collapseOwner"
                                aria-expanded="true" aria-controls="collapseOwner">
-                                Собственик: {{ car.owner.firstName }} {{ car.owner.lastName }}
+                                Собственик: <small>{{ car.owner.firstName }} {{ car.owner.lastName }}</small>
                             </a>
                             <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': refUrl}) }}"
-                               class="float-right"
+                               class="float-right text-dark"
                                title="Смяна на собственика"><i class="fas fa-exchange-alt"></i></a>
                         </h5>
                     </div>
@@ -41,10 +41,10 @@
                             <h5 class="mb-0">
                                 <a href="#" data-toggle="collapse" data-target="#collapseRepresentative"
                                    aria-expanded="true" aria-controls="collapseRepresentative">
-                                    Пълномощник: {{ car.representative.firstName }} {{ car.representative.lastName }}
+                                    Пълномощник: <small>{{ car.representative.firstName }} {{ car.representative.lastName }}</small>
                                 </a>
                                 <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'representative', 'ref': refUrl}) }}"
-                                   class="float-right"
+                                   class="float-right text-dark"
                                    title="Смяна на пълномощника"><i class="fas fa-exchange-alt"></i>
                                 </a>
                             </h5>

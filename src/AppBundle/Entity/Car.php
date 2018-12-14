@@ -506,10 +506,10 @@ class Car
     }
 
     /**
-     * @param Client $representative
+     * @param null|Client $representative
      * @return Car
      */
-    public function setRepresentative(Client $representative)
+    public function setRepresentative(?Client $representative)
     {
         $this->representative = $representative;
 

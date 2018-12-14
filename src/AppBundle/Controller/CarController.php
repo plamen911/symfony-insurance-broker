@@ -228,6 +228,26 @@ class CarController extends Controller
     }
 
     /**
+     * @Route("/{car}/representative/{representative}/delete", name="car_representative_delete", methods={"DELETE"}, requirements={"car": "\d+", "representative": "\d+"})
+     * @param Car $car
+     * @param Client $representative
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteRepresentativeAction(Car $car, Client $representative)
+    {
+        try {
+            $representative->removeRepresentativeCar($car);
+            $this->em->flush();
+            $this->addFlash('success', 'Пълномощникът бе успешно премахнат.');
+
+        } catch (Exception $ex) {
+            $this->addFlash('danger', $ex->getMessage());
+        }
+
+        return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
+    }
+
+    /**
      * @Route("/{car}/owner/new", name="car_new_owner", methods={"GET","POST"}, requirements={"car": "\d+"})
      * @param Request $request
      * @param Car $car

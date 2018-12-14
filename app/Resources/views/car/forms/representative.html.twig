@@ -14,6 +14,14 @@
             {{ form_row(form.representative.phone) }}
             {{ form_row(form.representative.phone2) }}
             {{ form_row(form.representative.notes) }}
+            <a href="#"
+               data-href="{{ path('car_representative_delete', {'car': car.id, 'representative': car.representative.id}) }}"
+               data-toggle="modal"
+               data-target="#confirm-delete"
+               data-message="Сигурни ли сте, че искате да премахнете пълномощника?"
+               title="Премахване"
+               class="btn btn-danger btn-sm ml-2 mt-3 float-right"
+            ><i class="far fa-trash-alt"></i></a>
         </div>
     </div>
 </div>
