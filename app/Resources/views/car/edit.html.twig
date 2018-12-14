@@ -82,24 +82,34 @@
                 <thead>
                     <tr>
                         <th scope="col">No</th>
+                        <th scope="col">Вид</th>
                         <th scope="col">Издадена на</th>
                         <th scope="col">Застраховател</th>
                         <th scope="col">Агент</th>
                         <th scope="col">Започва от</th>
                         <th scope="col">Изтича на</th>
                         <th scope="col">Дължимо</th>
+                        <th scope="col">Платено</th>
+                        <th scope="col">Баланс</th>
+                        <th scope="col">&nbsp</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for policy in car.policies %}
                         <tr>
                             <th scope="row">{{ policy.idNumber }}</th>
+                            <td>{{ policy.policyType.name }}</td>
                             <td>{{ policy.createdAt|date('d.m.Y') }}</td>
                             <td>{{ policy.insurer.name }}</td>
                             <td>{{ policy.agent.fullName }}</td>
                             <td>{{ policy.startsAt|date('d.m.Y') }}</td>
                             <td>{{ policy.expiresAt|date('d.m.Y') }}</td>
-                            <td>{{ policy.total }}</td>
+                            <td class="text-right">{{ policy.total }}</td>
+                            <td class="text-right">{{ policy.paid }}</td>
+                            <td class="text-right">{{ policy.balance }}</td>
+                            <td class="text-right"><a href="{{ path('policy_edit', {'id': policy.id}) }}"
+                                   class="btn btn-sm btn-secondary" title="Редактирай"><i
+                                            class="fas fa-edit"></i> </a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
