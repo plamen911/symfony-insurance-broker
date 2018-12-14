@@ -1,0 +1,42 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Основни данни</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                {% if isNew %}
+                    {{ form_row(form.insurer) }}
+                    {{ form_row(form.idNumber) }}
+                    {{ form_row(form.agent) }}
+                {% else %}
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item px-0 pt-0">
+                            <strong>No:</strong> {{ policy.idNumber }}
+                        </li>
+                        <li class="list-group-item px-0">
+                            <strong>Застраховател:</strong> {{ policy.insurer.name }}
+                        </li>
+                        <li class="list-group-item px-0">
+                            <strong>Агент:</strong> {{ policy.agent.fullName }}
+                        </li>
+                    </ul>
+                    {{ form_row(form.isCancelled) }}
+                {% endif %}
+                {{ form_row(form.issuedAt) }}
+                {{ form_row(form.startsAt) }}
+                {{ form_row(form.expiresAt) }}
+                {{ form_row(form.notes) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.currency) }}
+                {{ form_row(form.officeCommission) }}
+                {{ form_row(form.clientCommission) }}
+                {{ form_row(form.amount) }}
+                {{ form_row(form.taxes) }}
+                {{ form_row(form.amountGf) }}
+                {{ form_row(form.total) }}
+            </div>
+        </div>
+    </div>
+</div>

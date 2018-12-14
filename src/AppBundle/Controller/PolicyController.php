@@ -182,6 +182,8 @@ class PolicyController extends Controller
      */
     public function editAction(Request $request, Policy $policy)
     {
+        $refUrl = $request->getRequestUri();
+
         $deleteForm = $this->createDeleteForm($policy);
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
@@ -191,7 +193,8 @@ class PolicyController extends Controller
             'form' => $form->createView(),
             'car' => $policy->getCar(),
             'delete_form' => $deleteForm->createView(),
-            'isNew' => false
+            'isNew' => false,
+            'refUrl' => $refUrl
         ];
 
         if ($form->isSubmitted() && $form->isValid()) {

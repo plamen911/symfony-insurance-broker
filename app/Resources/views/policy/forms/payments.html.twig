@@ -1,0 +1,26 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Падежи и плащания
+            <a id="calc-payments" href="#" title="Изчисли вноските" class="text-dark ml-1"><i
+                        class="fas fa-calculator"></i>
+            </a>
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <ul class="payments pl-0 mb-0" data-prototype="{{ form_widget(form.payments.vars.prototype)|e('html_attr') }}">
+                {% for key, payment in form.payments %}
+                    <li class="form-inline mb-1">
+                        <div id="policy_payments_{{ key }}">
+                            {{ form_row(payment.dueAt) }}
+                            {{ form_row(payment.amountDue) }}
+                            {{ form_row(payment.paidAt) }}
+                            {{ form_row(payment.amountPaid) }}
+                            {{ form_row(payment.isDeferred) }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

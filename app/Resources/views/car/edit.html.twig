@@ -72,6 +72,15 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <a href="{{ path('car_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмени</a>
+            <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Съхрани</button>
+            {#<a href="#"
+               onclick="event.preventDefault(); document.getElementById('delete-policy-form').submit();"
+               class="btn btn-danger float-right mr-2"><i class="far fa-trash-alt"></i> Изтрий</a>#}
+        </div>
+    </div>
     {{ form_end(form) }}
 
     {% if car.policies|length %}
@@ -116,15 +125,4 @@
             </table>
         </div>
     {% endif %}
-
-    <ul>
-        <li>
-            <a href="{{ path('car_index') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-            <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
 {% endblock %}

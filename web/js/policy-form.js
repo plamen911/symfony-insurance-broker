@@ -3,7 +3,7 @@
   var $collectionHolder
 
   // setup an "add a payment" link
-  var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-success my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
+  var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
   var $newLinkLi = $('<li class="form-inline"></li>').append($addPaymentButton)
 
   $(function () {
