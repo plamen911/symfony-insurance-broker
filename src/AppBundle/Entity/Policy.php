@@ -108,6 +108,20 @@ class Policy
     private $total;
 
     /**
+     * @var float|null
+     *
+     * @ORM\Column(name="paid", type="decimal", precision=10, scale=2, nullable=true)
+     */
+    private $paid;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="balance", type="decimal", precision=10, scale=2, nullable=true)
+     */
+    private $balance;
+
+    /**
      * @var string|null
      *
      * @ORM\Column(name="currency", type="string", length=191, nullable=true)
@@ -222,6 +236,8 @@ class Policy
         $this->officeCommission = 0;
         $this->clientCommission = 0;
         $this->total = 0;
+        $this->paid = 0;
+        $this->balance = 0;
         $this->currency = 'BGN';
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -404,7 +420,7 @@ class Policy
      */
     public function getAmount()
     {
-        return $this->amount;
+        return (float)$this->amount;
     }
 
     /**
@@ -428,7 +444,7 @@ class Policy
      */
     public function getTaxes()
     {
-        return $this->taxes;
+        return (float)$this->taxes;
     }
 
     /**
@@ -452,7 +468,7 @@ class Policy
      */
     public function getAmountGf()
     {
-        return $this->amountGf;
+        return (float)$this->amountGf;
     }
 
     /**
@@ -476,7 +492,7 @@ class Policy
      */
     public function getTotal()
     {
-        return $this->total;
+        return (float)$this->total;
     }
 
     /**
@@ -812,5 +828,64 @@ class Policy
         $this->car = $car;
 
         return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getPaid(): ?float
+    {
+        return $this->paid;
+    }
+
+    /**
+     * @param float|null $paid
+     * @return Policy
+     */
+    public function setPaid(?float $paid): Policy
+    {
+        $this->paid = $paid;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getBalance(): ?float
+    {
+        return $this->balance;
+    }
+
+    /**
+     * @param float|null $balance
+     * @return Policy
+     */
+    public function setBalance(?float $balance): Policy
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPaidTotal()
+    {
+        $paid = 0.0;
+        foreach ($this->getPayments() as $payment) {
+            $paid += (float)$payment->getAmountPaid();
+        }
+
+        return $paid;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBalanceTotal()
+    {
+        return $this->getTotal() - $this->getPaidTotal();
     }
 }

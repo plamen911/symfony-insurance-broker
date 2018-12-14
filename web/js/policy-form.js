@@ -118,7 +118,7 @@
     var paymentsCount = $('.payments').find('li').length - 1
     if (paymentsCount > 0) {
       var paymentAmount = parseFloat((policyTotal / paymentsCount).toFixed(2))
-      var firstPaymentAmount = parseFloat(policyTotal - (paymentAmount * (paymentsCount - 1)))
+      var firstPaymentAmount = parseFloat((policyTotal - (paymentAmount * (paymentsCount - 1))).toFixed(2))
       $('input[id$="_amountDue"]').each(function (i) {
         if (i === 0) {
           $(this).val(firstPaymentAmount)

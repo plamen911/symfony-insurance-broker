@@ -139,6 +139,8 @@ class PolicyController extends Controller
                 }
             }
 
+            $policy->setPaid($policy->getPaidTotal());
+            $policy->setBalance($policy->getBalanceTotal());
             $policy->setAuthor($this->getUser());
             $policy->setUpdater($this->getUser());
             $this->em->persist($policy);
@@ -218,6 +220,8 @@ class PolicyController extends Controller
                 }
             }
 
+            $policy->setPaid($policy->getPaidTotal());
+            $policy->setBalance($policy->getBalanceTotal());
             $policy->setUpdatedAt(new \DateTime());
             $policy->setUpdater($this->getUser());
             $this->em->flush();
@@ -298,7 +302,8 @@ class PolicyController extends Controller
         foreach ($policy->getPayments() as $payment) {
             $totalDue += (float)$payment->getAmountDue();
         }
-        if ($policy->getTotal() !== $totalDue) {
+
+        if (round($policy->getTotal(), 2) !== round($totalDue, 2)) {
             throw new Exception('Общо дължима премия (' . $policy->getTotal() . ') е различна от сумата на вноските (' . $totalDue . ').');
         }
     }
