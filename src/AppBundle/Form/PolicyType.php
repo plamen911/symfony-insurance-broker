@@ -82,6 +82,7 @@ class PolicyType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var Policy $policy */
             $policy = $event->getData();
             $form = $event->getForm();
             if (!$policy || null === $policy->getId()) {

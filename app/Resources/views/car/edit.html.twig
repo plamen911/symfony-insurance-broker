@@ -4,15 +4,68 @@
     <h1>Редактиране на МПС</h1>
 
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
-    {% include 'car/partials/form-fields.html.twig' %}
     <div class="row">
-        <div class="col-md-12 mt-3">
-            <a href="{{ path('car_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмяна</a>
-            <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Съхрани</button>
+        <div class="col-md-6">
+            {% include 'car/forms/car.html.twig' %}
+        </div>
+        <div class="col-md-6">
+            <div class="accordion" id="accordionCar">
+                <div class="card">
+                    {% if car.owner %}
+                    <div class="card-header" id="headingOwner">
+                        <h5 class="mb-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapseOwner"
+                               aria-expanded="true" aria-controls="collapseOwner">
+                                Собственик: {{ car.owner.firstName }} {{ car.owner.lastName }}
+                            </a>
+                            <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': refUrl}) }}"
+                               class="float-right"
+                               title="Смяна на собственика"><i class="fas fa-exchange-alt"></i></a>
+                        </h5>
+                    </div>
+                    <div id="collapseOwner" class="collapse show" aria-labelledby="headingOwner"
+                         data-parent="#accordionCar">
+                        {% include 'car/forms/owner.html.twig' %}
+                    </div>
+                    {% else %}
+                        <div class="card-header">
+                            <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': refUrl}) }}"
+                               title="Добави собственик" class="btn btn-warning float-right"
+                            ><i class="fas fa-user-plus"></i> Добави собственик</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card">
+                    {% if car.representative %}
+                        <div class="card-header" id="headingRepresentative">
+                            <h5 class="mb-0">
+                                <a href="#" data-toggle="collapse" data-target="#collapseRepresentative"
+                                   aria-expanded="true" aria-controls="collapseRepresentative">
+                                    Пълномощник: {{ car.representative.firstName }} {{ car.representative.lastName }}
+                                </a>
+                                <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'representative', 'ref': refUrl}) }}"
+                                   class="float-right"
+                                   title="Смяна на пълномощника"><i class="fas fa-exchange-alt"></i>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseRepresentative" class="collapse" aria-labelledby="headingRepresentative"
+                             data-parent="#accordionCar">
+                            {% include 'car/forms/representative.html.twig' %}
+                        </div>
+                    {% else %}
+                        <div class="card-header">
+                            <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'representative', 'ref': refUrl}) }}"
+                               title="Добави пълномощник" class="btn btn-warning float-right"
+                            ><i class="fas fa-user-plus"></i> Добави пълномощник</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
+    </div>
     {{ form_end(form) }}
-
 
     <ul>
         <li>
@@ -20,7 +73,7 @@
         </li>
         <li>
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+            <input type="submit" value="Delete">
             {{ form_end(delete_form) }}
         </li>
     </ul>

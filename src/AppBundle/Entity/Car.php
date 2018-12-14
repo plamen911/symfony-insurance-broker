@@ -136,7 +136,7 @@ class Car
     /**
      * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="ownerCars")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="ownerCars", cascade={"persist"})
      * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=true)
      */
     private $owner;
@@ -144,7 +144,8 @@ class Car
     /**
      * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="representativeCars")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="representativeCars", cascade={"persist"})
+     * @ORM\JoinColumn(name="representative_id", referencedColumnName="id", nullable=true)
      */
     private $representative;
 

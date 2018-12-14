@@ -138,12 +138,17 @@ class CarController extends Controller
      */
     public function editAction(Request $request, Car $car)
     {
+        $refUrl = $request->getRequestUri();
+        if (null === $car->getOwner()) {
+            $this->addFlash('warning', 'Моля, изберете или въведете собственик на МПС.');
+            return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => 'owner1', 'ref' => $refUrl]);
+        }
+
         $deleteForm = $this->createDeleteForm($car);
-        $editForm = $this->createForm('AppBundle\Form\CarType', $car);
-        $editForm->handleRequest($request);
+        $form = $this->createForm(CarType::class, $car);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-
+        if ($form->isSubmitted() && $form->isValid()) {
             // upload car documents
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */
@@ -165,15 +170,16 @@ class CarController extends Controller
             $car->setUpdatedAt(new \DateTime());
             $this->em->flush();
 
-            $this->addFlash('success', 'Данните бяха успешно записани.');
+            $this->addFlash('success', 'Данните за МПС бяха успешно записани.');
 
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
 
         return $this->render('car/edit.html.twig', [
             'car' => $car,
-            'form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView()
+            'form' => $form->createView(),
+            'delete_form' => $deleteForm->createView(),
+            'refUrl' => $refUrl
         ]);
     }
 
@@ -229,12 +235,8 @@ class CarController extends Controller
      */
     public function newOwnerAction(Request $request, Car $car)
     {
-        $type = (in_array($request->query->get('type'), ['owner', 'representative'])) ? $request->query->get('type') : 'owner';
+        $type = (in_array($type = $request->query->get('type'), ['owner', 'representative'])) ? $type : 'owner';
         $refUrl = $request->query->get('ref');
-        if (null === $refUrl || !filter_var($refUrl, FILTER_VALIDATE_URL)) {
-            $this->addFlash('danger', 'Невалиден URL адрес!');
-            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
-        }
 
         $autoCompleteForm = $this->createAutoCompleteForm();
         $autoCompleteForm->handleRequest($request);

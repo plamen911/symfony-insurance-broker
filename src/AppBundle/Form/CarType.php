@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CarType extends AbstractType
@@ -36,11 +38,21 @@ class CarType extends AbstractType
             ->add('grossWeight', NumberType::class, ['label' => 'Общо тегло (тон)', 'attr' => ['placeholder' => 'Общо тегло (тон)']])
             ->add('color', TextType::class, ['label' => 'Цвят', 'attr' => ['placeholder' => 'Цвят']])
             ->add('yearMade', TextType::class, ['label' => 'Год. на произв.', 'attr' => ['placeholder' => 'Год. на произв.']])
-            ->add('notes', TextareaType::class, ['label' => 'Бележки', 'attr' => ['placeholder' => 'Бележки']])
-            //->add('owner')
-            //->add('representative')
-            //->add('carType')
-        ;
+            ->add('notes', TextareaType::class, ['label' => 'Бележки', 'attr' => ['placeholder' => 'Бележки']]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var Car $car */
+            $car = $event->getData();
+            $form = $event->getForm();
+            if ($car && null !== $car->getId()) {
+                if (null !== $car->getOwner()) {
+                    $form->add('owner', ClientType::class);
+                }
+                if (null !== $car->getRepresentative()) {
+                    $form->add('representative', ClientType::class);
+                }
+            }
+        });
     }
 
     /**
