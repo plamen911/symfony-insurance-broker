@@ -9,7 +9,11 @@
     <div class="collapse navbar-collapse my-2 my-md-0 mr-md-3" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             {% if app.user %}
-                <li class="nav-item dropdown">
+                {% set current_route = app.request.attributes.get('_route') %}
+                <li class="nav-item{{ current_route starts with 'car_' ? ' active' : '' }}">
+                    <a class="nav-link" href="{{ path('car_index') }}">МПС</a>
+                </li>
+                <li class="nav-item dropdown{{ current_route starts with 'policy_' ? ' active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#" id="policyDropdown"
                        role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Полици

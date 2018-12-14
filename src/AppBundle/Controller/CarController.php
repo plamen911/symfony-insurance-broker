@@ -12,12 +12,14 @@ use AppBundle\Form\ClientType;
 use AppBundle\Service\Aws\UploadInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 /**
  * Class CarController
@@ -25,6 +27,7 @@ use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
  * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("car")
+ * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class CarController extends Controller
 {
@@ -71,6 +74,9 @@ class CarController extends Controller
      */
     public function newAction(Request $request)
     {
+
+        dump($request->getRequestUri());
+
         $car = new Car();
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);

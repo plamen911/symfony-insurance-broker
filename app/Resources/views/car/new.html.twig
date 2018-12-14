@@ -2,7 +2,16 @@
 
 {% block body %}
     <h1>Ново МПС</h1>
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
+    <div class="row">
+        <div class="col-md-6">
+            {% include 'car/forms/car.html.twig' %}
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{#    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {% include 'car/partials/form-fields.html.twig' %}
     <div class="row">
         <div class="col-md-12 mt-3">
@@ -10,7 +19,7 @@
             <button type="submit" class="btn btn-primary float-right"><i class="fa fa-check"></i> Съхрани</button>
         </div>
     </div>
-    {{ form_end(form) }}
+    {{ form_end(form) }}#}
 
     <ul>
         <li>
