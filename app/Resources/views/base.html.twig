@@ -19,6 +19,9 @@
     <body>
 
         {% include 'partials/navbar.html.twig' %}
+
+        {% block breadcrumbs %}{% endblock %}
+
         <div class="container-fluid">
             {% include 'partials/errors.html.twig' %}
             {% block body %}{% endblock %}

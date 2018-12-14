@@ -1,8 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h1>Редактиране на МПС</h1>
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('car_index') }}">Списък</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Редактиране на {{ car.carType.name }} {{ car.idNumber }}</li>
+        </ol>
+    </nav>
+{% endblock %}
 
+{% block body %}
+    <h3>Редактиране на МПС</h3>
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
     <div class="row">
         <div class="col-md-6">

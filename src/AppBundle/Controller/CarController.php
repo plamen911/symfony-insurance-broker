@@ -74,9 +74,6 @@ class CarController extends Controller
      */
     public function newAction(Request $request)
     {
-
-        dump($request->getRequestUri());
-
         $car = new Car();
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
@@ -147,7 +144,7 @@ class CarController extends Controller
         $refUrl = $request->getRequestUri();
         if (null === $car->getOwner()) {
             $this->addFlash('warning', 'Моля, изберете или въведете собственик на МПС.');
-            return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => 'owner1', 'ref' => $refUrl]);
+            return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => 'owner', 'ref' => $refUrl]);
         }
 
         $deleteForm = $this->createDeleteForm($car);
@@ -276,7 +273,7 @@ class CarController extends Controller
                 $message = 'Собственикът на МПС бе успешно добавен.';
                 $car->setOwner($client);
             } else {
-                $message = 'Пълномошникът бе успешно добавен.';
+                $message = 'Пълномощникът бе успешно добавен.';
                 $car->setRepresentative($client);
             }
             $this->em->persist($client);
@@ -292,15 +289,15 @@ class CarController extends Controller
 
         if ($autoCompleteForm->isSubmitted() && $autoCompleteForm->isValid()) {
             if (null === $client = $autoCompleteForm['owner']->getData()) {
-                $this->addFlash('danger', 'Невалиден ' . ('owner' === $type ? 'собственик' : 'пълномошник') . '!');
-                return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'ref' => $refUrl]);
+                $this->addFlash('danger', 'Невалиден ' . ('owner' === $type ? 'собственик' : 'пълномощник') . '!');
+                return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => $type, 'ref' => $refUrl]);
             }
 
             if ('owner' === $type) {
                 $message = 'Собственикът на МПС бе успешно променен.';
                 $car->setOwner($client);
             } else {
-                $message = 'Пълномошникът бе успешно променен.';
+                $message = 'Пълномощникът бе успешно променен.';
                 $car->setRepresentative($client);
             }
 
