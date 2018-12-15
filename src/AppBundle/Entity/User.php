@@ -105,7 +105,20 @@ class User implements AdvancedUserInterface
     private $updatedPolicies;
 
     /**
+     * @var ArrayCollection|Car[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Car", mappedBy="author")
+     */
+    private $createdCars;
+
+    /**
+     * @var ArrayCollection|Car[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Car", mappedBy="updater")
+     */
+    private $updatedCars;
+
+    /**
      * User constructor.
+     * @throws \Exception
      */
     public function __construct()
     {
@@ -113,6 +126,8 @@ class User implements AdvancedUserInterface
         $this->assignedPolicies = new ArrayCollection();
         $this->createdPolicies = new ArrayCollection();
         $this->updatedPolicies = new ArrayCollection();
+        $this->createdCars = new ArrayCollection();
+        $this->updatedCars = new ArrayCollection();
         $this->setEnabled(true);
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -389,15 +404,6 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param Policy $policy
-     * @return bool
-     */
-    public function isPolicyAuthor(Policy $policy)
-    {
-        return $this->getId() === $policy->getAuthor()->getId();
-    }
-
-    /**
      * @return string
      */
     public function getAvatar()
@@ -447,13 +453,13 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param Policy[]|ArrayCollection $updatedPolicies
+     * @param Policy[]|ArrayCollection $policies
      * @return User
      */
-    public function setUpdatedPolicies($updatedPolicies): User
+    public function setUpdatedPolicies($policies): User
     {
-        foreach ($updatedPolicies as $updatedPolicy) {
-            $this->addUpdatedPolicy($updatedPolicy);
+        foreach ($policies as $policy) {
+            $this->addUpdatedPolicy($policy);
         }
 
         return $this;
@@ -461,12 +467,84 @@ class User implements AdvancedUserInterface
 
     /**
      * @param Policy $policy
-     * @return $this
+     * @return User
      */
     public function addUpdatedPolicy(Policy $policy)
     {
-        $this->updatedPolicies->add($policy);
-        $policy->setUpdater($this);
+        if (!$this->updatedPolicies->contains($policy)) {
+            $this->updatedPolicies->add($policy);
+            $policy->setUpdater($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Car[]|ArrayCollection
+     */
+    public function getCreatedCars()
+    {
+        return $this->createdCars;
+    }
+
+    /**
+     * @param Car[]|ArrayCollection $cars
+     * @return User
+     */
+    public function setCreatedCars($cars): User
+    {
+        foreach ($cars as $car) {
+            $this->addCreatedCar($car);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Car $car
+     * @return User
+     */
+    public function addCreatedCar(Car $car)
+    {
+        if (!$this->createdCars->contains($car)) {
+            $this->createdCars->add($car);
+            $car->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Car[]|ArrayCollection
+     */
+    public function getUpdatedCars()
+    {
+        return $this->updatedCars;
+    }
+
+    /**
+     * @param Car[]|ArrayCollection $cars
+     * @return User
+     */
+    public function setUpdatedCars($cars): User
+    {
+        foreach ($cars as $car) {
+            $this->addUpdatedCar($car);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Car $car
+     * @return User
+     */
+    public function addUpdatedCar(Car $car)
+    {
+        if (!$this->updatedCars->contains($car)) {
+            $this->updatedCars->add($car);
+            $car->setUpdater($this);
+        }
 
         return $this;
     }
@@ -480,13 +558,13 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param Policy[]|ArrayCollection $assignedPolicies
+     * @param Policy[]|ArrayCollection $policies
      * @return User
      */
-    public function setAssignedPolicies($assignedPolicies): User
+    public function setAssignedPolicies($policies): User
     {
-        foreach ($assignedPolicies as $assignedPolicy) {
-            $this->addAssignedPolicy($assignedPolicy);
+        foreach ($policies as $policy) {
+            $this->addAssignedPolicy($policy);
         }
 
         return $this;

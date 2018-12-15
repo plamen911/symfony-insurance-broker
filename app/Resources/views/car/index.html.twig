@@ -36,7 +36,7 @@
         <tbody>
         {% for car in cars %}
             <tr>
-                <td><a href="{{ path('car_show', { 'id': car.id }) }}">{{ car.id }}</a></td>
+                <td><a href="{{ path('car_edit', { 'id': car.id }) }}">{{ car.id }}</a></td>
                 <td>{{ car.idNumber }}</td>
                 <td>{{ car.idFrame }}</td>
                 <td>{{ car.carMake }}</td>
@@ -55,9 +55,6 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('car_show', { 'id': car.id }) }}">show</a>
-                        </li>
-                        <li>
                             <a href="{{ path('car_edit', { 'id': car.id }) }}">edit</a>
                         </li>
                     </ul>
@@ -69,7 +66,8 @@
 
     <ul>
         <li>
-            <a href="{{ path('car_new') }}">Create a new car</a>
+            <a href="{{ path('car_new') }}" class="btn btn-dark"><i
+                        class="fas fa-plus-circle"></i> Ново МПС</a>
         </li>
     </ul>
 {% endblock %}

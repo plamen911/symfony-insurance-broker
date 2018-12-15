@@ -16,8 +16,8 @@
         <div class="col-md-12">
             <div class="text-muted mb-2">
                 <small>
-                    Създадена на {{ policy.createdAt|date('d.m.Y H:i:s') }} ч. от {{ policy.author.fullName }} |
-                    Последна редакция на {{ policy.updatedAt|date('d.m.Y H:i:s') }} ч. от {{ policy.updater.fullName }}
+                    Създадена на {{ policy.createdAt|date('d.m.Y H:i:s') }} ч. от {{ policy.author.fullName ?? '--' }} |
+                    Последна редакция на {{ policy.updatedAt|date('d.m.Y H:i:s') }} ч. от {{ policy.updater.fullName ? '--' }}
                 </small>
             </div>
         </div>

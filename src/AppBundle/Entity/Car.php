@@ -130,6 +130,22 @@ class Car
     private $updatedAt;
 
     /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="createdCars")
+     * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
+     */
+    private $author;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="updatedCars")
+     * @ORM\JoinColumn(name="updated_by", referencedColumnName="id")
+     */
+    private $updater;
+
+    /**
      * @var string|null
      *
      * @ORM\Column(name="notes", type="text", nullable=true)
@@ -171,7 +187,7 @@ class Car
     /**
      * @var ArrayCollection|Document[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="car", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="car", cascade={"persist", "remove"})
      */
     private $documents;
 
@@ -181,6 +197,7 @@ class Car
     /**
      * Car constructor.
      * @param Cyr2Lat|null $cyr2Lat
+     * @throws \Exception
      */
     public function __construct(Cyr2Lat $cyr2Lat = null)
     {
@@ -673,6 +690,44 @@ class Car
             $this->documents->removeElement($document);
             $document->setCar(null);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return null|User
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param User $author
+     * @return Car
+     */
+    public function setAuthor(User $author): Car
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * @return null|User
+     */
+    public function getUpdater(): ?User
+    {
+        return $this->updater;
+    }
+
+    /**
+     * @param User $updater
+     * @return Car
+     */
+    public function setUpdater(User $updater): Car
+    {
+        $this->updater = $updater;
 
         return $this;
     }

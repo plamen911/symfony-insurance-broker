@@ -8,7 +8,6 @@ use AppBundle\Entity\Document;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
-use AppBundle\Entity\User;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
@@ -16,7 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -114,6 +112,8 @@ class PolicyController extends Controller
                 }
             }
 
+            $car->setAuthor($this->getUser());
+            $car->setUpdater($this->getUser());
             $this->em->persist($car);
             $this->em->flush();
 
@@ -208,6 +208,9 @@ class PolicyController extends Controller
                 }
             }
 
+            $policy->getCar()->setUpdatedAt(new \DateTime());
+            $policy->getCar()->setUpdater($this->getUser());
+
             $policy->setPaid($policy->getPaidTotal());
             $policy->setBalance($policy->getBalanceTotal());
             $policy->setAuthor($this->getUser());
@@ -240,9 +243,6 @@ class PolicyController extends Controller
             return $this->redirectToRoute('policy_new_car', ['typeOfPolicy' => $policy->getPolicyType()->getId(), 'ref' => $refUrl]);
         }
 
-        $canDelete = $this->getUser()->isAdmin() || $this->getUser()->isPolicyAuthor($policy);
-
-        $deleteForm = $this->createDeleteForm($policy);
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
@@ -250,10 +250,9 @@ class PolicyController extends Controller
             'policy' => $policy,
             'form' => $form->createView(),
             'car' => $policy->getCar(),
-            'delete_form' => $deleteForm->createView(),
             'isNew' => false,
             'refUrl' => $refUrl,
-            'canDelete' => $canDelete
+            'canDelete' => $this->canDelete($policy)
         ];
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -282,6 +281,9 @@ class PolicyController extends Controller
                 }
             }
 
+            $policy->getCar()->setUpdatedAt(new \DateTime());
+            $policy->getCar()->setUpdater($this->getUser());
+
             $policy->setPaid($policy->getPaidTotal());
             $policy->setBalance($policy->getBalanceTotal());
             $policy->setUpdatedAt(new \DateTime());
@@ -305,6 +307,11 @@ class PolicyController extends Controller
      */
     public function deleteAction(Policy $policy)
     {
+        if (!$this->canDelete($policy)) {
+            $this->addFlash('danger', 'Нямате права за тази операция.');
+            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
+        }
+
         try {
             $this->em->remove($policy);
             $this->em->flush();
@@ -327,12 +334,6 @@ class PolicyController extends Controller
      */
     public function deleteDocument(Policy $policy, Document $document)
     {
-        $canDelete = $this->getUser()->isAdmin() || $this->getUser()->isPolicyAuthor($policy);
-        if (!$canDelete) {
-            $this->addFlash('danger', 'Нямате права за тази операция.');
-            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
-        }
-
         try {
             $this->uploadService->delete(basename($document->getFileUrl()));
             $this->em->remove($document);
@@ -371,22 +372,6 @@ class PolicyController extends Controller
     }
 
     /**
-     * Creates a form to delete a policy entity.
-     *
-     * @param Policy $policy The policy entity
-     *
-     * @return \Symfony\Component\Form\FormInterface
-     */
-    private function createDeleteForm(Policy $policy)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('policy_delete', array('policy' => $policy->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
-    }
-
-    /**
      * @param Policy $policy
      * @throws Exception
      */
@@ -420,5 +405,15 @@ class PolicyController extends Controller
                 ]
             ])
             ->getForm();
+    }
+
+    /**
+     * @param Policy $policy
+     * @return bool
+     */
+    private function canDelete(Policy $policy)
+    {
+        $currentUser = $this->getUser();
+        return $currentUser->isAdmin() || (null !== $policy->getAuthor() && $currentUser->getId() === $policy->getAuthor()->getId());
     }
 }

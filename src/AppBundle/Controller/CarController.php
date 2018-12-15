@@ -14,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,8 +48,7 @@ class CarController extends Controller
     /**
      * Lists all car entities.
      *
-     * @Route("/", name="car_index")
-     * @Method("GET")
+     * @Route("/", methods={"GET"}, name="car_index")
      */
     public function indexAction()
     {
@@ -58,18 +56,18 @@ class CarController extends Controller
 
         $cars = $em->getRepository('AppBundle:Car')->findAll();
 
-        return $this->render('car/index.html.twig', array(
-            'cars' => $cars,
-        ));
+        return $this->render('car/index.html.twig', [
+            'cars' => $cars
+        ]);
     }
 
     /**
      * Creates a new car entity.
      *
-     * @Route("/new", name="car_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", methods={"GET", "POST"}, name="car_new")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws Exception
      */
     public function newAction(Request $request)
     {
@@ -96,6 +94,8 @@ class CarController extends Controller
                 }
             }
 
+            $car->setAuthor($this->getUser());
+            $car->setUpdater($this->getUser());
             $this->em->persist($car);
             $this->em->flush();
 
@@ -111,28 +111,9 @@ class CarController extends Controller
     }
 
     /**
-     * Finds and displays a car entity.
-     *
-     * @Route("/{id}", name="car_show")
-     * @Method("GET")
-     * @param Car $car
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function showAction(Car $car)
-    {
-        $deleteForm = $this->createDeleteForm($car);
-
-        return $this->render('car/show.html.twig', array(
-            'car' => $car,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing car entity.
      *
-     * @Route("/{id}/edit", name="car_edit", requirements={"id": "\d+"})
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="car_edit", methods={"GET", "POST"}, requirements={"id": "\d+"})
      * @param Request $request
      * @param Car $car
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -146,7 +127,6 @@ class CarController extends Controller
             return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => 'owner', 'ref' => $refUrl]);
         }
 
-        $deleteForm = $this->createDeleteForm($car);
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
 
@@ -170,6 +150,7 @@ class CarController extends Controller
             }
 
             $car->setUpdatedAt(new \DateTime());
+            $car->setUpdater($this->getUser());
             $this->em->flush();
 
             $this->addFlash('success', 'Данните за МПС бяха успешно записани.');
@@ -180,32 +161,49 @@ class CarController extends Controller
         return $this->render('car/edit.html.twig', [
             'car' => $car,
             'form' => $form->createView(),
-            'delete_form' => $deleteForm->createView(),
-            'refUrl' => $refUrl
+            'refUrl' => $refUrl,
+            'canDelete' => $this->canDelete($car)
         ]);
     }
 
     /**
      * Deletes a car entity.
      *
-     * @Route("/{id}", name="car_delete")
-     * @Method("DELETE")
-     * @param Request $request
+     * @Route("/{car}", methods={"DELETE"}, name="car_delete", requirements={"car": "\d+"})
      * @param Car $car
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteAction(Request $request, Car $car)
+    public function deleteAction(Car $car)
     {
-        $form = $this->createDeleteForm($car);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($car);
-            $em->flush();
+        if (!$this->canDelete($car)) {
+            $this->addFlash('danger', 'Нямате права за тази операция.');
+            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
 
-        return $this->redirectToRoute('car_index');
+        if (0 < $cnt = $car->getPolicies()->count()) {
+            $this->addFlash('danger', 'Не може да изтриете това МПС, защото принадлежи към ' . $cnt . ' бр. полици.');
+            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
+        }
+
+        try {
+            // delete uploaded files from S3 cloud
+            if ($car->getDocuments()->count() > 0) {
+                foreach ($car->getDocuments() as $document) {
+                    $this->uploadService->delete(basename($document->getFileUrl()));
+                }
+            }
+
+            $this->em->remove($car);
+            $this->em->flush();
+
+            $this->addFlash('success', 'МПС бе успешно изтрито.');
+
+            return $this->redirectToRoute('car_index');
+
+        } catch (Exception $ex) {
+            $this->addFlash('danger', $ex->getMessage());
+            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
+        }
     }
 
     /**
@@ -350,21 +348,6 @@ class CarController extends Controller
     }
 
     /**
-     * Creates a form to delete a car entity.
-     *
-     * @param Car $car The car entity
-     *
-     * @return \Symfony\Component\Form\FormInterface
-     */
-    private function createDeleteForm(Car $car)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('car_delete', array('id' => $car->getId())))
-            ->setMethod('DELETE')
-            ->getForm();
-    }
-
-    /**
      * @return \Symfony\Component\Form\FormInterface
      */
     private function createAutoCompleteForm()
@@ -382,5 +365,15 @@ class CarController extends Controller
                 ]
             ])
             ->getForm();
+    }
+
+    /**
+     * @param Car $car
+     * @return bool
+     */
+    private function canDelete(Car $car)
+    {
+        $currentUser = $this->getUser();
+        return $currentUser->isAdmin() || (null !== $car->getAuthor() && $currentUser->getId() === $car->getAuthor()->getId());
     }
 }

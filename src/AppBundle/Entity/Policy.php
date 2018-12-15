@@ -152,13 +152,6 @@ class Policy
     private $updatedAt;
 
     /**
-     * @var bool|null
-     *
-     * @ORM\Column(name="is_deleted", type="boolean", nullable=true)
-     */
-    private $isDeleted;
-
-    /**
      * @var TypeOfPolicy
      *
      * @ORM\ManyToOne(targetEntity="TypeOfPolicy", inversedBy="policies")
@@ -254,7 +247,6 @@ class Policy
         $this->currency = 'BGN';
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
-        $this->isDeleted = false;
         $this->payments = new ArrayCollection();
     }
 
@@ -581,30 +573,6 @@ class Policy
     }
 
     /**
-     * Set isDeleted.
-     *
-     * @param bool|null $isDeleted
-     *
-     * @return Policy
-     */
-    public function setIsDeleted($isDeleted = null)
-    {
-        $this->isDeleted = $isDeleted;
-
-        return $this;
-    }
-
-    /**
-     * Get isDeleted.
-     *
-     * @return bool|null
-     */
-    public function getIsDeleted()
-    {
-        return $this->isDeleted;
-    }
-
-    /**
      * @return Insurer
      */
     public function getInsurer()
@@ -848,7 +816,7 @@ class Policy
      */
     public function getPaid(): ?float
     {
-        return $this->paid;
+        return (float)$this->paid;
     }
 
     /**
@@ -867,7 +835,7 @@ class Policy
      */
     public function getBalance(): ?float
     {
-        return $this->balance;
+        return (float)$this->balance;
     }
 
     /**
