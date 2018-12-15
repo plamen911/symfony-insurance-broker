@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Form;
 
@@ -14,6 +15,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class CarType
+ * @package AppBundle\Form
+ * @author Plamen Markov <plamen@lynxlake.org>
+ */
 class CarType extends AbstractType
 {
     /**
@@ -40,19 +46,21 @@ class CarType extends AbstractType
             ->add('yearMade', TextType::class, ['label' => 'Год. на произв.', 'attr' => ['placeholder' => 'Год. на произв.']])
             ->add('notes', TextareaType::class, ['label' => 'Бележки', 'attr' => ['placeholder' => 'Бележки']]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var Car $car */
-            $car = $event->getData();
-            $form = $event->getForm();
-            if ($car && null !== $car->getId()) {
-                if (null !== $car->getOwner()) {
-                    $form->add('owner', ClientType::class);
+        if (null === $options['block_name']) {
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                /** @var Car $car */
+                $car = $event->getData();
+                $form = $event->getForm();
+                if ($car && null !== $car->getId()) {
+                    if (null !== $car->getOwner()) {
+                        $form->add('owner', ClientType::class);
+                    }
+                    if (null !== $car->getRepresentative()) {
+                        $form->add('representative', ClientType::class);
+                    }
                 }
-                if (null !== $car->getRepresentative()) {
-                    $form->add('representative', ClientType::class);
-                }
-            }
-        });
+            });
+        }
     }
 
     /**

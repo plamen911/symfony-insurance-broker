@@ -14,7 +14,14 @@
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
     <div class="row">
         <div class="col-md-6">
-            {% include 'car/forms/car.html.twig' %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Данни за МПС</h5>
+                </div>
+                <div class="card-body">
+                    {% include 'car/forms/car.html.twig' %}
+                </div>
+            </div>
         </div>
     </div>
     {{ form_end(form) }}

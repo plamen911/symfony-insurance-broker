@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 /**
  * Class CarController
@@ -211,11 +210,12 @@ class CarController extends Controller
 
     /**
      * @Route("/{car}/document/{document}/delete", name="car_document_delete", methods={"DELETE"}, requirements={"car": "\d+", "document": "\d+"})
+     * @param Request $request
      * @param Car $car
      * @param Document $document
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteDocument(Car $car, Document $document)
+    public function deleteDocument(Request $request, Car $car, Document $document)
     {
         try {
             $this->uploadService->delete(basename($document->getFileUrl()));
@@ -225,6 +225,10 @@ class CarController extends Controller
 
         } catch (Exception $ex) {
             $this->addFlash('danger', $ex->getMessage());
+        }
+
+        if (null !== $refUrl = $request->query->get('ref')) {
+            return $this->redirect($refUrl);
         }
 
         return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);

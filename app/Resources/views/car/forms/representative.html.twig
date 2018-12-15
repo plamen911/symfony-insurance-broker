@@ -1,19 +1,19 @@
-<div class="card-body">
-    <div class="row">
-        <div class="col-md-6">
-            {{ form_row(form.representative.firstName) }}
-            {{ form_row(form.representative.middleName) }}
-            {{ form_row(form.representative.lastName) }}
-            {{ form_row(form.representative.idNumber) }}
-            {{ form_row(form.representative.city) }}
-            {{ form_row(form.representative.street) }}
-        </div>
-        <div class="col-md-6">
-            {{ form_row(form.representative.email) }}
-            {{ form_row(form.representative.email2) }}
-            {{ form_row(form.representative.phone) }}
-            {{ form_row(form.representative.phone2) }}
-            {{ form_row(form.representative.notes) }}
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.middleName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.idNumber) }}
+        {{ form_row(form.city) }}
+        {{ form_row(form.street) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.email) }}
+        {{ form_row(form.email2) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.phone2) }}
+        {{ form_row(form.notes) }}
+        {% if deleteButton %}
             <a href="#"
                data-href="{{ path('car_representative_delete', {'car': car.id, 'representative': car.representative.id}) }}"
                data-toggle="modal"
@@ -22,6 +22,6 @@
                title="Премахване"
                class="btn btn-danger btn-sm ml-2 mt-3 float-right"
             ><i class="far fa-trash-alt"></i></a>
-        </div>
+        {% endif %}
     </div>
 </div>

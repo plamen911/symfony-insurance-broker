@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Form;
 
@@ -109,6 +110,22 @@ class PolicyType extends AbstractType
 
             } else {
                 $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулирана?']);
+            }
+
+            if (null !== $policy->getCar()) {
+                $form->add('car', CarType::class, [
+                    'block_name' => 'policy_form'
+                ]);
+            }
+            if (null !== $policy->getOwner()) {
+                $form->add('owner', ClientType::class, [
+                    'block_name' => 'policy_form'
+                ]);
+            }
+            if (null !== $policy->getRepresentative()) {
+                $form->add('representative', ClientType::class, [
+                    'block_name' => 'policy_form'
+                ]);
             }
         });
     }

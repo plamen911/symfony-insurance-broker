@@ -4,7 +4,8 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('policy_index') }}">Списък</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Полица {{ policy.policyType.name }} No: {{ policy.idNumber }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Полица {{ policy.policyType.name }}
+                No: {{ policy.idNumber }}</li>
         </ol>
     </nav>
 {% endblock %}
@@ -35,16 +36,16 @@
                             <h5 class="mb-0">
                                 <a href="#" data-toggle="collapse" data-target="#collapseVehicle"
                                    aria-expanded="true" aria-controls="collapseVehicle">
-                                    МПС: <small>{{ policy.car.carMake }} {{ policy.car.carModel }}</small>
+                                    МПС:
+                                    <small>{{ policy.car.carType.name }} {{ policy.car.carMake }} {{ policy.car.carModel }} {{ policy.car.idNumber }}</small>
                                 </a>
-                                {#<a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': refUrl}) }}"
-                                   class="float-right text-dark"
-                                   title="Смяна на МПС"><i class="fas fa-exchange-alt"></i></a>#}
                             </h5>
                         </div>
                         <div id="collapseVehicle" class="collapse show" aria-labelledby="headingVehicle"
                              data-parent="#accordionCar">
-                            TODO: include car form...
+                            <div class="card-body">
+                                {% include 'car/forms/car.html.twig' with {'form': form.car, 'car': policy.car, 'refUrl': refUrl} only %}
+                            </div>
                         </div>
                     {% else %}
                         <div class="card-header">
@@ -54,6 +55,44 @@
                         </div>
                     {% endif %}
                 </div>
+                {% if policy.owner %}
+                    <div class="card">
+                        <div class="card-header" id="headingOwner">
+                            <h5 class="mb-0">
+                                <a href="#" data-toggle="collapse" data-target="#collapseOwner"
+                                   aria-expanded="true" aria-controls="collapseOwner">
+                                    Собственик:
+                                    <small>{{ policy.owner.firstName }} {{ policy.owner.lastName }}</small>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseOwner" class="collapse" aria-labelledby="headingOwner"
+                             data-parent="#accordionCar">
+                            <div class="card-body">
+                                {% include 'car/forms/owner.html.twig' with {'form': form.owner} only %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if policy.representative %}
+                    <div class="card">
+                        <div class="card-header" id="headingRepresentative">
+                            <h5 class="mb-0">
+                                <a href="#" data-toggle="collapse" data-target="#collapseRepresentative"
+                                   aria-expanded="true" aria-controls="collapseRepresentative">
+                                    Пълномощник:
+                                    <small>{{ policy.representative.firstName }} {{ policy.representative.lastName }}</small>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseRepresentative" class="collapse" aria-labelledby="headingRepresentative"
+                             data-parent="#accordionCar">
+                            <div class="card-body">
+                                {% include 'car/forms/representative.html.twig' with {'form': form.representative, 'deleteButton': false} only %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
