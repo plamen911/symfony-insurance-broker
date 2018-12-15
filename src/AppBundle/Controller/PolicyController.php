@@ -295,22 +295,24 @@ class PolicyController extends Controller
     /**
      * Deletes a policy entity.
      *
-     * @Route("/{id}", name="policy_delete", methods={"DELETE"}, requirements={"id", "\d+"})
-     * @param Request $request
+     * @Route("/{policy}", name="policy_delete", methods={"DELETE"}, requirements={"policy", "\d+"})
      * @param Policy $policy
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteAction(Request $request, Policy $policy)
+    public function deleteAction(Policy $policy)
     {
-        $form = $this->createDeleteForm($policy);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        try {
             $this->em->remove($policy);
             $this->em->flush();
-        }
 
-        return $this->redirectToRoute('policy_index');
+            $this->addFlash('success', 'Полицата бе успешно изтрита.');
+
+            return $this->redirectToRoute('policy_index');
+
+        } catch (Exception $ex) {
+            $this->addFlash('danger', $ex->getMessage());
+            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
+        }
     }
 
     /**
@@ -368,7 +370,7 @@ class PolicyController extends Controller
     private function createDeleteForm(Policy $policy)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('policy_delete', array('id' => $policy->getId())))
+            ->setAction($this->generateUrl('policy_delete', array('policy' => $policy->getId())))
             ->setMethod('DELETE')
             ->getForm()
         ;

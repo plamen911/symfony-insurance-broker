@@ -30,14 +30,15 @@
                 <a href="{{ path('policy_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмени</a>
                 <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Съхрани</button>
                 <a href="#"
-                   onclick="event.preventDefault(); document.getElementById('delete-policy-form').submit();"
+                   data-href="{{ path('policy_delete', {'policy': policy.id}) }}"
+                   data-toggle="modal"
+                   data-target="#confirm-delete"
+                   data-message="Сигурни ли сте, че искате да изтриете тази полица?"
+                   title="Моля, потвърдете"
                    class="btn btn-danger float-right mr-2"><i class="far fa-trash-alt"></i> Изтрий</a>
             </div>
         </div>
     {{ form_end(form) }}
-
-    {{ form_start(delete_form, {'attr': {'id': 'delete-policy-form', 'class': 'd-none'}}) }}
-    {{ form_end(delete_form) }}
 {% endblock %}
 
 {% block javascripts %}

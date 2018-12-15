@@ -136,6 +136,7 @@ class CarController extends Controller
      * @param Request $request
      * @param Car $car
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws Exception
      */
     public function editAction(Request $request, Car $car)
     {
