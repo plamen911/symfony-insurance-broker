@@ -8,6 +8,7 @@ use AppBundle\Entity\Document;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
+use AppBundle\Entity\User;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
@@ -239,6 +240,8 @@ class PolicyController extends Controller
             return $this->redirectToRoute('policy_new_car', ['typeOfPolicy' => $policy->getPolicyType()->getId(), 'ref' => $refUrl]);
         }
 
+        $canDelete = $this->getUser()->isAdmin() || $this->getUser()->isPolicyAuthor($policy);
+
         $deleteForm = $this->createDeleteForm($policy);
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
@@ -249,7 +252,8 @@ class PolicyController extends Controller
             'car' => $policy->getCar(),
             'delete_form' => $deleteForm->createView(),
             'isNew' => false,
-            'refUrl' => $refUrl
+            'refUrl' => $refUrl,
+            'canDelete' => $canDelete
         ];
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -323,6 +327,12 @@ class PolicyController extends Controller
      */
     public function deleteDocument(Policy $policy, Document $document)
     {
+        $canDelete = $this->getUser()->isAdmin() || $this->getUser()->isPolicyAuthor($policy);
+        if (!$canDelete) {
+            $this->addFlash('danger', 'Нямате права за тази операция.');
+            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
+        }
+
         try {
             $this->uploadService->delete(basename($document->getFileUrl()));
             $this->em->remove($document);

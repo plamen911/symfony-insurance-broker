@@ -359,9 +359,42 @@ class User implements AdvancedUserInterface
     /**
      * @return bool
      */
+    public function isSuperAdmin()
+    {
+        return in_array('ROLE_SUPER_ADMIN', $this->getRoles());
+    }
+
+    /**
+     * @return bool
+     */
     public function isAdmin()
     {
-        return in_array('ROLE_ADMIN', $this->getRoles());
+        return $this->isSuperAdmin() || in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOffice()
+    {
+        return in_array('ROLE_OFFICE', $this->getRoles());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return in_array('ROLE_USER', $this->getRoles());
+    }
+
+    /**
+     * @param Policy $policy
+     * @return bool
+     */
+    public function isPolicyAuthor(Policy $policy)
+    {
+        return $this->getId() === $policy->getAuthor()->getId();
     }
 
     /**
