@@ -4,14 +4,15 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('policy_index') }}">Списък</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Нова Полица {{ policy.policyType.name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Нова полица {{ policy.policyType.name }} - Основни данни</li>
         </ol>
     </nav>
 {% endblock %}
 
 {% block body %}
-    <h3>Нова Полица {{ policy.policyType.name }}</h3>
-
+    <h3>Нова полица {{ policy.policyType.name }}
+        <small class="text-muted">Основни данни</small>
+    </h3>
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
         {% include 'policy/partials/form-fields.html.twig' %}
         <div class="row">
