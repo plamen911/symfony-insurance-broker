@@ -78,7 +78,6 @@ class CarController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             // upload car documents
             if (null !== $request->files->get('documents')) {
                 /** @var UploadedFile $file */

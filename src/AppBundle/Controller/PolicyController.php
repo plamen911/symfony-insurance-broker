@@ -95,9 +95,30 @@ class PolicyController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // todo: create new car
+            // upload car documents
+            if (null !== $request->files->get('documents')) {
+                /** @var UploadedFile $file */
+                foreach ($request->files->get('documents') as $file) {
+                    $fileUrl = $this->uploadService->upload(
+                        $file->getPathname(),
+                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
+                        $file->getClientMimeType()
+                    );
 
+                    $document = new Document();
+                    $document->setFileUrl($fileUrl);
+                    $document->setFileName($file->getClientOriginalName());
+                    $document->setMimeType($file->getClientMimeType());
+                    $car->addDocument($document);
+                }
+            }
 
+            $this->em->persist($car);
+            $this->em->flush();
+
+            $this->addFlash('success', 'МПС бе успешно създадено.');
+
+            return $this->redirectToRoute('policy_new', ['typeOfPolicy' => $typeOfPolicy->getId(), 'car' => $car->getId()]);
         }
 
         if ($autoCompleteForm->isSubmitted() && $autoCompleteForm->isValid()) {
@@ -208,6 +229,7 @@ class PolicyController extends Controller
      * @param Request $request
      * @param Policy $policy
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws Exception
      */
     public function editAction(Request $request, Policy $policy)
     {
