@@ -326,13 +326,13 @@ class CarController extends Controller
     }
 
     /**
-     * @Route("/{car}/owner/search", name="car_search_owner", methods={"GET"}, requirements={"car": "\d+"})
+     * @Route("/owner/search", name="car_search_owner", methods={"GET"})
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function searchOwner(Request $request)
     {
-        $q = $request->query->get('term'); // use "term" instead of "q" for jquery-ui
+        $q = $request->query->get('term');
         /** @var Client[]|null $owners */
         $owners = $this->em->getRepository(Client::class)->findByKeyword((string)$q);
 
@@ -340,7 +340,6 @@ class CarController extends Controller
         if ($owners) {
             foreach ($owners as $owner) {
                 $data[] = [
-                    //'id' => $owner->getId(),
                     'value' => $owner->getId(),
                     'label' => $owner->getIdNumber() . ': ' . $owner->getFullName()
                 ];
@@ -348,19 +347,6 @@ class CarController extends Controller
         }
 
         return $this->json($data);
-    }
-
-    /**
-     * @Route("/{car}/owner/get", name="car_get_owner", methods={"GET"}, requirements={"car": "\d+"})
-     * @param null|int $id
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getOwner(?int $id = null)
-    {
-        /** @var Client $owner */
-        $owner = $this->em->getRepository(Client::class)->find($id);
-
-        return $this->json($owner->getIdNumber() . ': ' . $owner->getFullName());
     }
 
     /**

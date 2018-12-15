@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Repository;
+
+use AppBundle\Entity\Car;
+use AppBundle\Service\Cyr2Lat;
 
 /**
  * CarRepository
@@ -10,4 +14,32 @@ namespace AppBundle\Repository;
  */
 class CarRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param string $keyword
+     * @return Car[]|null
+     */
+    public function findByKeyword(string $keyword)
+    {
+        $cyr2Lat = new Cyr2Lat();
+
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.owner', 'o')
+            ->where('c.idNumber LIKE :idNumber')
+            ->orWhere('c.carMake LIKE :keyword')
+            ->orWhere('c.carModel LIKE :keyword')
+            ->orWhere('o.firstName LIKE :keyword')
+            ->orWhere('o.middleName LIKE :keyword')
+            ->orWhere('o.lastName LIKE :keyword')
+            ->setParameters([
+                'idNumber' => $cyr2Lat->transliterate($keyword) . '%',
+                'keyword' => $keyword . '%'
+            ])
+            ->addOrderBy('c.idNumber', 'ASC')
+            ->addOrderBy('c.carMake', 'ASC')
+            ->addOrderBy('c.carModel', 'ASC')
+            ->getQuery()
+            ->setFirstResult(0)
+            ->setMaxResults(50)
+            ->getResult();
+    }
 }

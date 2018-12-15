@@ -63,7 +63,8 @@
 
     <ul>
         <li>
-            <a href="#">Create a new policy</a>
+            <a href="{{ path('policy_new_car', {'typeOfPolicy': typeOfPolicy.id}) }}" class="btn btn-dark"><i
+                        class="fas fa-plus-circle"></i> Нова полица</a>
         </li>
     </ul>
 {% endblock %}

@@ -1,186 +1,77 @@
 <div class="row">
-    <div class="col-md-3">
-        {% if isNew %}
-            {{ form_row(form.insurer) }}
-            {{ form_row(form.idNumber) }}
-            {{ form_row(form.agent) }}
-        {% else %}
-            <div class="card mb-2">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        No: {{ policy.idNumber }}
-                    </h5>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong>Застраховател:</strong> {{ policy.insurer.name }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Агент:</strong> {{ policy.agent.fullName }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            {{ form_row(form.isCancelled) }}
-        {% endif %}
-
-        <div class="card mb-2">
-            <div class="card-header">
-                <h5 class="mb-0">Документи на МПС</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="form-group pl-3 pt-2">
-                    <label for="documents">Избери файл</label>
-                    <input type="file" id="documents" name="documents[]" class="form-control-file" placeholder="Документи на МПС..."
-                           multiple>
-                </div>
-                {% if policy.car.documents|length > 0 %}
-                    <ul class="list-group list-group-flush">
-                        {% for document in policy.car.documents %}
-                            <li class="list-group-item">
-                                <a href="{{ document.fileUrl }}" class="float-left mt-1" target="_blank">{{ document.fileName }}</a>
-                                <a href="#"
-                                   data-href="{{ path('document_delete', {'policy': policy.id, 'document': document.id}) }}"
-                                   data-toggle="modal"
-                                   data-target="#confirm-delete"
-                                   data-message="Сигурни ли сте, че искате да изтриете документа?"
-                                   title="Изтрий"
-                                   class="btn btn-danger btn-sm ml-2 float-right"
-                                ><i class="far fa-trash-alt"></i></a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </div>
-
+    <div class="col-md-6">
+        {% include 'policy/forms/policy.html.twig' %}
     </div>
-    <div class="col-md-3">
-        {{ form_row(form.issuedAt) }}
-        {{ form_row(form.startsAt) }}
-        {{ form_row(form.expiresAt) }}
-        {{ form_row(form.officeCommission) }}
-        {{ form_row(form.clientCommission) }}
-        {{ form_row(form.notes) }}
-    </div>
-    <div class="col-md-3">
-        {{ form_row(form.currency) }}
-        {{ form_row(form.amount) }}
-        {{ form_row(form.taxes) }}
-        {{ form_row(form.amountGf) }}
-        {{ form_row(form.total) }}
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-6">
         <div class="accordion" id="accordionCar">
             <div class="card">
-                <div class="card-header" id="headingCar">
-                    <h5 class="mb-0">
-                        <a href="#" data-toggle="collapse" data-target="#collapseCar"
-                           aria-expanded="true" aria-controls="collapseCar">
-                            <i class="fas fa-car"></i> {{ car.carType.name }}
-                        </a>
-                    </h5>
-                </div>
-                <div id="collapseCar" class="collapse show" aria-labelledby="headingCar" data-parent="#accordionCar">
-                    <div class="card-body p-0">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <strong>Рег. No:</strong> {{ car.idNumber }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Марка:</strong> {{ car.carMake }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Модел:</strong> {{ car.carModel }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Волан:</strong> {{ car.isRightSteeringWheel ? 'Десен' : 'Ляв' }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Рама No:</strong> {{ car.idFrame }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Двиг. обем (см3):</strong> {{ car.engineVol }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Общо тегло:</strong> {{ car.grossWeight }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Пол. товар:</strong> {{ car.newWeight }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Цвят:</strong> {{ car.color }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Година на произв.:</strong> {{ car.yearMade }}
-                            </li>
-                        </ul>
+                {% if policy.car %}
+                    <div class="card-header" id="headingVehicle">
+                        <h5 class="mb-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapseVehicle"
+                               aria-expanded="true" aria-controls="collapseVehicle">
+                                МПС:
+                                <small>{{ policy.car.carType.name }} {{ policy.car.carMake }} {{ policy.car.carModel }} {{ policy.car.idNumber }}</small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseVehicle" class="collapse show" aria-labelledby="headingVehicle"
+                         data-parent="#accordionCar">
+                        <div class="card-body">
+                            {% include 'car/forms/car.html.twig' with {'form': form.car, 'car': policy.car, 'refUrl': refUrl} only %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card-header">
+                        <a href="{{ path('car_new_owner', {'car': car.id, 'type': 'owner', 'ref': refUrl}) }}"
+                           title="Добави МПС" class="btn btn-warning float-right"
+                        ><i class="fas fa-user-plus"></i> Добави МПС</a>
+                    </div>
+                {% endif %}
+            </div>
+            {% if policy.owner %}
+                <div class="card">
+                    <div class="card-header" id="headingOwner">
+                        <h5 class="mb-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapseOwner"
+                               aria-expanded="true" aria-controls="collapseOwner">
+                                Собственик:
+                                <small>{{ policy.owner.firstName }} {{ policy.owner.lastName }}</small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseOwner" class="collapse" aria-labelledby="headingOwner"
+                         data-parent="#accordionCar">
+                        <div class="card-body">
+                            {% include 'car/forms/owner.html.twig' with {'form': form.owner} only %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingOwner">
-                    <h5 class="mb-0">
-                        <a href="#"  data-toggle="collapse" data-target="#collapseOwner"
-                           aria-expanded="true" aria-controls="collapseOwner">
-                            <i class="fas fa-user-tie"></i> {{ car.owner.firstName }} {{ car.owner.middleName }} {{ car.owner.lastName }}
-                        </a>
-                    </h5>
-                </div>
-                <div id="collapseOwner" class="collapse" aria-labelledby="headingOwner" data-parent="#accordionCar">
-                    <div class="card-body p-0">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <strong>ЕГН/ЕИК/БУЛСТАТ:</strong> {{ car.owner.idNumber }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Нас. място (гр./с.):</strong> {{ car.owner.city }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Адрес (ул./жк.):</strong> {{ car.owner.street }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Телефон:</strong> {{ car.owner.phone }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Телефон 2:</strong> {{ car.owner.phone2 }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>И-мейл:</strong> {{ car.owner.email }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>И-мейл 2:</strong> {{ car.owner.email2 }}
-                            </li>
-                        </ul>
+            {% endif %}
+            {% if policy.representative %}
+                <div class="card">
+                    <div class="card-header" id="headingRepresentative">
+                        <h5 class="mb-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapseRepresentative"
+                               aria-expanded="true" aria-controls="collapseRepresentative">
+                                Пълномощник:
+                                <small>{{ policy.representative.firstName }} {{ policy.representative.lastName }}</small>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseRepresentative" class="collapse" aria-labelledby="headingRepresentative"
+                         data-parent="#accordionCar">
+                        <div class="card-body">
+                            {% include 'car/forms/representative.html.twig' with {'form': form.representative, 'deleteButton': false} only %}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-        <h3>Падежи и плащания
-            <a id="calc-payments"
-               href="#"
-               title="Изчисли вноските"
-               class="btn btn-primary btn-sm"><i class="fas fa-calculator"></i></a>
-        </h3>
-        <div class="table-responsive">
-            <ul class="payments pl-0" data-prototype="{{ form_widget(form.payments.vars.prototype)|e('html_attr') }}">
-                {% for key, payment in form.payments %}
-                    <li class="form-inline mb-1">
-                        <div id="policy_payments_{{ key }}">
-                            {{ form_row(payment.dueAt) }}
-                            {{ form_row(payment.amountDue) }}
-                            {{ form_row(payment.paidAt) }}
-                            {{ form_row(payment.amountPaid) }}
-                            {{ form_row(payment.isDeferred) }}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div class="col-md-12 mt-2">
+        {% include 'policy/forms/payments.html.twig' %}
     </div>
 </div>

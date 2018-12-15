@@ -1,16 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Policy
+ * Class Policy
+ * @package AppBundle\Entity
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @ORM\Table(name="policies")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PolicyRepository")
+ * @UniqueEntity(fields="idNumber", message="Вече има полица с този номер.")
  */
 class Policy
 {
@@ -27,6 +32,7 @@ class Policy
      * @var string
      *
      * @ORM\Column(name="id_number", type="string", length=191, unique=true)
+     * @Assert\NotBlank(message="Полица No е задължително поле.")
      */
     private $idNumber;
 
@@ -48,6 +54,7 @@ class Policy
      * @var \DateTime
      *
      * @ORM\Column(name="issued_at", type="datetime")
+     * @Assert\NotBlank(message="Дата на издаване е задължително поле.")
      */
     private $issuedAt;
 
@@ -55,6 +62,7 @@ class Policy
      * @var \DateTime|null
      *
      * @ORM\Column(name="starts_at", type="datetime", nullable=true)
+     * @Assert\NotBlank(message="Начална дата е задължително поле.")
      */
     private $startsAt;
 
@@ -62,6 +70,7 @@ class Policy
      * @var \DateTime|null
      *
      * @ORM\Column(name="expires_at", type="datetime", nullable=true)
+     * @Assert\NotBlank(message="Крайна дата е задължително поле.")
      */
     private $expiresAt;
 
@@ -162,6 +171,7 @@ class Policy
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Insurer", inversedBy="policies")
      * @ORM\JoinColumn(name="insurer_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="Застраховател е задължит. поле.")
      */
     private $insurer;
 
@@ -170,6 +180,7 @@ class Policy
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="assignedPolicies")
      * @ORM\JoinColumn(name="agent_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="Агент е задължително поле.")
      */
     private $agent;
 
@@ -194,6 +205,7 @@ class Policy
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Car", inversedBy="policies")
      * @ORM\JoinColumn(name="car_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="МПС е задължително поле.")
      */
     private $car;
 
@@ -202,6 +214,7 @@ class Policy
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client", inversedBy="ownerPolicies")
      * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=true)
+     * @Assert\NotBlank(message="Собственик на МПС е задължително поле.")
      */
     private $owner;
 
@@ -232,7 +245,7 @@ class Policy
         $this->expiresAt = (new \DateTime())->add(new \DateInterval('P1Y'));
         $this->amount = 0;
         $this->taxes = 2;
-        $this->amountGf = 0;
+        $this->amountGf = 11.5;
         $this->officeCommission = 0;
         $this->clientCommission = 0;
         $this->total = 0;

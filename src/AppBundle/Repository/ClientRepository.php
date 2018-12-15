@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
@@ -28,6 +29,8 @@ class ClientRepository extends \Doctrine\ORM\EntityRepository
             ->addOrderBy('c.middleName', 'ASC')
             ->addOrderBy('c.lastName', 'ASC')
             ->getQuery()
+            ->setFirstResult(0)
+            ->setMaxResults(50)
             ->getResult();
     }
 }

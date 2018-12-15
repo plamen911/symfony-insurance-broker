@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Entity;
 
@@ -9,7 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Car
+ * Class Car
+ * @package AppBundle\Entity
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @ORM\Table(name="cars")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CarRepository")
