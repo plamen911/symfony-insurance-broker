@@ -29,7 +29,7 @@
         <tbody>
         {% for policy in policies %}
             <tr>
-                <td><a href="{{ path('policy_show', { 'id': policy.id }) }}">{{ policy.id }}</a></td>
+                <td><a href="{{ path('policy_edit', { 'id': policy.id }) }}">{{ policy.id }}</a></td>
                 <td>{{ policy.idNumber }}</td>
                 <td>{% if policy.isCancelled %}Yes{% else %}No{% endif %}</td>
                 <td>{{ policy.notes }}</td>
@@ -48,9 +48,6 @@
                 <td>{% if policy.isDeleted %}Yes{% else %}No{% endif %}</td>
                 <td>
                     <ul>
-                        <li>
-                            <a href="{{ path('policy_show', { 'id': policy.id }) }}">show</a>
-                        </li>
                         <li>
                             <a href="{{ path('policy_edit', { 'id': policy.id }) }}">edit</a>
                         </li>
