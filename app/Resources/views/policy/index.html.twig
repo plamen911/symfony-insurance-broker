@@ -22,7 +22,6 @@
                 <th>Currency</th>
                 <th>Createdat</th>
                 <th>Updatedat</th>
-                <th>Isdeleted</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -45,7 +44,6 @@
                 <td>{{ policy.currency }}</td>
                 <td>{% if policy.createdAt %}{{ policy.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if policy.updatedAt %}{{ policy.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if policy.isDeleted %}Yes{% else %}No{% endif %}</td>
                 <td>
                     <ul>
                         <li>
