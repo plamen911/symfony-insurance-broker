@@ -153,7 +153,11 @@ class PolicyController extends Controller
      */
     public function newAction(Request $request, TypeOfPolicy $typeOfPolicy, Car $car)
     {
-        $refUrl = $request->query->get('ref');
+        $refUrl = $request->query->get('ref', $request->getRequestUri());
+        if (null === $car->getOwner()) {
+            $this->addFlash('warning', 'Моля, изберете или въведете собственик на МПС.');
+            return $this->redirectToRoute('car_new_owner', ['car' => $car->getId(), 'type' => 'owner', 'ref' => $refUrl]);
+        }
 
         $policy = new Policy();
         $policy->setPolicyType($typeOfPolicy);
