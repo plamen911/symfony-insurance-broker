@@ -24,6 +24,7 @@ class UserController extends Controller
      * @param Request $request
      * @param EntityManagerInterface $em
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function registerAction(Request $request, EntityManagerInterface $em)
     {

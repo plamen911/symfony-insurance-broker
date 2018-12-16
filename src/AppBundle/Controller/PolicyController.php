@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Car;
 use AppBundle\Entity\Document;
-use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
@@ -410,13 +409,15 @@ class PolicyController extends Controller
             return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
         }
 
+        $policyTypeId = $policy->getPolicyType()->getId();
+
         try {
             $this->em->remove($policy);
             $this->em->flush();
 
             $this->addFlash('success', 'Полицата бе успешно изтрита.');
 
-            return $this->redirectToRoute('policy_index');
+            return $this->redirectToRoute('policy_list', ['typeOfPolicy' => $policyTypeId]);
 
         } catch (Exception $ex) {
             $this->addFlash('danger', $ex->getMessage());

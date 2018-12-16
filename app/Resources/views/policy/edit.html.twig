@@ -3,7 +3,7 @@
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('policy_index') }}">Списък</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('policy_list', {'typeOfPolicy': policy.policyType.id}) }}">Списък</a></li>
             <li class="breadcrumb-item active" aria-current="page">Полица {{ policy.policyType.name }}
                 No: {{ policy.idNumber }}</li>
         </ol>
@@ -27,7 +27,7 @@
         {% include 'policy/partials/form-fields.html.twig' %}
         <div class="row">
             <div class="col-md-12 mt-3">
-                <a href="{{ path('policy_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмени</a>
+                <a href="{{ path('policy_list', {'typeOfPolicy': policy.policyType.id}) }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмени</a>
                 <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Съхрани</button>
                 {% if canDelete %}
                     <a href="#"
