@@ -47,7 +47,7 @@ class PolicyType extends AbstractType
                 'html5' => false,
                 'attr' => ['class' => 'js-datepicker'],
                 'format' => 'dd.MM.yyyy',
-                'label' => 'Започва от'
+                'label' => 'Валидна от'
             ])
             ->add('expiresAt', DateType::class, [
                 'widget' => 'single_text',

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Car;
 use AppBundle\Entity\Document;
+use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
@@ -12,7 +13,9 @@ use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,6 +38,8 @@ use Omines\DataTablesBundle\Controller\DataTablesTrait;
  */
 class PolicyController extends Controller
 {
+    use DataTablesTrait;
+
     /** @var EntityManagerInterface $em */
     private $em;
     /** @var UploadInterface $uploadService */
@@ -66,16 +71,100 @@ class PolicyController extends Controller
     /**
      * Lists all policy entities.
      *
-     * @Route("/{typeOfPolicy}", name="policy_list", methods={"GET"}, requirements={"typeOfPolicy": "\d+"})
+     * @Route("/{typeOfPolicy}", name="policy_list", methods={"GET", "POST"}, requirements={"typeOfPolicy": "\d+"})
+     * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(TypeOfPolicy $typeOfPolicy)
+    public function indexAction(Request $request, TypeOfPolicy $typeOfPolicy)
     {
-        $policies = $this->em->getRepository(Policy::class)->findBy(['policyType' => $typeOfPolicy->getId()]);
+        // https://omines.github.io/datatables-bundle/
+        $table = $this->createDataTable([
+            'stateSave' => true,
+            'pageLength' => 25,
+            'autoWidth' => true,
+            'searching' => true,
+        ])
+            ->add('idNumber', TextColumn::class, ['label' => 'Полица No'])
+            ->add('issuedAt', DateTimeColumn::class, [
+                'searchable' => false, // Important - make datetime col. non-searchable!
+                'format' => 'd.m.Y',
+                'label' => 'Издадена на'
+            ])
+            ->add('insurerName', TextColumn::class, [
+                'field' => 'insurer.name',
+                'label' => 'Застраховател'
+            ])
+            ->add('agentName', TextColumn::class, [
+                'field' => 'agent.fullName',
+                'label' => 'Агент'
+            ])
+            ->add('total', TextColumn::class, ['label' => 'Дължимо'])
+            ->add('paid', TextColumn::class, ['label' => 'Платено'])
+            ->add('startsAt', DateTimeColumn::class, [
+                'searchable' => false,
+                'format' => 'd.m.Y',
+                'label' => 'Валидна от',
+                'visible' => false
+            ])
+            ->add('expiresAt', DateTimeColumn::class, [
+                'searchable' => false,
+                'format' => 'd.m.Y',
+                'label' => 'Изтича на',
+                'visible' => false
+            ])
+            ->add('carMake', TextColumn::class, [
+                'field' => 'car.carMake',
+                'label' => 'МПС',
+                'render' => function ($value, $policy) {
+                    /** @var Policy $policy */
+                    return $policy->getCar()->getCarMake() . ' ' . $policy->getCar()->getCarModel();
+                }
+            ])
+            ->add('carModel', TextColumn::class, [
+                'field' => 'car.carModel',
+                'className' => 'd-none',
+                'visible' => false
+            ])
+            ->add('carIdNumber', TextColumn::class, [
+                'field' => 'car.idNumber',
+                'label' => 'Рег. No',
+            ])
+            ->add('buttons', TextColumn::class, [
+                'label' => '',
+                'searchable' => false,
+                'className' => 'text-center',
+                'render' => function($value, $policy) {
+                    /** @var Policy $policy */
+                    return '<a href="' . $this->generateUrl('policy_edit', ['id' => $policy->getId()]) . '"' .
+                        ' class="btn btn-sm btn-secondary" title="Редактирай"><i class="fas fa-edit"></i></a>';
+                }
+            ])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Policy::class,
+                'query' => function (QueryBuilder $builder) use ($typeOfPolicy) {
+                    $builder
+                        ->select('p')
+                        ->addSelect('car')
+                        ->addSelect('insurer')
+                        ->addSelect('agent')
+                        ->from(Policy::class, 'p')
+                        ->leftJoin('p.insurer', 'insurer')
+                        ->leftJoin('p.car', 'car')
+                        ->leftJoin('p.agent', 'agent')
+                        ->where('p.policyType = :policyType')
+                        ->setParameter('policyType', $typeOfPolicy->getId())
+                    ;
+                },
+            ])
+            ->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
 
         return $this->render('policy/index.html.twig', [
-            'policies' => $policies,
+            'datatable' => $table,
             'typeOfPolicy' => $typeOfPolicy
         ]);
     }

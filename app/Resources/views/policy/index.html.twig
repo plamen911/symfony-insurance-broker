@@ -1,65 +1,64 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Списък полици {{ typeOfPolicy.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Списък {{ typeOfPolicy.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Policies list</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Idnumber</th>
-                <th>Iscancelled</th>
-                <th>Notes</th>
-                <th>Issuedat</th>
-                <th>Startsat</th>
-                <th>Expiresat</th>
-                <th>Amount</th>
-                <th>Taxes</th>
-                <th>Amountgf</th>
-                <th>OfficeCommission</th>
-                <th>ClientCommission</th>
-                <th>Total</th>
-                <th>Currency</th>
-                <th>Createdat</th>
-                <th>Updatedat</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for policy in policies %}
-            <tr>
-                <td><a href="{{ path('policy_edit', { 'id': policy.id }) }}">{{ policy.id }}</a></td>
-                <td>{{ policy.idNumber }}</td>
-                <td>{% if policy.isCancelled %}Yes{% else %}No{% endif %}</td>
-                <td>{{ policy.notes }}</td>
-                <td>{% if policy.issuedAt %}{{ policy.issuedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if policy.startsAt %}{{ policy.startsAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if policy.expiresAt %}{{ policy.expiresAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ policy.amount }}</td>
-                <td>{{ policy.taxes }}</td>
-                <td>{{ policy.amountGf }}</td>
-                <td>{{ policy.officeCommission }}</td>
-                <td>{{ policy.clientCommission }}</td>
-                <td>{{ policy.total }}</td>
-                <td>{{ policy.currency }}</td>
-                <td>{% if policy.createdAt %}{{ policy.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if policy.updatedAt %}{{ policy.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('policy_edit', { 'id': policy.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <ul>
+    <h3>Списък полици {{ typeOfPolicy.name }}</h3>
+    <div id="policies" class="table-responsive">Зареждане...</div>
+    <ul class="list-unstyled mb-0">
         <li>
             <a href="{{ path('policy_new_car', {'typeOfPolicy': typeOfPolicy.id}) }}" class="btn btn-dark"><i
                         class="fas fa-plus-circle"></i> Нова полица</a>
         </li>
     </ul>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript"
+            src="//cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/r-2.2.2/datatables.min.js"></script>
+    <script charset="UTF-8" src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+    <script>
+      $(function () {
+        $('#policies').initDataTables({{ datatable_settings(datatable) }}, {
+          language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.10.15/i18n/Bulgarian.json'
+          },
+          searching: true,
+          dom: '<"html5buttons"B>lTfgitp',
+          buttons: [
+            'copy',
+            {extend: 'pdf', title: 'spisak_polici'},
+            {extend: 'print'}
+          ],
+
+          stateSaveCallback: function (settings, data) {
+            console.log('state saved...')
+            // localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
+          }
+
+        }).then(function (dt) {
+          // dt contains the initialized instance of DataTables
+          dt.on('draw', function (el1, el2) {
+            console.log('Redrawing table')
+          })
+        })
+      })
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css"
+          href="//cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/r-2.2.2/datatables.min.css"/>
 {% endblock %}
