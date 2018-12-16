@@ -23,3 +23,11 @@
 .card-login, .card-register {
     max-width: 25rem;
 }
+
+.dataTables_length {
+    float: left;
+}
+
+.dataTables_wrapper .html5buttons {
+    margin-bottom: .6em;
+}

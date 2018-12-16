@@ -17,7 +17,8 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
-            new PUGX\AutocompleterBundle\PUGXAutocompleterBundle()
+            new PUGX\AutocompleterBundle\PUGXAutocompleterBundle(),
+            new \Omines\DataTablesBundle\DataTablesBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace AppBundle\Controller;
@@ -18,6 +17,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
+//
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
+
 
 /**
  * Class CarController
@@ -29,6 +33,8 @@ use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
  */
 class CarController extends Controller
 {
+    use DataTablesTrait;
+
     /** @var EntityManagerInterface $em */
     private $em;
     /** @var UploadInterface $uploadService */
@@ -48,16 +54,58 @@ class CarController extends Controller
     /**
      * Lists all car entities.
      *
-     * @Route("/", methods={"GET"}, name="car_index")
+     * @Route("/", methods={"GET", "POST"}, name="car_index")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        // https://omines.github.io/datatables-bundle/
+        $table = $this->createDataTable([
+            //'stateSave' => true,
+            'pageLength' => 25,
+            'autoWidth' => true,
+            'searching' => true,
+        ])
+            ->add('idNumber', TextColumn::class, ['label' => 'Рег. No'])
+            ->add('carMake', TextColumn::class, [
+                'label' => 'МПС',
+                'render' => function ($value, $car) {
+                    /** @var Car $car */
+                    return $car->getCarMake() . ' ' . $car->getCarModel();
+                }
+            ])
+            ->add('carModel', TextColumn::class, ['visible' => false])
+            ->add('ownerFirstName', TextColumn::class, [
+                'field' => 'owner.firstName',
+                'label' => 'Собственик',
+                'render' => function ($value, $car) {
+                    /** @var Car $car */
+                    return $car->getOwner()->getFullName();
+                }
+            ])
+            ->add('ownerMiddleName', TextColumn::class, ['field' => 'owner.middleName', 'visible' => false])
+            ->add('ownerLastName', TextColumn::class, ['field' => 'owner.lastName', 'visible' => false])
+            ->add('buttons', TextColumn::class, [
+                'label' => '',
+                'searchable' => false,
+                'className' => 'text-center',
+                'render' => function($value, $car) {
+                    /** @var Car $car */
+                    return '<a href="' . $this->generateUrl('car_edit', ['id' => $car->getId()]) . '" class="text-dark"><i class="fas fa-edit"></i></a>';
+                }
+            ])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Car::class,
+            ])
+            ->handleRequest($request);
 
-        $cars = $em->getRepository('AppBundle:Car')->findAll();
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
 
         return $this->render('car/index.html.twig', [
-            'cars' => $cars
+            'datatable' => $table
         ]);
     }
 

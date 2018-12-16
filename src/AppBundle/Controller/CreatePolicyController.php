@@ -40,6 +40,7 @@ class CreatePolicyController extends Controller
      * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function carAction(Request $request, TypeOfPolicy $typeOfPolicy)
     {

@@ -9,11 +9,14 @@ $(function () {
 })
 
 function attachJsDatepicker () {
-  $('.js-datepicker').datepicker({
-    language: 'bg',
-    todayHighlight: true,
-    format: 'dd.mm.yyyy',
-    autoclose: true,
-    weekStart: 1
-  })
+  var $elem = $('.js-datepicker')
+  if ($elem.length > 0) {
+    $elem.datepicker({
+      language: 'bg',
+      todayHighlight: true,
+      format: 'dd.mm.yyyy',
+      autoclose: true,
+      weekStart: 1
+    })
+  }
 }
