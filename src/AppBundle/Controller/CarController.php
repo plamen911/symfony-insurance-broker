@@ -103,7 +103,7 @@ class CarController extends Controller
                 'className' => 'text-center',
                 'render' => function($value, $car) {
                     /** @var Car $car */
-                    return '<a href="' . $this->generateUrl('car_edit', ['id' => $car->getId()]) . '" class="text-dark"><i class="fas fa-edit"></i></a>';
+                    return '<a href="' . $this->generateUrl('car_edit', ['id' => $car->getId()]) . '" class="btn btn-sm btn-secondary" title="Редактирай"><i class="fas fa-edit"></i></a>';
                 }
             ])
             ->createAdapter(ORMAdapter::class, [
