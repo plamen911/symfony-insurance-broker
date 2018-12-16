@@ -19,6 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
+//
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
 
 /**
  * Class PolicyController
@@ -81,6 +85,7 @@ class PolicyController extends Controller
      * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws Exception
      */
     public function newCarAction(Request $request, TypeOfPolicy $typeOfPolicy)
     {

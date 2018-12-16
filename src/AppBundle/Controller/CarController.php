@@ -22,7 +22,6 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 
-
 /**
  * Class CarController
  * @package AppBundle\Controller
@@ -62,7 +61,7 @@ class CarController extends Controller
     {
         // https://omines.github.io/datatables-bundle/
         $table = $this->createDataTable([
-            //'stateSave' => true,
+            'stateSave' => true,
             'pageLength' => 25,
             'autoWidth' => true,
             'searching' => true,
