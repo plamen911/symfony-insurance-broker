@@ -75,7 +75,10 @@ class CarController extends Controller
                     return $car->getCarMake() . ' ' . $car->getCarModel();
                 }
             ])
-            ->add('carModel', TextColumn::class, ['visible' => false])
+            ->add('carModel', TextColumn::class, [
+                'className' => 'd-none',
+                'visible' => false
+            ])
             ->add('ownerFirstName', TextColumn::class, [
                 'field' => 'owner.firstName',
                 'label' => 'Собственик',
@@ -84,8 +87,16 @@ class CarController extends Controller
                     return $car->getOwner()->getFullName();
                 }
             ])
-            ->add('ownerMiddleName', TextColumn::class, ['field' => 'owner.middleName', 'visible' => false])
-            ->add('ownerLastName', TextColumn::class, ['field' => 'owner.lastName', 'visible' => false])
+            ->add('ownerMiddleName', TextColumn::class, [
+                'field' => 'owner.middleName',
+                'className' => 'd-none',
+                'visible' => false
+            ])
+            ->add('ownerLastName', TextColumn::class, [
+                'field' => 'owner.lastName',
+                'className' => 'd-none',
+                'visible' => false
+            ])
             ->add('buttons', TextColumn::class, [
                 'label' => '',
                 'searchable' => false,

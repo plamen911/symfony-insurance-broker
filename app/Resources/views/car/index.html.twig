@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Cars list</h1>
-    <div id="cars" class="table-responsive">Loading...</div>
-    <ul>
+    <h3>Списък на МПС</h3>
+    <div id="cars" class="table-responsive">Зареждане...</div>
+    <ul class="list-unstyled mb-0">
         <li>
             <a href="{{ path('car_new') }}" class="btn btn-dark"><i
                         class="fas fa-plus-circle"></i> Ново МПС</a>
@@ -21,16 +21,16 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript"
-            src="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/datatables.min.js"></script>
+            src="//cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/datatables.min.js"></script>
     <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
     <script>
       $(function () {
         $('#cars').initDataTables({{ datatable_settings(datatable) }}, {
-          'language': {
-            'url': 'https://cdn.datatables.net/plug-ins/1.10.15/i18n/Bulgarian.json'
+          language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.10.15/i18n/Bulgarian.json'
           },
           searching: true,
           dom: '<"html5buttons"B>lTfgitp',
@@ -58,5 +58,5 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/datatables.min.css"/>
+          href="//cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/b-html5-1.5.4/b-print-1.5.4/datatables.min.css"/>
 {% endblock %}
