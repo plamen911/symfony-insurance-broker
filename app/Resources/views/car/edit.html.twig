@@ -16,7 +16,8 @@
             <div class="text-muted mb-2">
                 <small>
                     Създадено на {{ car.createdAt|date('d.m.Y H:i:s') }} ч. от {{ car.author.fullName ?? '--' }} |
-                    Последна редакция на {{ car.updatedAt|date('d.m.Y H:i:s') }} ч. от {{ car.updater.fullName  ?? '--'}}
+                    Последна редакция на {{ car.updatedAt|date('d.m.Y H:i:s') }} ч.
+                    от {{ car.updater.fullName  ?? '--' }}
                 </small>
             </div>
         </div>
@@ -100,6 +101,19 @@
         <div class="col-md-12 mt-3">
             <a href="{{ path('car_index') }}" class="btn btn-secondary"><i class="fas fa-undo-alt"></i> Отмени</a>
             <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Съхрани</button>
+
+            <div class="btn-group float-right mr-2">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"><i
+                            class="fas fa-plus-circle"></i> Създай полица
+                </button>
+                <div class="dropdown-menu">
+                    {% for policy_type in policy_types.getAll %}
+                        <a class="dropdown-item" href="{{ path('policy_new', {'typeOfPolicy': policy_type.id, 'car': car.id}) }}">{{ policy_type.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
             {% if canDelete %}
                 <a href="#"
                    data-href="{{ path('car_delete', {'car': car.id}) }}"
@@ -146,9 +160,10 @@
                         <td class="text-right">{{ policy.total }}</td>
                         <td class="text-right">{{ policy.paid }}</td>
                         <td class="text-right">{{ policy.balance }}</td>
-                        <td class="text-right"><a href="{{ path('policy_edit', {'id': policy.id}) }}"
-                                                  class="btn btn-sm btn-secondary" title="Редактирай"><i
-                                        class="fas fa-edit"></i> </a></td>
+                        <td class="text-right">
+                            <a href="{{ path('policy_edit', {'id': policy.id}) }}" class="btn btn-sm btn-secondary"
+                               title="Редактирай"><i class="fas fa-edit"></i> </a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
