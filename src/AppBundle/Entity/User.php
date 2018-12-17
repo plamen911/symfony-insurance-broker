@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
- * @UniqueEntity(fields="email", message="Sorry, this e-mail address is already used.")
+ * @UniqueEntity(fields="email", message="Вече има регистриран профил с този и-мейл.")
  */
 class User implements AdvancedUserInterface
 {
@@ -309,6 +309,40 @@ class User implements AdvancedUserInterface
         }
 
         return $stringRoles;
+    }
+
+    /**
+     * @return Role[]|ArrayCollection
+     */
+    public function getProfileRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param Role[]|ArrayCollection $roles
+     * @return User
+     */
+    public function setProfileRoles($roles)
+    {
+        foreach ($roles as $role) {
+            $this->addProfileRole($role);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Role $role
+     * @return User
+     */
+    public function addProfileRole(Role $role)
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+
+        return $this;
     }
 
     /**

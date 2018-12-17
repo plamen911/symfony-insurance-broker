@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Моят профил{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Моят профил</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <h3>Моят профил</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="row">
+            <div class="col-md-6">
+                {% include 'profile/forms/profile.html.twig' with {'form': form, 'user': user} only %}
+                <button type="submit" class="btn btn-dark"><i class="fa fa-check"></i> Съхрани</button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+      $(function () {
+        window.setTimeout(function () {
+          $('#old_password, #new_password').val('')
+        }, 100)
+      })
+    </script>
+{% endblock %}
