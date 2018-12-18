@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Service;
 
 use AppBundle\Entity\TypeOfPolicy;
+use AppBundle\Repository\TypeOfPolicyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -11,17 +12,17 @@ use Doctrine\ORM\EntityManagerInterface;
  * @package AppBundle\Service
  * @author Plamen Markov <plamen@lynxlake.org>
  */
-class TypeOfPolicyService
+class TypeOfPolicyService implements TypeOfPolicyServiceInterface
 {
-    private $em;
+    private $typeOfPolicyRepo;
 
     /**
      * TypeOfPolicyService constructor.
-     * @param EntityManagerInterface $em
+     * @param TypeOfPolicyRepository $typeOfPolicyRepo
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(TypeOfPolicyRepository $typeOfPolicyRepo)
     {
-        $this->em = $em;
+        $this->typeOfPolicyRepo = $typeOfPolicyRepo;
     }
 
     /**
@@ -29,7 +30,6 @@ class TypeOfPolicyService
      */
     public function getAll()
     {
-        return $this->em->getRepository(TypeOfPolicy::class)
-            ->findBy(['isDeleted' => 0], ['position' => 'ASC']);
+        return $this->typeOfPolicyRepo->findBy(['isDeleted' => 0], ['position' => 'ASC']);
     }
 }

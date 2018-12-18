@@ -51,3 +51,7 @@ services:
             - '%aws_bucket_name%'
 
     AppBundle\Service\Aws\UploadInterface: '@AppBundle\Service\Aws\AwsS3Util'
+
+    AppBundle\Service\TypeOfPolicyService:
+        arguments:
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"

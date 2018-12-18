@@ -37,7 +37,7 @@ twig:
     strict_variables: '%kernel.debug%'
     form_themes: ['bootstrap_4_layout.html.twig']
     globals:
-        policy_types: '@AppBundle\Service\TypeOfPolicyService'
+        policy_types: '@AppBundle\Service\TypeOfPolicyServiceInterface'
 
 # Doctrine Configuration
 doctrine:

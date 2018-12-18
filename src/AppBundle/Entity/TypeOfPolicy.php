@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * PolicyType
  *
  * @ORM\Table(name="policy_types")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PolicyTypeRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TypeOfPolicyRepository")
  */
 class TypeOfPolicy
 {
