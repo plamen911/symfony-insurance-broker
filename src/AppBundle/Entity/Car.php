@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Entity;
 
 use AppBundle\Service\Cyr2Lat;
+use AppBundle\Service\Cyr2LatInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -191,15 +192,14 @@ class Car
      */
     private $documents;
 
-    /** @var Cyr2Lat $cyr2Lat */
     private $cyr2Lat;
 
     /**
      * Car constructor.
-     * @param Cyr2Lat|null $cyr2Lat
+     * @param Cyr2LatInterface $cyr2Lat
      * @throws \Exception
      */
-    public function __construct(Cyr2Lat $cyr2Lat = null)
+    public function __construct(Cyr2LatInterface $cyr2Lat = null)
     {
         $this->isRightSteeringWheel = false;
         $this->createdAt = new \DateTime();

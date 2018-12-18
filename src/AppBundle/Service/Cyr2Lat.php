@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Service;
 
@@ -7,7 +8,7 @@ namespace AppBundle\Service;
  * @package AppBundle\Service
  * @author Plamen Markov <plamen@lynxlake.org>
  */
-class Cyr2Lat
+class Cyr2Lat implements Cyr2LatInterface
 {
     /**
      * @param null|string $textCyr
