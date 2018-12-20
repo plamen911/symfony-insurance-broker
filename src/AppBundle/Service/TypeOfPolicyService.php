@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Repository\TypeOfPolicyRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class TypeOfPolicyService

@@ -1,3 +1,4 @@
+{#
 {% if form is defined and form.vars is defined and not form.vars.valid %}
 
     {% set errorsArray = [] %}
@@ -20,6 +21,7 @@
     {% endif %}
 
 {% endif %}
+#}
 
 {% for type, messages in app.session.flashbag.all() %}
     <div class="alert alert-{{ type }} alert-dismissible" role="alert">

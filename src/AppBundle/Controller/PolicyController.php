@@ -11,6 +11,7 @@ use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\FormErrorsServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
@@ -44,15 +45,20 @@ class PolicyController extends Controller
     /** @var UploadInterface $uploadService */
     private $uploadService;
 
+    /** @var FormErrorsServiceInterface $formErrorsService */
+    private $formErrorsService;
+
     /**
      * PolicyController constructor.
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
+     * @param FormErrorsServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorsServiceInterface $formErrorsService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
+        $this->formErrorsService = $formErrorsService;
     }
 
     /**
@@ -186,6 +192,8 @@ class PolicyController extends Controller
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
 
+        $this->formErrorsService->checkErrors($form);
+
         if ($form->isSubmitted() && $form->isValid()) {
             // upload car documents
             if (null !== $request->files->get('documents')) {
@@ -270,6 +278,8 @@ class PolicyController extends Controller
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
+        $this->formErrorsService->checkErrors($form);
+
         $data = [
             'policy' => $policy,
             'form' => $form->createView(),
@@ -342,6 +352,8 @@ class PolicyController extends Controller
 
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
+
+        $this->formErrorsService->checkErrors($form);
 
         $data = [
             'policy' => $policy,

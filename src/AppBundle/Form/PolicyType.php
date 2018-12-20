@@ -128,7 +128,7 @@ class PolicyType extends AbstractType
             if (null !== $policy->getRepresentative()) {
                 $form->add('representative', ClientType::class, [
                     'block_name' => 'policy_form',
-                    'constraints' => [new Valid()]
+                    'constraints' => [new Valid()],
                 ]);
             }
         });
