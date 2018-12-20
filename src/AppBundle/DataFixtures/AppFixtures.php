@@ -9,7 +9,6 @@ use AppBundle\Entity\TypeOfCar;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
-use AppBundle\Service\Cyr2Lat;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -151,11 +150,12 @@ class AppFixtures extends Fixture
 
     /**
      * @param ObjectManager $manager
+     * @throws \Exception
      */
     private function loadCars(ObjectManager $manager)
     {
         foreach ($this->getCarData() as [$idNumber, $carMake, $carModel, $carTypeName]) {
-            $car = new Car(new Cyr2Lat());
+            $car = new Car();
             $car->setIdNumber($idNumber);
             $car->setCarMake($carMake);
             $car->setCarModel($carModel);
