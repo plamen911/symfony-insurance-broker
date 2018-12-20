@@ -9,6 +9,7 @@ use AppBundle\Form\CarType;
 use AppBundle\Service\Aws\UploadInterface;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
  * Class CreatePolicyController
  * @package AppBundle\Controller
  * @author Plamen Markov <plamen@lynxlake.org>
+ *
+ * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class CreatePolicyController extends Controller
 {

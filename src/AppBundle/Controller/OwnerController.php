@@ -7,6 +7,7 @@ use AppBundle\Entity\Client;
 use AppBundle\Form\ClientType;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("owner")
+ * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class OwnerController extends Controller
 {

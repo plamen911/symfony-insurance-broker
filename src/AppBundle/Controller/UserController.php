@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +22,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  * Class UserController
  * @package AppBundle\Controller
  * @author Plamen Markov <plamen@lynxlake.org>
+ *
+ * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class UserController extends Controller
 {
