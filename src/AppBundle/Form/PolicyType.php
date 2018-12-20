@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * https://symfony.com/doc/3.4/form/form_collections.html
@@ -114,17 +115,20 @@ class PolicyType extends AbstractType
 
             if (null !== $policy->getCar()) {
                 $form->add('car', CarType::class, [
-                    'block_name' => 'policy_form'
+                    'block_name' => 'policy_form',
+                    'constraints' => [new Valid()]
                 ]);
             }
             if (null !== $policy->getOwner()) {
                 $form->add('owner', ClientType::class, [
-                    'block_name' => 'policy_form'
+                    'block_name' => 'policy_form',
+                    'constraints' => [new Valid()]
                 ]);
             }
             if (null !== $policy->getRepresentative()) {
                 $form->add('representative', ClientType::class, [
-                    'block_name' => 'policy_form'
+                    'block_name' => 'policy_form',
+                    'constraints' => [new Valid()]
                 ]);
             }
         });

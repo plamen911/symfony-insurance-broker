@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace AppBundle\Entity;
 
-use AppBundle\Service\Cyr2Lat;
 use AppBundle\Service\Cyr2LatInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,6 +34,16 @@ class Car
      *
      * @ORM\Column(name="id_number", type="string", length=191, unique=true)
      * @Assert\NotBlank(message="Рег. номер е задължително поле.")
+     * @Assert\Length(
+     *      min = 7,
+     *      max = 8,
+     *      minMessage = "Рег. номер трябва да съдържа поне {{ limit }} символа",
+     *      maxMessage = "Рег. номер не трябва да е по-дълъг от {{ limit }} символа"
+     * )
+     * @Assert\Regex(
+     *     pattern="/^[A-Z]{1,2}[0-9]{4}[A-Z]{1,2}$/",
+     *     message="Рег. номер трябва да съдържа само главни латински букви и числа"
+     * )
      */
     private $idNumber;
 
@@ -42,6 +51,10 @@ class Car
      * @var string|null
      *
      * @ORM\Column(name="id_frame", type="string", length=191, nullable=true)
+     * @Assert\Regex(
+     *     pattern="/^[A-Z0-9]*$/",
+     *     message="Номер на рама трябва да съдържа само главни латински букви и числа"
+     * )
      */
     private $idFrame;
 
@@ -204,7 +217,7 @@ class Car
         $this->isRightSteeringWheel = false;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
-        $this->cyr2Lat = null === $cyr2Lat ? new Cyr2Lat() : $cyr2Lat;
+        $this->cyr2Lat = null === $cyr2Lat ?  : $cyr2Lat;
         $this->policies = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -228,7 +241,6 @@ class Car
      */
     public function setIdNumber($idNumber)
     {
-        $idNumber = $this->cyr2Lat->transliterate($idNumber);
         $this->idNumber = $idNumber;
 
         return $this;
@@ -253,7 +265,7 @@ class Car
      */
     public function setIdFrame($idFrame = null)
     {
-        $this->idFrame = $this->cyr2Lat->transliterate($idFrame);
+        $this->idFrame = $idFrame;
 
         return $this;
     }
