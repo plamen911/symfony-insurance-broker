@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\ProfileType;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,19 +26,22 @@ class ProfileController extends Controller
 {
     /** @var EntityManagerInterface $em */
     private $em;
-
     /** @var UserPasswordEncoder $encoder */
     private $encoder;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
 
     /**
      * ProfileController constructor.
      * @param EntityManagerInterface $em
      * @param UserPasswordEncoderInterface $encoder
+     * @param FormErrorServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorsService)
     {
         $this->em = $em;
         $this->encoder = $encoder;
+        $this->formErrorService = $formErrorsService;
     }
 
     /**
@@ -52,6 +56,8 @@ class ProfileController extends Controller
         $user = $this->getUser();
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $oldPassword = $request->get('old_password');

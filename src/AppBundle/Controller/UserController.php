@@ -6,11 +6,17 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class UserController
@@ -19,30 +25,51 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class UserController extends Controller
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+    /** @var UserPasswordEncoder $encoder */
+    private $encoder;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
+
+    /**
+     * UserController constructor.
+     * @param EntityManagerInterface $em
+     * @param UserPasswordEncoderInterface $encoder
+     * @param FormErrorServiceInterface $formErrorService
+     */
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorService)
+    {
+        $this->em = $em;
+        $this->encoder = $encoder;
+        $this->formErrorService = $formErrorService;
+    }
+
     /**
      * @Route("/register", name="user_register")
      * @param Request $request
-     * @param EntityManagerInterface $em
+     * @param TokenStorageInterface $tokenStorage
+     * @param SessionInterface $session
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      */
-    public function registerAction(Request $request, EntityManagerInterface $em)
+    public function registerAction(Request $request, TokenStorageInterface $tokenStorage, SessionInterface $session)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
+        $this->formErrorService->checkErrors($form);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->get('security.password_encoder')
-                ->encodePassword($user, $user->getPassword());
+            $password = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $roleRepository = $this->getDoctrine()->getRepository(Role::class);
-            $userRole = $roleRepository->findOneBy(['name' => 'ROLE_ADMIN']);
+            $userRole = $this->em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']);
             $user->addRole($userRole);
 
-            $em->persist($user);
-            $em->flush();
+            $this->em->persist($user);
+            $this->em->flush();
 
             $token = new UsernamePasswordToken(
                 $user,
@@ -51,8 +78,8 @@ class UserController extends Controller
                 $user->getRoles()
             );
 
-            $this->get('security.token_storage')->setToken($token);
-            $this->get('session')->set('_security_main', serialize($token));
+            $tokenStorage->setToken($token);
+            $session->set('_security_main', serialize($token));
 
             $this->addFlash('success', 'Сега сте успешно регистриран.');
 

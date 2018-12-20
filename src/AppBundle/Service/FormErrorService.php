@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
  * @package AppBundle\Service
  * @author Plamen Markov <plamen@lynxlake.org>
  */
-class FormErrorsService implements FormErrorsServiceInterface
+class FormErrorService implements FormErrorServiceInterface
 {
     private $container;
 

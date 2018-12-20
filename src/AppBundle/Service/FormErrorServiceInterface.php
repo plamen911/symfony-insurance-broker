@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
  * Interface FormErrorsServiceInterface
  * @package AppBundle\Service
  */
-interface FormErrorsServiceInterface
+interface FormErrorServiceInterface
 {
     /**
      * @param FormInterface $form

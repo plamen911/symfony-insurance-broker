@@ -11,7 +11,7 @@ use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
-use AppBundle\Service\FormErrorsServiceInterface;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
@@ -44,21 +44,20 @@ class PolicyController extends Controller
     private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
-
-    /** @var FormErrorsServiceInterface $formErrorsService */
-    private $formErrorsService;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
 
     /**
      * PolicyController constructor.
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
-     * @param FormErrorsServiceInterface $formErrorsService
+     * @param FormErrorServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorsServiceInterface $formErrorsService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
-        $this->formErrorsService = $formErrorsService;
+        $this->formErrorService = $formErrorsService;
     }
 
     /**
@@ -192,7 +191,7 @@ class PolicyController extends Controller
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
 
-        $this->formErrorsService->checkErrors($form);
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // upload car documents
@@ -278,7 +277,7 @@ class PolicyController extends Controller
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
-        $this->formErrorsService->checkErrors($form);
+        $this->formErrorService->checkErrors($form);
 
         $data = [
             'policy' => $policy,
@@ -353,7 +352,7 @@ class PolicyController extends Controller
         $form = $this->createForm(PolicyType::class, $policy);
         $form->handleRequest($request);
 
-        $this->formErrorsService->checkErrors($form);
+        $this->formErrorService->checkErrors($form);
 
         $data = [
             'policy' => $policy,

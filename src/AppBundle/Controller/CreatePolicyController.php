@@ -7,6 +7,7 @@ use AppBundle\Entity\Car;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
 use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,16 +24,20 @@ class CreatePolicyController extends Controller
     private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
 
     /**
      * PolicyController constructor.
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
+     * @param FormErrorServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
+        $this->formErrorService = $formErrorsService;
     }
 
     /**
@@ -48,12 +53,14 @@ class CreatePolicyController extends Controller
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
 
+        $this->formErrorService->checkErrors($form);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($car);
             $em->flush();
 
-            return $this->redirectToRoute('car_show', ['id' => $car->getId()]);
+            return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
 
         return $this->render('create-policy/car.html.twig', [

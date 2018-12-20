@@ -9,6 +9,7 @@ use AppBundle\Entity\Document;
 use AppBundle\Form\CarType;
 use AppBundle\Form\ClientType;
 use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -38,16 +39,20 @@ class CarController extends Controller
     private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
 
     /**
      * PolicyController constructor.
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
+     * @param FormErrorServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
+        $this->formErrorService = $formErrorsService;
     }
 
     /**
@@ -133,6 +138,8 @@ class CarController extends Controller
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
 
+        $this->formErrorService->checkErrors($form);
+
         if ($form->isSubmitted() && $form->isValid()) {
             // upload car documents
             if (null !== $request->files->get('documents')) {
@@ -187,6 +194,8 @@ class CarController extends Controller
 
         $form = $this->createForm(CarType::class, $car);
         $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // upload car documents
@@ -327,6 +336,8 @@ class CarController extends Controller
         $client = new Client();
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ('owner' === $type) {

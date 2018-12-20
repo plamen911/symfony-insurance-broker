@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
 use AppBundle\Form\ClientType;
+use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -22,14 +24,18 @@ class OwnerController extends Controller
 {
     /** @var EntityManagerInterface $em */
     private $em;
+    /** @var FormErrorServiceInterface $formErrorService */
+    private $formErrorService;
 
     /**
      * OwnerController constructor.
      * @param EntityManagerInterface $em
+     * @param FormErrorServiceInterface $formErrorsService
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, FormErrorServiceInterface $formErrorsService)
     {
         $this->em = $em;
+        $this->formErrorService = $formErrorsService;
     }
 
     /**
@@ -62,6 +68,8 @@ class OwnerController extends Controller
         $owner = new Client();
         $form = $this->createForm(ClientType::class, $owner);
         $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($owner);
@@ -105,14 +113,17 @@ class OwnerController extends Controller
      * @param Request $request
      * @param Client $owner
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function editAction(Request $request, Client $owner)
     {
         $deleteForm = $this->createDeleteForm($owner);
-        $editForm = $this->createForm(ClientType::class, $owner);
-        $editForm->handleRequest($request);
+        $form = $this->createForm(ClientType::class, $owner);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
+        $this->formErrorService->checkErrors($form);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $owner->setUpdatedAt(new \DateTime());
             $this->em->flush();
 
@@ -123,7 +134,7 @@ class OwnerController extends Controller
 
         return $this->render('owner/edit.html.twig', [
             'owner' => $owner,
-            'form' => $editForm->createView(),
+            'form' => $form->createView(),
             'delete_form' => $deleteForm->createView(),
             'isNew' => false
         ]);
@@ -139,6 +150,8 @@ class OwnerController extends Controller
     {
         $form = $this->createDeleteForm($client);
         $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
