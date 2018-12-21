@@ -8,6 +8,16 @@
         {{ form_row(form.new_password) }}
     </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <label>Права:</label>
+        <ul class="list-unstyled">
+            {% for role in user.profileRoles %}
+                <li>{{ role.title }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 
 {#<div class="row">
     <div class="col-md-12">
