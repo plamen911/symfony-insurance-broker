@@ -31,7 +31,7 @@ class ReportController extends Controller
     }
 
     /**
-     * @Route("/payment")
+     * @Route("/car/payment", name="report_car_payment", methods={"GET"})
      */
     public function paymentAction()
     {
