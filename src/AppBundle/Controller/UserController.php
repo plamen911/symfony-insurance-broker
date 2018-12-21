@@ -17,6 +17,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+//
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\BoolColumn;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
 
 /**
  * Class UserController
@@ -28,6 +34,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class UserController extends Controller
 {
+    use DataTablesTrait;
+
     /** @var EntityManagerInterface $em */
     private $em;
     /** @var UserPasswordEncoder $encoder */
@@ -51,16 +59,87 @@ class UserController extends Controller
     /**
      * Lists all car users.
      *
-     * @Route("/user/", name="user_index", methods={"GET"})
+     * @Route("/user/", name="user_index", methods={"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         /** @var User $users */
-        $users = $this->em->getRepository(User::class)->findAllWithRoles();
+        //$users = $this->em->getRepository(User::class)->findAllWithRoles();
 
-        return $this->render('user/index.html.twig', array(
-            'users' => $users,
-        ));
+        // https://omines.github.io/datatables-bundle/
+        $table = $this->createDataTable([
+            'stateSave' => true,
+            'pageLength' => 25,
+            'autoWidth' => true,
+            'searching' => true,
+        ])
+            ->add('fullName', TextColumn::class, ['label' => 'Име'])
+            ->add('email', TextColumn::class, ['label' => 'И-мейл'])
+            ->add('roles', TextColumn::class, [
+                'searchable' => false,
+                'label' => 'Права',
+                'render' => function ($value, $user) {
+                    $output = '<ul class="list-unstyled">';
+                    /** @var User $user */
+                    foreach ($user->getProfileRoles() as $role) {
+                        $output .= '<li>' . $role->getTitle() . '</li>';
+                    }
+                    $output .= '</ul>';
+                    return $output;
+                }
+            ])
+            ->add('createdAt', DateTimeColumn::class, [
+                'searchable' => false,
+                'format' => 'd.m.Y H:i:s',
+                'label' => 'Добавен на',
+            ])
+            ->add('enabled', BoolColumn::class, [
+                'label' => 'Активен?',
+                'className' => 'text-center',
+                'render' => function($value, $user) {
+                    $output = '';
+                    /** @var User $user */
+                    if ($user->isEnabled()) {
+                        $output .= '<span class="badge badge-pill badge-success">Да</span>';
+                    } else {
+                        $output .= '<span class="badge badge-pill badge-danger">Не</span>';
+                    }
+                    return $output;
+                }
+            ])
+            ->add('buttons', TextColumn::class, [
+                'label' => '',
+                'searchable' => false,
+                'className' => 'text-center',
+                'render' => function($value, $user) {
+                    /** @var User $user */
+                    return '<a href="' . $this->generateUrl('user_edit', ['user' => $user->getId()]) . '" class="btn btn-sm btn-secondary" title="Редактирай"><i class="fas fa-edit"></i></a>';
+                }
+            ])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => User::class
+            ])
+            ->handleRequest($request);
+
+        if ($table->isCallback()) {
+            return $table->getResponse();
+        }
+
+        return $this->render('user/index.html.twig', [
+            'datatable' => $table
+        ]);
+    }
+
+    /**
+     * @Route("/{user}/edit", name="user_edit", methods={"GET", "POST"}, requirements={"user": "\d+"})
+     * @param Request $request
+     * @param User $user
+     */
+    public function editAction(Request $request, User $user)
+    {
+
     }
 
     /**
