@@ -40,16 +40,18 @@ class User implements AdvancedUserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=191)
-     * @Assert\NotBlank(message="Паролата е задължителна.")
+     * @Assert\NotBlank(message="Паролата е задължителна.", groups={"registration"})
      * @Assert\Length(
      *     min="6",
      *     max="12",
      *     minMessage="Паролата трябва да е дълга поне {{ limit }} символа.",
-     *     maxMessage="Паролата трябва да съдържа не повече от {{ limit }} символа."
+     *     maxMessage="Паролата трябва да съдържа не повече от {{ limit }} символа.",
+     *     groups={"registration"}
      * )
      * @Assert\Regex(
      *     pattern="/^[a-z0-9]+$/",
-     *     message="Паролата трябва се състои само от малки букви и цифри."
+     *     message="Паролата трябва се състои само от малки букви и цифри.",
+     *     groups={"registration"}
      * )
      */
     private $password;

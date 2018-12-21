@@ -27,7 +27,8 @@ class SecurityController extends Controller
         $lastUsername = $authenticationUtils->getLastUsername();
 
         if ($error) {
-            $this->addFlash('danger', $error->getMessage());
+            // $this->addFlash('danger', $error->getMessage());
+            $this->addFlash('danger', 'Невалиден и-мейл или парола.');
         }
 
         return $this->render('security/login.html.twig', [

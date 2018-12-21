@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -48,29 +49,42 @@ class ProfileType extends AbstractType
                 ]
             ])
             ->add('email', EmailType::class, ['label' => 'И-мейл', 'attr' => ['placeholder' => 'И-мейл']])
+            ->add('old_password', PasswordType::class, [
+                'mapped' => false,
+                'label' => 'Стара парола',
+                'attr' => [
+                    'placeholder' => 'Стара парола'
+                ]
+            ])->add('new_password', PasswordType::class, [
+                'mapped' => false,
+                'label' => 'Нова парола',
+                'attr' => [
+                    'placeholder' => 'Нова парола'
+                ]
+            ])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var User $user */
-            $user = $event->getData();
-            $form = $event->getForm();
-            if ($this->security->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])) {
-                $form->add('profileRoles', EntityType::class, [
-                    'label' => 'Права',
-                    'class' => Role::class,
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('r')
-                            ->where('r.name != :name')
-                            ->setParameter('name', 'ROLE_SUPER_ADMIN')
-                            ->orderBy('r.position', 'ASC');
-                    },
-                    'choice_label' => 'title',
-                    'multiple' => true,
-                    'expanded' => true,
-                    'attr' => ['class' => 'checkbox_container']
-                ]);
-            }
-        });
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+//            /** @var User $user */
+//            $user = $event->getData();
+//            $form = $event->getForm();
+//            if ($this->security->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])) {
+//                $form->add('profileRoles', EntityType::class, [
+//                    'label' => 'Права',
+//                    'class' => Role::class,
+//                    'query_builder' => function (EntityRepository $er) {
+//                        return $er->createQueryBuilder('r')
+//                            ->where('r.name != :name')
+//                            ->setParameter('name', 'ROLE_SUPER_ADMIN')
+//                            ->orderBy('r.position', 'ASC');
+//                    },
+//                    'choice_label' => 'title',
+//                    'multiple' => true,
+//                    'expanded' => true,
+//                    'attr' => ['class' => 'checkbox_container']
+//                ]);
+//            }
+//        });
     }
 
     /**

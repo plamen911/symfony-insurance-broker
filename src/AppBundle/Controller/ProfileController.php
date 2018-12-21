@@ -60,8 +60,8 @@ class ProfileController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $oldPassword = $request->get('old_password');
-            $newPassword = $request->get('new_password');
+            $oldPassword = $form->get('old_password')->getData();
+            $newPassword = $form->get('new_password')->getData();
             // Change user password
             if (!empty($oldPassword) && !empty($newPassword)) {
                 if (!$this->encoder->isPasswordValid($user, $oldPassword)) {
