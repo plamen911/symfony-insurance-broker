@@ -23,6 +23,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  * @package AppBundle\Controller
  * @author Plamen Markov <plamen@lynxlake.org>
  *
+ * Notice - This way the user registration is disabled
  * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
  */
 class UserController extends Controller
