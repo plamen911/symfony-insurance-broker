@@ -37,7 +37,13 @@
                             </ul>
                         </td>
                         <td>{{ user.createdAt|date('d.m.Y H:i:s') }}</td>
-                        <td class="text-center">{{ user.enabled ? 'Да' : 'Не' }}</td>
+                        <td class="text-center">
+                            {% if user.enabled %}
+                                <span class="badge badge-pill badge-success">Да</span>
+                            {% else %}
+                                <span class="badge badge-pill badge-danger">Не</span>
+                            {% endif %}
+                        </td>
                         <td class="text-center">
                             <a href="/car/1/edit" class="btn btn-sm btn-secondary" title="Редактирай"><i
                                         class="fas fa-edit"></i></a>
