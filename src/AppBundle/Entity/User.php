@@ -31,7 +31,7 @@ class User implements AdvancedUserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=191, unique=true)
-     * @Assert\NotBlank(message="This field is required.")
+     * @Assert\NotBlank(message="И-мейлът е задължителен.")
      * @Assert\Email()
      */
     private $email;
@@ -40,7 +40,17 @@ class User implements AdvancedUserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=191)
-     * @Assert\NotBlank(message="Password field is required.")
+     * @Assert\NotBlank(message="Паролата е задължителна.")
+     * @Assert\Length(
+     *     min="6",
+     *     max="12",
+     *     minMessage="Паролата трябва да е дълга поне {{ limit }} символа.",
+     *     maxMessage="Паролата трябва да съдържа не повече от {{ limit }} символа."
+     * )
+     * @Assert\Regex(
+     *     pattern="/^[a-z0-9]+$/",
+     *     message="Паролата трябва се състои само от малки букви и цифри."
+     * )
      */
     private $password;
 
