@@ -200,7 +200,7 @@ class Car
     /**
      * @var ArrayCollection|Document[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="car", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="car", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $documents;
 

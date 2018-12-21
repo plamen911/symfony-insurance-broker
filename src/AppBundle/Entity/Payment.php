@@ -58,6 +58,28 @@ class Payment
     private $isDeferred;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_reminded", type="boolean", nullable=true)
+     */
+    private $isReminded;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="reminded_at", type="datetime", nullable=true)
+     */
+    private $remindedAt;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="reminders")
+     * @ORM\JoinColumn(name="reminded_by", referencedColumnName="id")
+     */
+    private $reminder;
+
+    /**
      * @var Policy
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Policy", inversedBy="payments")
      * @ORM\JoinColumn(name="policy_id", referencedColumnName="id")
@@ -66,12 +88,14 @@ class Payment
 
     /**
      * Payment constructor.
+     * @throws \Exception
      */
     public function __construct()
     {
         $this->amountDue = 0;
         $this->amountPaid = 0;
         $this->isDeferred = false;
+        $this->isReminded = false;
         $this->dueAt = new \DateTime();
     }
 
@@ -224,4 +248,60 @@ class Payment
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
+    public function getIsReminded(): ?bool
+    {
+        return $this->isReminded;
+    }
+
+    /**
+     * @param bool|null $isReminded
+     * @return Payment
+     */
+    public function setIsReminded(?bool $isReminded): Payment
+    {
+        $this->isReminded = $isReminded;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getRemindedAt(): ?\DateTime
+    {
+        return $this->remindedAt;
+    }
+
+    /**
+     * @param \DateTime|null $remindedAt
+     * @return Payment
+     */
+    public function setRemindedAt(?\DateTime $remindedAt): Payment
+    {
+        $this->remindedAt = $remindedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getReminder(): User
+    {
+        return $this->reminder;
+    }
+
+    /**
+     * @param User $user
+     * @return Payment
+     */
+    public function setReminder(?User $user): Payment
+    {
+        $this->reminder = $user;
+
+        return $this;
+    }
 }

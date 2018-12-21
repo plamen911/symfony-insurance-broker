@@ -222,7 +222,7 @@ class Policy
     /**
      * @var ArrayCollection|Payment[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment", mappedBy="policy", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $payments;
 

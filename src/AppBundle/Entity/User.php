@@ -129,6 +129,12 @@ class User implements AdvancedUserInterface
     private $updatedCars;
 
     /**
+     * @var ArrayCollection|Payment[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment", mappedBy="reminder")
+     */
+    private $reminders;
+
+    /**
      * User constructor.
      * @throws \Exception
      */
@@ -140,6 +146,7 @@ class User implements AdvancedUserInterface
         $this->updatedPolicies = new ArrayCollection();
         $this->createdCars = new ArrayCollection();
         $this->updatedCars = new ArrayCollection();
+        $this->reminders = new ArrayCollection();
         $this->setEnabled(true);
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -665,5 +672,39 @@ class User implements AdvancedUserInterface
 
         return $this;
     }
-}
 
+    /**
+     * @return Payment[]|ArrayCollection
+     */
+    public function getReminders()
+    {
+        return $this->reminders;
+    }
+
+    /**
+     * @param Payment[]|ArrayCollection $payments
+     * @return User
+     */
+    public function setReminders($payments): User
+    {
+        foreach ($payments as $payment) {
+            $this->addReminder($payment);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Payment $payment
+     * @return $this
+     */
+    public function addReminder(Payment $payment)
+    {
+        if (!$this->reminders->contains($payment)) {
+            $this->reminders->add($payment);
+            $payment->setReminder($this);
+        }
+
+        return $this;
+    }
+}
