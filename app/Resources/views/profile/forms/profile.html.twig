@@ -10,7 +10,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <label>Права:</label>
+        <label>Роли:</label>
         <ul class="list-unstyled">
             {% for role in user.profileRoles %}
                 <li>{{ role.title }}</li>
@@ -18,19 +18,3 @@
         </ul>
     </div>
 </div>
-
-{#<div class="row">
-    <div class="col-md-12">
-        {% if app.user.isAdmin() %}
-            {{ form_row(form.profileRoles) }}
-        {% else %}
-            <label>Права:</label>
-            <ul class="list-unstyled">
-                {% for role in user.profileRoles %}
-                    <li>{{ role.title }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-</div>#}
-

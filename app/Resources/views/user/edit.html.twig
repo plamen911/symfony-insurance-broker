@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Профил на {{ user.fullName }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('user_index') }}">Списък</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Профил на {{ user.fullName }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <h3>Профил на {{ user.fullName }}</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'multipart': true}) }}
+    <div class="row">
+        <div class="col-md-6">
+            {% include 'user/forms/profile.html.twig' with {'form': form, 'user': user} only %}
+            <button type="submit" class="btn btn-dark"><i class="fa fa-check"></i> Съхрани</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

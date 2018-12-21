@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
+use AppBundle\Form\UserProfileType;
 use AppBundle\Form\UserType;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -65,9 +66,6 @@ class UserController extends Controller
      */
     public function indexAction(Request $request)
     {
-        /** @var User $users */
-        //$users = $this->em->getRepository(User::class)->findAllWithRoles();
-
         // https://omines.github.io/datatables-bundle/
         $table = $this->createDataTable([
             'stateSave' => true,
@@ -79,7 +77,7 @@ class UserController extends Controller
             ->add('email', TextColumn::class, ['label' => 'И-мейл'])
             ->add('roles', TextColumn::class, [
                 'searchable' => false,
-                'label' => 'Права',
+                'label' => 'Роли',
                 'render' => function ($value, $user) {
                     $output = '<ul class="list-unstyled">';
                     /** @var User $user */
@@ -136,10 +134,37 @@ class UserController extends Controller
      * @Route("/{user}/edit", name="user_edit", methods={"GET", "POST"}, requirements={"user": "\d+"})
      * @param Request $request
      * @param User $user
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function editAction(Request $request, User $user)
     {
+        if ($user->getId() === $this->getUser()->getId()) {
+            return $this->redirectToRoute('profile_edit');
+        }
 
+        $form = $this->createForm(UserProfileType::class, $user);
+        $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (0 === count($user->getRoles())) {
+                $this->addFlash('danger', 'Профилът трябва да има поне една роля.');
+                return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
+            }
+            $user->setUpdatedAt(new \DateTime());
+            $this->em->flush();
+
+            $this->addFlash('success', 'Профилът бе успешно редактиран.');
+
+            return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
+        }
+
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
     }
 
     /**

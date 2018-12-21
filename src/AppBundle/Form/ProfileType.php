@@ -70,7 +70,7 @@ class ProfileType extends AbstractType
 //            $form = $event->getForm();
 //            if ($this->security->isGranted(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN'])) {
 //                $form->add('profileRoles', EntityType::class, [
-//                    'label' => 'Права',
+//                    'label' => 'Роли',
 //                    'class' => Role::class,
 //                    'query_builder' => function (EntityRepository $er) {
 //                        return $er->createQueryBuilder('r')
