@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
-use AppBundle\Form\UserProfileType;
+use AppBundle\Form\ProfileType;
 use AppBundle\Form\UserType;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -96,7 +96,7 @@ class UserController extends Controller
             ->add('enabled', BoolColumn::class, [
                 'label' => 'Активен?',
                 'className' => 'text-center',
-                'render' => function($value, $user) {
+                'render' => function ($value, $user) {
                     $output = '';
                     /** @var User $user */
                     if ($user->isEnabled()) {
@@ -111,7 +111,7 @@ class UserController extends Controller
                 'label' => '',
                 'searchable' => false,
                 'className' => 'text-center',
-                'render' => function($value, $user) {
+                'render' => function ($value, $user) {
                     /** @var User $user */
                     return '<a href="' . $this->generateUrl('user_edit', ['user' => $user->getId()]) . '" class="btn btn-sm btn-secondary" title="Редактирай"><i class="fas fa-edit"></i></a>';
                 }
@@ -131,6 +131,44 @@ class UserController extends Controller
     }
 
     /**
+     * @Route("/user/new", name="user_new", methods={"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
+     */
+    public function newAction(Request $request)
+    {
+        $user = new User();
+        $form = $this->createForm(ProfileType::class, $user, ['user' => $this->getUser()]);
+        $form->handleRequest($request);
+
+        $this->formErrorService->checkErrors($form);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (0 === count($user->getRoles())) {
+                $this->addFlash('danger', 'Профилът трябва да има поне една роля.');
+
+                return $this->render('user/new.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+
+            $password = $this->encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($password);
+            $this->em->persist($user);
+            $this->em->flush();
+
+            $this->addFlash('success', 'Профилът бе успешно създаден.');
+
+            return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
+        }
+
+        return $this->render('user/new.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * @Route("/{user}/edit", name="user_edit", methods={"GET", "POST"}, requirements={"user": "\d+"})
      * @param Request $request
      * @param User $user
@@ -143,7 +181,7 @@ class UserController extends Controller
             return $this->redirectToRoute('profile_edit');
         }
 
-        $form = $this->createForm(UserProfileType::class, $user);
+        $form = $this->createForm(ProfileType::class, $user, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         $this->formErrorService->checkErrors($form);
@@ -151,8 +189,29 @@ class UserController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if (0 === count($user->getRoles())) {
                 $this->addFlash('danger', 'Профилът трябва да има поне една роля.');
-                return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
+
+                return $this->render('user/edit.html.twig', [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                ]);
             }
+
+            $oldPassword = $form->get('old_password')->getData();
+            $newPassword = $form->get('new_password')->getData();
+            // Change user password
+            if (!empty($oldPassword) && !empty($newPassword)) {
+                if (!$this->encoder->isPasswordValid($user, $oldPassword)) {
+                    $this->addFlash('danger', 'Грешна стара парола!');
+
+                    return $this->render('user/edit.html.twig', [
+                        'user' => $user,
+                        'form' => $form->createView(),
+                    ]);
+                }
+                $user->setPassword($this->encoder->encodePassword($user, $newPassword));
+                $this->addFlash('success', 'Паролата бе успешно променена.');
+            }
+
             $user->setUpdatedAt(new \DateTime());
             $this->em->flush();
 

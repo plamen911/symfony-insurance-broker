@@ -16,7 +16,26 @@
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
         <div class="row">
             <div class="col-md-6">
-                {% include 'profile/forms/profile.html.twig' with {'form': form, 'user': user} only %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.full_name) }}
+                        {{ form_row(form.email) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.old_password) }}
+                        {{ form_row(form.new_password) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Роли:</label>
+                        <ul class="list-unstyled">
+                            {% for role in user.profileRoles %}
+                                <li>{{ role.title }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-dark"><i class="fa fa-check"></i> Съхрани</button>
             </div>
         </div>

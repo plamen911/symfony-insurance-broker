@@ -49,8 +49,8 @@ class User implements AdvancedUserInterface
      *     groups={"registration"}
      * )
      * @Assert\Regex(
-     *     pattern="/^[a-z0-9]+$/",
-     *     message="Паролата трябва се състои само от малки букви и цифри.",
+     *     pattern="/^[A-Za-z0-9]+$/",
+     *     message="Паролата трябва се състои само от малки и главни букви и цифри.",
      *     groups={"registration"}
      * )
      */

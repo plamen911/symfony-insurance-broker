@@ -54,7 +54,7 @@ class ProfileController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        $form = $this->createForm(ProfileType::class, $user);
+        $form = $this->createForm(ProfileType::class, $user, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         $this->formErrorService->checkErrors($form);
