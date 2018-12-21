@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Списък потребители{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Списък</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <h3>Списък потребители</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Име</th>
+                    <th>И-мейл</th>
+                    <th>Права</th>
+                    <th>Добавен на</th>
+                    <th>Активен?</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.fullName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <ul class="list-unstyled">
+                                {% for role in user.profileRoles %}
+                                    <li>{{ role.title }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ user.createdAt|date('d.m.Y H:i:s') }}</td>
+                        <td class="text-center">{{ user.enabled ? 'Да' : 'Не' }}</td>
+                        <td class="text-center">
+                            <a href="/car/1/edit" class="btn btn-sm btn-secondary" title="Редактирай"><i
+                                        class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

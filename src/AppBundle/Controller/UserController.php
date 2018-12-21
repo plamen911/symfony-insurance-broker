@@ -49,6 +49,21 @@ class UserController extends Controller
     }
 
     /**
+     * Lists all car users.
+     *
+     * @Route("/user/", name="user_index", methods={"GET"})
+     */
+    public function indexAction()
+    {
+        /** @var User $users */
+        $users = $this->em->getRepository(User::class)->findAllWithRoles();
+
+        return $this->render('user/index.html.twig', array(
+            'users' => $users,
+        ));
+    }
+
+    /**
      * @Route("/register", name="user_register")
      * @param Request $request
      * @param TokenStorageInterface $tokenStorage

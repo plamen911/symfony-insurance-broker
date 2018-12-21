@@ -11,4 +11,18 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @return mixed
+     */
+    public function findAllWithRoles()
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.roles', 'r')
+            ->select('u, r')
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->setFirstResult(0)
+            ->setMaxResults(100)
+            ->getResult();
+    }
 }
