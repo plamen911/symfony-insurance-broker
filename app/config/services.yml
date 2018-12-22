@@ -55,3 +55,9 @@ services:
     AppBundle\Service\TypeOfPolicyService:
         arguments:
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
+
+    AppBundle\Service\ReportService:
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Payment')"

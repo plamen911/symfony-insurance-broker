@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Payment;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\ReportServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -21,16 +21,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ReportController extends Controller
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
+    /** @var ReportServiceInterface $reportService */
+    private $reportService;
 
     /**
      * ReportController constructor.
-     * @param EntityManagerInterface $em
+     * @param ReportServiceInterface $reportService
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ReportServiceInterface $reportService)
     {
-        $this->em = $em;
+        $this->reportService = $reportService;
     }
 
     /**
@@ -41,10 +41,10 @@ class ReportController extends Controller
     public function paymentAction()
     {
         return $this->render('report/payment.html.twig', [
-            'overdue_payments' => $this->getOverduePayments(),
-            'payments_after_one_week' => $this->getPaymentsAfterOneWeek(),
-            'payments_after_two_weeks' => $this->getPaymentsAfterTwoWeeks(),
-            'payments_after_three_weeks' => $this->getPaymentsAfterThreeWeeks(),
+            'overdue_payments' => $this->reportService->getOverduePayments(),
+            'payments_after_one_week' => $this->reportService->getPaymentsAfterOneWeek(),
+            'payments_after_two_weeks' => $this->reportService->getPaymentsAfterTwoWeeks(),
+            'payments_after_three_weeks' => $this->reportService->getPaymentsAfterThreeWeeks(),
         ]);
     }
 
@@ -59,15 +59,7 @@ class ReportController extends Controller
     {
         $isReminded = 1 === (int)$request->request->get('isReminded', 0);
         $payment->setIsReminded($isReminded);
-        if ($isReminded) {
-            $payment->setRemindedAt(new \DateTime());
-            $payment->setReminder($this->getUser());
-        } else {
-            $payment->setRemindedAt(null);
-            $payment->setReminder(null);
-        }
-        $this->em->merge($payment);
-        $this->em->flush();
+        $this->reportService->reminder($payment, $isReminded);
 
         return $this->json([
             'isReminded' => $payment->getIsReminded() ? 1 : 0,
@@ -80,49 +72,5 @@ class ReportController extends Controller
             'dueAt' => null !== $payment->getDueAt() ? $payment->getDueAt()->format('d.m.Y') : '',
             'policyType' => null !== $payment->getPolicy()->getPolicyType() ? $payment->getPolicy()->getPolicyType()->getName() : ''
         ], Response::HTTP_OK);
-    }
-
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getOverduePayments()
-    {
-        $startDate = new \DateTime('-1 year');
-        $endDate = new \DateTime();
-        return $this->em->getRepository(Payment::class)->findAllByDateRange($startDate, $endDate);
-    }
-
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getPaymentsAfterOneWeek()
-    {
-        $startDate = new \DateTime();
-        $endDate = new \DateTime('+1 week');
-        return $this->em->getRepository(Payment::class)->findAllByDateRange($startDate, $endDate);
-    }
-
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getPaymentsAfterTwoWeeks()
-    {
-        $startDate = new \DateTime('+1 week');
-        $endDate = new \DateTime('+2 week');
-        return $this->em->getRepository(Payment::class)->findAllByDateRange($startDate, $endDate);
-    }
-
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getPaymentsAfterThreeWeeks()
-    {
-        $startDate = new \DateTime('+2 week');
-        $endDate = new \DateTime('+3 week');
-        return $this->em->getRepository(Payment::class)->findAllByDateRange($startDate, $endDate);
     }
 }
