@@ -10,6 +10,10 @@ parameters:
             key: '%aws_key%'
             secret: '%aws_secret%'
 
+    pusher_options:
+        cluster: '%pusher_cluster%'
+        useTLS: true
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -52,6 +56,8 @@ services:
 
     AppBundle\Service\Aws\UploadInterface: '@AppBundle\Service\Aws\AwsS3Util'
 
+    AppBundle\Service\Pusher\RealTimeServiceInterface: '@AppBundle\Service\Pusher\PusherService'
+
     AppBundle\Service\TypeOfPolicyService:
         arguments:
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
@@ -76,3 +82,15 @@ services:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Car')"
             - '@AppBundle\Service\Aws\UploadInterface'
+
+    Pusher\Pusher:
+        arguments:
+            - '%pusher_key%'
+            - '%pusher_secret%'
+            - '%pusher_app_id%'
+            - '%pusher_options%'
+
+    AppBundle\Service\Pusher\PusherService:
+        arguments:
+            - '@Pusher\Pusher'
+            - '%pusher_channel%'

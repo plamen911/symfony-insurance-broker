@@ -28,3 +28,4 @@ parameters:
     pusher_key: your_pusher_key
     pusher_secret: your_pusher_secret
     pusher_cluster: your_pusher_cluster
+    pusher_channel: insurance-broker-channel

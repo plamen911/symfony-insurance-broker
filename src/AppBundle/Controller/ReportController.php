@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Payment;
+use AppBundle\Service\Pusher\RealTimeServiceInterface;
 use AppBundle\Service\ReportServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,16 +22,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ReportController extends Controller
 {
+    const EVENT_NAME = 'remind-event';
+
     /** @var ReportServiceInterface $reportService */
     private $reportService;
+
+    /** @var RealTimeServiceInterface $realTimeService */
+    private $realTimeService;
 
     /**
      * ReportController constructor.
      * @param ReportServiceInterface $reportService
+     * @param RealTimeServiceInterface $realTimeService
      */
-    public function __construct(ReportServiceInterface $reportService)
+    public function __construct(ReportServiceInterface $reportService, RealTimeServiceInterface $realTimeService)
     {
         $this->reportService = $reportService;
+        $this->realTimeService = $realTimeService;
     }
 
     /**
@@ -41,6 +49,7 @@ class ReportController extends Controller
     public function paymentAction()
     {
         return $this->render('report/payment.html.twig', [
+            'event_name' => self::EVENT_NAME,
             'overdue_payments' => $this->reportService->getOverduePayments(),
             'payments_after_one_week' => $this->reportService->getPaymentsAfterOneWeek(),
             'payments_after_two_weeks' => $this->reportService->getPaymentsAfterTwoWeeks(),
@@ -61,7 +70,8 @@ class ReportController extends Controller
         $payment->setIsReminded($isReminded);
         $this->reportService->reminder($payment, $isReminded);
 
-        return $this->json([
+        $data = [
+            'paymentId' => $payment->getId(),
             'isReminded' => $payment->getIsReminded() ? 1 : 0,
             'reminder' => null !== $payment->getReminder() ? $payment->getReminder()->getFullName() : '',
             'remindedAt' => null !== $payment->getRemindedAt() ? $payment->getRemindedAt()->format('d.m.Y H:i:s') : '',
@@ -71,6 +81,16 @@ class ReportController extends Controller
             'paymentOrder' => $payment->getPaymentOrder(),
             'dueAt' => null !== $payment->getDueAt() ? $payment->getDueAt()->format('d.m.Y') : '',
             'policyType' => null !== $payment->getPolicy()->getPolicyType() ? $payment->getPolicy()->getPolicyType()->getName() : ''
-        ], Response::HTTP_OK);
+        ];
+
+        try {
+            $this->realTimeService
+                ->setEvent(self::EVENT_NAME)
+                ->dispatch($data);
+        } catch (\Exception $ex) {
+            return $this->json(['error' => $ex->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return $this->json($data, Response::HTTP_OK);
     }
 }

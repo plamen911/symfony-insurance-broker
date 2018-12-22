@@ -26,6 +26,7 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "omines/datatables-bundle": "^0.2.1",
         "pugx/autocompleter-bundle": "^1.4",
+        "pusher/pusher-php-server": "^3.2",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",
         "symfony/monolog-bundle": "^3.1.0",

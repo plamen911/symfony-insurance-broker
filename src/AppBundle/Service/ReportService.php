@@ -6,6 +6,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\User;
 use AppBundle\Repository\PaymentRepository;
+use AppBundle\Service\Pusher\RealTimeServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -30,7 +31,6 @@ class ReportService implements ReportServiceInterface
      * @param EntityManagerInterface $em
      * @param TokenStorageInterface $tokenStorage
      * @param PaymentRepository $paymentRepo
-     * @throws \Exception
      */
     public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, PaymentRepository $paymentRepo)
     {
