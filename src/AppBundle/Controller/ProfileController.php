@@ -6,13 +6,11 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProfileType;
 use AppBundle\Service\FormErrorServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\ProfileServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class ProfileController
@@ -24,24 +22,21 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class ProfileController extends Controller
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-    /** @var UserPasswordEncoder $encoder */
-    private $encoder;
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
+    /** @var ProfileServiceInterface $profileService */
+    private $profileService;
+
     /**
      * ProfileController constructor.
-     * @param EntityManagerInterface $em
-     * @param UserPasswordEncoderInterface $encoder
      * @param FormErrorServiceInterface $formErrorsService
+     * @param ProfileServiceInterface $profileService
      */
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorsService)
+    public function __construct(FormErrorServiceInterface $formErrorsService, ProfileServiceInterface $profileService)
     {
-        $this->em = $em;
-        $this->encoder = $encoder;
         $this->formErrorService = $formErrorsService;
+        $this->profileService = $profileService;
     }
 
     /**
@@ -60,25 +55,20 @@ class ProfileController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $oldPassword = $form->get('old_password')->getData();
-            $newPassword = $form->get('new_password')->getData();
-            // Change user password
-            if (!empty($oldPassword) && !empty($newPassword)) {
-                if (!$this->encoder->isPasswordValid($user, $oldPassword)) {
-                    $this->addFlash('danger', 'Грешна стара парола!');
-
-                    return $this->render('profile/edit.html.twig', [
-                        'user' => $user,
-                        'form' => $form->createView(),
-                    ]);
+            try {
+                if (true === $this->profileService->changePassword($form, $user)) {
+                    $this->addFlash('success', 'Паролата бе успешно променена.');
                 }
-                $user->setPassword($this->encoder->encodePassword($user, $newPassword));
-                $this->addFlash('success', 'Паролата бе успешно променена.');
+            } catch (\Exception $ex) {
+                $this->addFlash('danger', $ex->getMessage());
+
+                return $this->render('profile/edit.html.twig', [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                ]);
             }
 
-            $user->setUpdatedAt(new \DateTime());
-            $this->em->flush();
-
+            $this->profileService->editProfile($user);
             $this->addFlash('success', 'Профилът бе успешно редактиран.');
 
             return $this->redirectToRoute('profile_edit');
