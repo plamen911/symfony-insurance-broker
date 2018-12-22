@@ -6,9 +6,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Car;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
-use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\CarServiceInterface;
 use AppBundle\Service\FormErrorServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,24 +22,21 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CreatePolicyController extends Controller
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-    /** @var UploadInterface $uploadService */
-    private $uploadService;
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
+    /** @var CarServiceInterface $carService */
+    private $carService;
+
     /**
      * PolicyController constructor.
-     * @param EntityManagerInterface $em
-     * @param UploadInterface $uploadService
      * @param FormErrorServiceInterface $formErrorsService
+     * @param CarServiceInterface $carService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
+    public function __construct(FormErrorServiceInterface $formErrorsService, CarServiceInterface $carService)
     {
-        $this->em = $em;
-        $this->uploadService = $uploadService;
         $this->formErrorService = $formErrorsService;
+        $this->carService = $carService;
     }
 
     /**
@@ -59,9 +55,8 @@ class CreatePolicyController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($car);
-            $em->flush();
+            $this->carService->newCar($request, $car);
+            $this->addFlash('success', 'МПС бе успешно създадено.');
 
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
