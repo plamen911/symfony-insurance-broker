@@ -72,24 +72,7 @@ class PolicyService implements PolicyServiceInterface
     public function newPolicy(Request $request, Policy $policy)
     {
         $this->validatePayments($policy);
-
-        // upload car documents
-        if (null !== $request->files->get('documents')) {
-            /** @var UploadedFile $file */
-            foreach ($request->files->get('documents') as $file) {
-                $fileUrl = $this->uploadService->upload(
-                    $file->getPathname(),
-                    $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                    $file->getClientMimeType()
-                );
-
-                $document = new Document();
-                $document->setFileUrl($fileUrl);
-                $document->setFileName($file->getClientOriginalName());
-                $document->setMimeType($file->getClientMimeType());
-                $policy->getCar()->addDocument($document);
-            }
-        }
+        $this->processUpload($request, $policy);
 
         $policy->getCar()->setUpdatedAt(new \DateTime());
         $policy->getCar()->setUpdater($this->currentUser);
@@ -113,24 +96,7 @@ class PolicyService implements PolicyServiceInterface
     public function editPolicy(Request $request, Policy $policy)
     {
         $this->validatePayments($policy);
-
-        // upload car documents
-        if (null !== $request->files->get('documents')) {
-            /** @var UploadedFile $file */
-            foreach ($request->files->get('documents') as $file) {
-                $fileUrl = $this->uploadService->upload(
-                    $file->getPathname(),
-                    $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                    $file->getClientMimeType()
-                );
-
-                $document = new Document();
-                $document->setFileUrl($fileUrl);
-                $document->setFileName($file->getClientOriginalName());
-                $document->setMimeType($file->getClientMimeType());
-                $policy->getCar()->addDocument($document);
-            }
-        }
+        $this->processUpload($request, $policy);
 
         $policy->getCar()->setUpdatedAt(new \DateTime());
         $policy->getCar()->setUpdater($this->currentUser);
@@ -170,7 +136,24 @@ class PolicyService implements PolicyServiceInterface
     {
         $totalDue = 0;
         foreach ($policy->getPayments() as $i => $payment) {
-            $totalDue += (float)$payment->getAmountDue();
+            if (null === $payment->getDueAt()) {
+                throw new Exception('Липсва дата за падеж No ' . ($i + 1) . '.');
+            }
+            $amountDue = (float)$payment->getAmountDue();
+            if (0 >= $amountDue) {
+                throw new Exception('Липсва дължима сума за падеж No ' . ($i + 1) . '.');
+            }
+            $amountPaid = $payment->getAmountPaid();
+            if ($amountPaid > 0) {
+                if ($amountPaid !== $amountDue) {
+                    throw new Exception(sprintf('Платената сума (%.2f) за падеж No %d не може да е различна от дължимата сума (%.2f).', $amountPaid, ($i + 1), $amountDue));
+                }
+                if (null === $payment->getPaidAt()) {
+                    throw new Exception('Липсва дата на плащане за падеж No ' . ($i + 1) . '.');
+                }
+            }
+
+            $totalDue += $amountDue;
             $payment->setPaymentOrder($i + 1);
             $policy->getPayments()->set($i, $payment);
         }
@@ -180,4 +163,32 @@ class PolicyService implements PolicyServiceInterface
         }
     }
 
+    /**
+     * Upload car documents
+     *
+     * @param Request $request
+     * @param Policy $policy
+     * @return Policy
+     */
+    private function processUpload(Request $request, Policy $policy): Policy
+    {
+        if (null !== $request->files->get('documents')) {
+            /** @var UploadedFile $file */
+            foreach ($request->files->get('documents') as $file) {
+                $fileUrl = $this->uploadService->upload(
+                    $file->getPathname(),
+                    $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
+                    $file->getClientMimeType()
+                );
+
+                $document = new Document();
+                $document->setFileUrl($fileUrl);
+                $document->setFileName($file->getClientOriginalName());
+                $document->setMimeType($file->getClientMimeType());
+                $policy->getCar()->addDocument($document);
+            }
+        }
+
+        return $policy;
+    }
 }
