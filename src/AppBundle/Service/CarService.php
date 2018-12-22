@@ -54,7 +54,66 @@ class CarService implements CarServiceInterface
      */
     public function newCar(Request $request, Car $car)
     {
-        // upload car documents
+        $this->processUpload($request, $car);
+
+        $car->setAuthor($this->currentUser);
+        $car->setUpdater($this->currentUser);
+        $this->em->persist($car);
+        $this->em->flush();
+
+        return $car;
+    }
+
+    /**
+     * @param Request $request
+     * @param Car $car
+     * @return Car
+     * @throws \Exception
+     */
+    public function editCar(Request $request, Car $car)
+    {
+        $this->processUpload($request, $car);
+
+        $car->setUpdatedAt(new \DateTime());
+        $car->setUpdater($this->currentUser);
+        $this->em->flush();
+
+        return $car;
+    }
+
+    /**
+     * @param Car $car
+     */
+    public function deleteCar(Car $car)
+    {
+        // delete uploaded files from S3 cloud
+        if ($car->getDocuments()->count() > 0) {
+            foreach ($car->getDocuments() as $document) {
+                $this->uploadService->delete(basename($document->getFileUrl()));
+            }
+        }
+
+        $this->em->remove($car);
+        $this->em->flush();
+    }
+
+    /**
+     * @param Car $car
+     * @return bool
+     */
+    public function canDelete(Car $car)
+    {
+        return $this->currentUser->isAdmin() || (null !== $car->getAuthor() && $this->currentUser->getId() === $car->getAuthor()->getId());
+    }
+
+    /**
+     * Upload car documents
+     *
+     * @param Request $request
+     * @param Car $car
+     */
+    private function processUpload(Request $request, Car $car): void
+    {
         if (null !== $request->files->get('documents')) {
             /** @var UploadedFile $file */
             foreach ($request->files->get('documents') as $file) {
@@ -71,12 +130,5 @@ class CarService implements CarServiceInterface
                 $car->addDocument($document);
             }
         }
-
-        $car->setAuthor($this->currentUser);
-        $car->setUpdater($this->currentUser);
-        $this->em->persist($car);
-        $this->em->flush();
-
-        return $car;
     }
 }

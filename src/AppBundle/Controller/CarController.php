@@ -9,12 +9,12 @@ use AppBundle\Entity\Document;
 use AppBundle\Form\CarType;
 use AppBundle\Form\ClientType;
 use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\CarServiceInterface;
 use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
@@ -37,22 +37,29 @@ class CarController extends Controller
 
     /** @var EntityManagerInterface $em */
     private $em;
+
     /** @var UploadInterface $uploadService */
     private $uploadService;
+
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
+
+    /** @var CarServiceInterface $carService */
+    private $carService;
 
     /**
      * PolicyController constructor.
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
      * @param FormErrorServiceInterface $formErrorsService
+     * @param CarServiceInterface $carService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService, CarServiceInterface $carService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
         $this->formErrorService = $formErrorsService;
+        $this->carService = $carService;
     }
 
     /**
@@ -141,29 +148,7 @@ class CarController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // upload car documents
-            if (null !== $request->files->get('documents')) {
-                /** @var UploadedFile $file */
-                foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->upload(
-                        $file->getPathname(),
-                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                        $file->getClientMimeType()
-                    );
-
-                    $document = new Document();
-                    $document->setFileUrl($fileUrl);
-                    $document->setFileName($file->getClientOriginalName());
-                    $document->setMimeType($file->getClientMimeType());
-                    $car->addDocument($document);
-                }
-            }
-
-            $car->setAuthor($this->getUser());
-            $car->setUpdater($this->getUser());
-            $this->em->persist($car);
-            $this->em->flush();
-
+            $this->carService->newCar($request, $car);
             $this->addFlash('success', 'МПС бе успешно създадено.');
 
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
@@ -198,28 +183,7 @@ class CarController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // upload car documents
-            if (null !== $request->files->get('documents')) {
-                /** @var UploadedFile $file */
-                foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->upload(
-                        $file->getPathname(),
-                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                        $file->getClientMimeType()
-                    );
-
-                    $document = new Document();
-                    $document->setFileUrl($fileUrl);
-                    $document->setFileName($file->getClientOriginalName());
-                    $document->setMimeType($file->getClientMimeType());
-                    $car->addDocument($document);
-                }
-            }
-
-            $car->setUpdatedAt(new \DateTime());
-            $car->setUpdater($this->getUser());
-            $this->em->flush();
-
+            $this->carService->editCar($request, $car);
             $this->addFlash('success', 'Данните за МПС бяха успешно записани.');
 
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
@@ -229,7 +193,7 @@ class CarController extends Controller
             'car' => $car,
             'form' => $form->createView(),
             'refUrl' => $refUrl,
-            'canDelete' => $this->canDelete($car)
+            'canDelete' => $this->carService->canDelete($car)
         ]);
     }
 
@@ -242,7 +206,7 @@ class CarController extends Controller
      */
     public function deleteAction(Car $car)
     {
-        if (!$this->canDelete($car)) {
+        if (!$this->carService->canDelete($car)) {
             $this->addFlash('danger', 'Нямате права за тази операция.');
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }
@@ -253,16 +217,7 @@ class CarController extends Controller
         }
 
         try {
-            // delete uploaded files from S3 cloud
-            if ($car->getDocuments()->count() > 0) {
-                foreach ($car->getDocuments() as $document) {
-                    $this->uploadService->delete(basename($document->getFileUrl()));
-                }
-            }
-
-            $this->em->remove($car);
-            $this->em->flush();
-
+            $this->carService->deleteCar($car);
             $this->addFlash('success', 'МПС бе успешно изтрито.');
 
             return $this->redirectToRoute('car_index');
@@ -434,15 +389,5 @@ class CarController extends Controller
                 ]
             ])
             ->getForm();
-    }
-
-    /**
-     * @param Car $car
-     * @return bool
-     */
-    private function canDelete(Car $car)
-    {
-        $currentUser = $this->getUser();
-        return $currentUser->isAdmin() || (null !== $car->getAuthor() && $currentUser->getId() === $car->getAuthor()->getId());
     }
 }
