@@ -61,3 +61,18 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Payment')"
+
+    AppBundle\Service\PolicyService:
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Policy')"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
+            - '@AppBundle\Service\Aws\UploadInterface'
+
+    AppBundle\Service\CarService:
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Car')"
+            - '@AppBundle\Service\Aws\UploadInterface'

@@ -68,7 +68,7 @@ class ReportService implements ReportServiceInterface
     public function getOverduePayments()
     {
         $startDate = new \DateTime('-1 year');
-        $endDate = new \DateTime();
+        $endDate = new \DateTime('-1 day');
         return $this->paymentRepo->findAllByDateRange($startDate, $endDate);
     }
 
@@ -78,7 +78,7 @@ class ReportService implements ReportServiceInterface
      */
     public function getPaymentsAfterOneWeek()
     {
-        $startDate = new \DateTime();
+        $startDate = new \DateTime('-1 day');
         $endDate = new \DateTime('+1 week');
         return $this->paymentRepo->findAllByDateRange($startDate, $endDate);
     }

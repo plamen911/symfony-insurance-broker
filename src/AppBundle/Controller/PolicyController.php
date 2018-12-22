@@ -11,7 +11,10 @@ use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
+use AppBundle\Service\CarServiceInterface;
 use AppBundle\Service\FormErrorServiceInterface;
+use AppBundle\Service\PolicyServiceInterface;
+use AppBundle\Service\TypeOfPolicyServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
@@ -19,7 +22,6 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
 //
@@ -44,6 +46,10 @@ class PolicyController extends Controller
     private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
+
+    /** @var PolicyServiceInterface $policyService */
+    private $policyService;
+
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
@@ -52,12 +58,14 @@ class PolicyController extends Controller
      * @param EntityManagerInterface $em
      * @param UploadInterface $uploadService
      * @param FormErrorServiceInterface $formErrorsService
+     * @param TypeOfPolicyServiceInterface $policyService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService)
+    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService, PolicyServiceInterface $policyService)
     {
         $this->em = $em;
         $this->uploadService = $uploadService;
         $this->formErrorService = $formErrorsService;
+        $this->policyService = $policyService;
     }
 
     /**
@@ -66,10 +74,9 @@ class PolicyController extends Controller
      */
     public function redirectToListAction()
     {
-        $typeOfPolicy = $this->em->getRepository(TypeOfPolicy::class)
-            ->findOneBy(['isDeleted' => 0], ['position' => 'ASC']);
+        $typeOfPolicy = $this->policyService->getDefaultTypeOfPolicy();
 
-        return $this->redirectToRoute("policy_list", ['typeOfPolicy' => $typeOfPolicy->getId()]);
+        return $this->redirectToRoute('policy_list', ['typeOfPolicy' => $typeOfPolicy->getId()]);
     }
 
     /**
@@ -177,10 +184,11 @@ class PolicyController extends Controller
      * @Route("/new/type/{typeOfPolicy}", name="policy_new_car", methods={"GET", "POST"}, requirements={"typeOfPolicy": "\d+"})
      * @param Request $request
      * @param TypeOfPolicy $typeOfPolicy
+     * @param CarServiceInterface $carService
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws Exception
      */
-    public function newCarAction(Request $request, TypeOfPolicy $typeOfPolicy)
+    public function newCarAction(Request $request, TypeOfPolicy $typeOfPolicy, CarServiceInterface $carService)
     {
         $refUrl = $request->query->get('ref');
 
@@ -194,29 +202,7 @@ class PolicyController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // upload car documents
-            if (null !== $request->files->get('documents')) {
-                /** @var UploadedFile $file */
-                foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->upload(
-                        $file->getPathname(),
-                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                        $file->getClientMimeType()
-                    );
-
-                    $document = new Document();
-                    $document->setFileUrl($fileUrl);
-                    $document->setFileName($file->getClientOriginalName());
-                    $document->setMimeType($file->getClientMimeType());
-                    $car->addDocument($document);
-                }
-            }
-
-            $car->setAuthor($this->getUser());
-            $car->setUpdater($this->getUser());
-            $this->em->persist($car);
-            $this->em->flush();
-
+            $carService->newCar($request, $car);
             $this->addFlash('success', 'МПС бе успешно създадено.');
 
             return $this->redirectToRoute('policy_new', ['typeOfPolicy' => $typeOfPolicy->getId(), 'car' => $car->getId()]);
@@ -226,6 +212,7 @@ class PolicyController extends Controller
             /** @var Car $car */
             if (null === $car = $autoCompleteForm['car']->getData()) {
                 $this->addFlash('danger', 'Невалидно МПС!');
+
                 return $this->redirectToRoute('policy_new_car', ['typeOfPolicy' => $typeOfPolicy->getId(), 'ref' => $refUrl]);
             }
 
@@ -290,43 +277,16 @@ class PolicyController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->validatePayments($policy);
+                $this->policyService->newPolicy($request, $policy);
+                $this->addFlash('success', 'Полицата бе успешно създадена.');
+
+                return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
+
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
+
                 return $this->render('policy/new.html.twig', $data);
             }
-
-            // upload car documents
-            if (null !== $request->files->get('documents')) {
-                /** @var UploadedFile $file */
-                foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->upload(
-                        $file->getPathname(),
-                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                        $file->getClientMimeType()
-                    );
-
-                    $document = new Document();
-                    $document->setFileUrl($fileUrl);
-                    $document->setFileName($file->getClientOriginalName());
-                    $document->setMimeType($file->getClientMimeType());
-                    $policy->getCar()->addDocument($document);
-                }
-            }
-
-            $policy->getCar()->setUpdatedAt(new \DateTime());
-            $policy->getCar()->setUpdater($this->getUser());
-
-            $policy->setPaid($policy->getPaidTotal());
-            $policy->setBalance($policy->getBalanceTotal());
-            $policy->setAuthor($this->getUser());
-            $policy->setUpdater($this->getUser());
-            $this->em->persist($policy);
-            $this->em->flush();
-
-            $this->addFlash('success', 'Полицата бе успешно създадена.');
-
-            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
         }
 
         return $this->render('policy/new.html.twig', $data);
@@ -360,47 +320,20 @@ class PolicyController extends Controller
             'car' => $policy->getCar(),
             'isNew' => false,
             'refUrl' => $refUrl,
-            'canDelete' => $this->canDelete($policy)
+            'canDelete' => $this->policyService->canDelete($policy)
         ];
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->validatePayments($policy);
+                $this->policyService->editPolicy($request, $policy);
+                $this->addFlash('success', 'Данните бяха успешно записани.');
+
+                return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
+
             } catch (\Exception $ex) {
                 $this->addFlash('danger', $ex->getMessage());
                 return $this->render('policy/edit.html.twig', $data);
             }
-
-            // upload car documents
-            if (null !== $request->files->get('documents')) {
-                /** @var UploadedFile $file */
-                foreach ($request->files->get('documents') as $file) {
-                    $fileUrl = $this->uploadService->upload(
-                        $file->getPathname(),
-                        $this->uploadService->generateUniqueFileName() . '.' . $file->getClientOriginalExtension(),
-                        $file->getClientMimeType()
-                    );
-
-                    $document = new Document();
-                    $document->setFileUrl($fileUrl);
-                    $document->setFileName($file->getClientOriginalName());
-                    $document->setMimeType($file->getClientMimeType());
-                    $policy->getCar()->addDocument($document);
-                }
-            }
-
-            $policy->getCar()->setUpdatedAt(new \DateTime());
-            $policy->getCar()->setUpdater($this->getUser());
-
-            $policy->setPaid($policy->getPaidTotal());
-            $policy->setBalance($policy->getBalanceTotal());
-            $policy->setUpdatedAt(new \DateTime());
-            $policy->setUpdater($this->getUser());
-            $this->em->flush();
-
-            $this->addFlash('success', 'Данните бяха успешно записани.');
-
-            return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
         }
 
         return $this->render('policy/edit.html.twig', $data);
@@ -415,7 +348,7 @@ class PolicyController extends Controller
      */
     public function deleteAction(Policy $policy)
     {
-        if (!$this->canDelete($policy)) {
+        if (!$this->policyService->canDelete($policy)) {
             $this->addFlash('danger', 'Нямате права за тази операция.');
             return $this->redirectToRoute('policy_edit', ['id' => $policy->getId()]);
         }
@@ -423,9 +356,7 @@ class PolicyController extends Controller
         $policyTypeId = $policy->getPolicyType()->getId();
 
         try {
-            $this->em->remove($policy);
-            $this->em->flush();
-
+            $this->policyService->deletePolicy($policy);
             $this->addFlash('success', 'Полицата бе успешно изтрита.');
 
             return $this->redirectToRoute('policy_list', ['typeOfPolicy' => $policyTypeId]);
@@ -482,24 +413,6 @@ class PolicyController extends Controller
     }
 
     /**
-     * @param Policy $policy
-     * @throws Exception
-     */
-    private function validatePayments(Policy $policy)
-    {
-        $totalDue = 0;
-        foreach ($policy->getPayments() as $i => $payment) {
-            $totalDue += (float)$payment->getAmountDue();
-            $payment->setPaymentOrder($i + 1);
-            $policy->getPayments()->set($i, $payment);
-        }
-
-        if (round($policy->getTotal(), 2) !== round($totalDue, 2)) {
-            throw new Exception('Общо дължима премия (' . $policy->getTotal() . ') е различна от сумата на вноските (' . $totalDue . ').');
-        }
-    }
-
-    /**
      * @return \Symfony\Component\Form\FormInterface
      */
     private function createAutoCompleteForm()
@@ -517,15 +430,5 @@ class PolicyController extends Controller
                 ]
             ])
             ->getForm();
-    }
-
-    /**
-     * @param Policy $policy
-     * @return bool
-     */
-    private function canDelete(Policy $policy)
-    {
-        $currentUser = $this->getUser();
-        return $currentUser->isAdmin() || (null !== $policy->getAuthor() && $currentUser->getId() === $policy->getAuthor()->getId());
     }
 }
