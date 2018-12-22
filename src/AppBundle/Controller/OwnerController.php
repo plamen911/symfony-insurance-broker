@@ -9,7 +9,6 @@ use AppBundle\Service\FormErrorServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,8 +42,7 @@ class OwnerController extends Controller
     /**
      * Lists all client entities.
      *
-     * @Route("/", name="owner_index")
-     * @Method("GET")
+     * @Route("/", name="owner_index", methods={"GET"})
      */
     public function indexAction()
     {
@@ -60,8 +58,7 @@ class OwnerController extends Controller
     /**
      * Creates a new client entity.
      *
-     * @Route("/new", name="owner_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="owner_new", methods={"GET", "POST"})
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -92,8 +89,7 @@ class OwnerController extends Controller
     /**
      * Finds and displays a client entity.
      *
-     * @Route("/{id}", name="owner_show")
-     * @Method("GET")
+     * @Route("/{id}", name="owner_show", methods={"GET"})
      * @param Client $owner
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -110,8 +106,7 @@ class OwnerController extends Controller
     /**
      * Displays a form to edit an existing client entity.
      *
-     * @Route("/{id}/edit", name="owner_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="owner_edit", methods={"GET", "POST"})
      * @param Request $request
      * @param Client $owner
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -145,8 +140,7 @@ class OwnerController extends Controller
     /**
      * Deletes a client entity.
      *
-     * @Route("/{id}", name="owner_delete")
-     * @Method("DELETE")
+     * @Route("/{id}", name="owner_delete", methods={"DELETE"})
      */
     public function deleteAction(Request $request, Client $client)
     {

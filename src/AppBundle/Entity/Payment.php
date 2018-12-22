@@ -302,9 +302,9 @@ class Payment
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getReminder(): User
+    public function getReminder(): ?User
     {
         return $this->reminder;
     }

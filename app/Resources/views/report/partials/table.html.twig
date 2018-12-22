@@ -27,8 +27,36 @@
                     </td>
                     <td>{{ payment.amountDue }}</td>
                     <td>{{ payment.paymentOrder }}</td>
-                    <td>{{ payment.dueAt|date('d.m.y') }}</td>
-                    <td></td>
+                    {% set isOverdue = date('now') > date(payment.dueAt) %}
+                    {% set isReminded = payment.isReminded %}
+                    <td class="text-white text-center {{ isOverdue ? 'bg-danger' : 'bg-success' }}">
+                        {{ payment.dueAt|date('d.m.y') }}
+                        <span id="reminder-status-{{ payment.id }}" class="ml-1">
+                            {% if payment.isReminded %}
+                                <button type="button"
+                                        data-reminder="{{ payment.reminder.fullName }}"
+                                        data-reminded-at="{{ payment.remindedAt|date('d.m.Y H:i:s') }}"
+                                        data-car-make="{{ payment.policy.car.carMake }}"
+                                        data-car-model="{{ payment.policy.car.carModel }}"
+                                        data-car-owner="{{ payment.policy.owner.fullName }}"
+                                        data-payment-order="{{ payment.paymentOrder }}"
+                                        data-due-at="{{ payment.dueAt|date('d.m.Y') }}"
+                                        data-policy-type="{{ payment.policy.policyType.name }}"
+                                        data-target="#reminderInfoModal"
+                                        class="text-white btn btn-link btn-sm modal-popup">
+                                    <i class="fas fa-bell"></i>
+                                </button>
+                            {% else %}
+                                <i class="far fa-bell-slash"></i>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <select data-payment-id="{{ payment.id }}" class="payment-reminder form-control form-control-sm">
+                            <option value="0"{{ (payment.isReminded ? '' : ' selected="selected"')|raw }}>НЕ</option>
+                            <option value="1"{{ (payment.isReminded ? ' selected="selected"' : '')|raw }}>ДА</option>
+                        </select>
+                    </td>
                     <td class="text-center">
                         <a href="{{ path('policy_edit', {'id': payment.policyId}) }}" target="_blank" class="btn btn-sm btn-secondary" title="Редактирай"><i class="fas fa-edit"></i></a>
                     </td>

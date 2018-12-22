@@ -23,4 +23,115 @@
     <h4>Плащания до 3 седмици</h4>
     {% include 'report/partials/table.html.twig' with {'payments': payments_after_three_weeks} only %}
 
+    <div class="modal fade" id="reminderInfoModal" tabindex="-1" role="dialog" aria-labelledby="reminderInfoLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reminderInfoLabel">Напомняне</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="reminderInfoBody">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="far fa-window-close"></i> Затвори</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+          $(document.body).on('click', '.modal-popup', function (e) {
+            var _self = $(this)
+            var target = _self.data('target')
+            var policyType = _self.data('policy-type')
+            var reminder = _self.data('reminder')
+            var remindedAt = _self.data('reminded-at')
+            var carMake = _self.data('car-make')
+            var carModel = _self.data('car-model')
+            var carOwner = _self.data('car-owner')
+            var paymentOrder = _self.data('payment-order')
+            var dueAt = _self.data('due-at')
+
+            $('#reminderInfoLabel').html('<i class="far fa-bell"></i> Напомняне за плащане по ' + policyType)
+            $('#reminderInfoBody').empty()
+              .append($('<ul class="list-unstyled">')
+                .append($('<li><h5>Дата: <small>' + remindedAt + '</small></h5></li>'))
+                .append($('<li><h5>Напомняне от: <small>' + reminder + '</small></h5></li>'))
+                .append($('<li><strong>Плащане No:</strong> ' + paymentOrder + '</li>'))
+                .append($('<li><strong>Падеж:</strong> ' + dueAt + '</li>'))
+                .append($('<li><strong>МПС:</strong> ' + carMake + ' ' + carModel + '</li>'))
+                .append($('<li><strong>Собственик:</strong> ' + carOwner + '</li>'))
+              )
+
+            $(target).modal({focus: true})
+          })
+
+          $('.payment-reminder').on('change', function (e) {
+            e.preventDefault()
+            var _self = $(this)
+            var paymentId = _self.data('payment-id')
+            var isReminded = _self.val()
+
+            $.ajax({
+              type: 'post',
+              url: '/report/car/payment/' + paymentId + '/remind',
+              dataType: 'json',
+              data: {
+                isReminded: isReminded
+              },
+              beforeSend: function () {
+                _self.attr('disabled', 'disabled')
+              }, // End beforeSend
+              success: function (res) {
+                var isReminded = res.isReminded || ''
+                var reminder = res.reminder || ''
+                var remindedAt = res.remindedAt || ''
+                var carMake = res.carMake || ''
+                var carModel = res.carModel || ''
+                var carOwner = res.carOwner || ''
+                var paymentOrder = res.paymentOrder || ''
+                var dueAt = res.dueAt || ''
+                var policyType = res.policyType || ''
+
+                toastr.success('Напомнянето бе успешно ' + ((isReminded) ? 'добавено' : 'премахнато') + '.', 'Успех!')
+
+                if (isReminded) {
+                    $('#reminder-status-' + paymentId).empty()
+                      .append(
+                        $('<button type="button">')
+                          .data('reminder', reminder)
+                          .data('reminded-at', remindedAt)
+                          .data('car-make', carMake)
+                          .data('car-model', carModel)
+                          .data('car-owner', carOwner)
+                          .data('payment-order', paymentOrder)
+                          .data('due-at', dueAt)
+                          .data('policy-type', policyType)
+                          .data('target', '#reminderInfoModal')
+                          .addClass('text-white btn btn-link btn-sm modal-popup')
+                          .append($('<i class="fas fa-bell"></i>'))
+                      )
+                } else {
+                  $('#reminder-status-' + paymentId).empty()
+                    .append($('<i class="far fa-bell-slash"></i>'))
+                }
+              }, // End success
+              error: function (err) {
+                toastr.error(parseAjaxError(err), 'Грешка!')
+              }, // End error
+              complete: function () {
+                _self.removeAttr('disabled')
+              }
+            })
+          })
+        })
+    </script>
 {% endblock %}
