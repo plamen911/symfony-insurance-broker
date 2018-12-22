@@ -16,6 +16,13 @@ interface ProfileServiceInterface
     /**
      * @param User $user
      * @return User
+     * @throws \Exception
+     */
+    public function newProfile(User $user);
+
+    /**
+     * @param User $user
+     * @return User
      * @throws Exception
      */
     public function editProfile(User $user);

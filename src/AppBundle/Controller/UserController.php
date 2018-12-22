@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\ProfileType;
 use AppBundle\Form\UserType;
 use AppBundle\Service\FormErrorServiceInterface;
+use AppBundle\Service\ProfileServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -39,22 +40,29 @@ class UserController extends Controller
 
     /** @var EntityManagerInterface $em */
     private $em;
+
     /** @var UserPasswordEncoder $encoder */
     private $encoder;
+
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
+
+    /** @var ProfileServiceInterface $profileService */
+    private $profileService;
 
     /**
      * UserController constructor.
      * @param EntityManagerInterface $em
      * @param UserPasswordEncoderInterface $encoder
      * @param FormErrorServiceInterface $formErrorService
+     * @param ProfileServiceInterface $profileService
      */
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorService)
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorService, ProfileServiceInterface $profileService)
     {
         $this->em = $em;
         $this->encoder = $encoder;
         $this->formErrorService = $formErrorService;
+        $this->profileService = $profileService;
     }
 
     /**
@@ -145,22 +153,19 @@ class UserController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (0 === count($user->getRoles())) {
-                $this->addFlash('danger', 'Профилът трябва да има поне една роля.');
+            try {
+                $this->profileService->newProfile($user);
+                $this->addFlash('success', 'Профилът бе успешно създаден.');
+
+                return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
+
+            } catch (\Exception $ex) {
+                $this->addFlash('danger', $ex->getMessage());
 
                 return $this->render('user/new.html.twig', [
                     'form' => $form->createView()
                 ]);
             }
-
-            $password = $this->encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-            $this->em->persist($user);
-            $this->em->flush();
-
-            $this->addFlash('success', 'Профилът бе успешно създаден.');
-
-            return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);
         }
 
         return $this->render('user/new.html.twig', [
@@ -187,8 +192,12 @@ class UserController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (0 === count($user->getRoles())) {
-                $this->addFlash('danger', 'Профилът трябва да има поне една роля.');
+            try {
+                if (true === $this->profileService->changePassword($form, $user)) {
+                    $this->addFlash('success', 'Паролата бе успешно променена.');
+                }
+            } catch (\Exception $ex) {
+                $this->addFlash('danger', $ex->getMessage());
 
                 return $this->render('user/edit.html.twig', [
                     'user' => $user,
@@ -196,25 +205,7 @@ class UserController extends Controller
                 ]);
             }
 
-            $oldPassword = $form->get('old_password')->getData();
-            $newPassword = $form->get('new_password')->getData();
-            // Change user password
-            if (!empty($oldPassword) && !empty($newPassword)) {
-                if (!$this->encoder->isPasswordValid($user, $oldPassword)) {
-                    $this->addFlash('danger', 'Грешна стара парола!');
-
-                    return $this->render('user/edit.html.twig', [
-                        'user' => $user,
-                        'form' => $form->createView(),
-                    ]);
-                }
-                $user->setPassword($this->encoder->encodePassword($user, $newPassword));
-                $this->addFlash('success', 'Паролата бе успешно променена.');
-            }
-
-            $user->setUpdatedAt(new \DateTime());
-            $this->em->flush();
-
+            $this->profileService->editProfile($user);
             $this->addFlash('success', 'Профилът бе успешно редактиран.');
 
             return $this->redirectToRoute('user_edit', ['user' => $user->getId()]);

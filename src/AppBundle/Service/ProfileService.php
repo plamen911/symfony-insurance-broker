@@ -43,10 +43,33 @@ class ProfileService implements ProfileServiceInterface
     /**
      * @param User $user
      * @return User
+     * @throws \Exception
+     */
+    public function newProfile(User $user)
+    {
+        if (0 === count($user->getRoles())) {
+            throw new \Exception('Профилът трябва да има поне една роля.');
+        }
+
+        $password = $this->encoder->encodePassword($user, $user->getPassword());
+        $user->setPassword($password);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
+
+    /**
+     * @param User $user
+     * @return User
      * @throws Exception
      */
     public function editProfile(User $user)
     {
+        if (0 === count($user->getRoles())) {
+            throw new \Exception('Профилът трябва да има поне една роля.');
+        }
+
         $user->setUpdatedAt(new \DateTime());
         $this->em->flush();
 
