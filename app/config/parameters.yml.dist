@@ -23,3 +23,8 @@ parameters:
     aws_default_region: your_aws_default_region
     aws_bucket_name: your_aws_bucket_name
     aws_base_url: your_aws_base_url
+
+    pusher_app_id: your_pusher_app_id
+    pusher_key: your_pusher_key
+    pusher_secret: your_pusher_secret
+    pusher_cluster: your_pusher_cluster
