@@ -23,6 +23,13 @@ class Payment
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="payment_order", type="integer", nullable=true)
+     */
+    private $paymentOrder;
+
+    /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="due_at", type="date", nullable=true)
@@ -80,6 +87,13 @@ class Payment
     private $reminder;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="policy_id", type="integer", nullable=true)
+     */
+    private $policyId;
+
+    /**
      * @var Policy
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Policy", inversedBy="payments")
      * @ORM\JoinColumn(name="policy_id", referencedColumnName="id")
@@ -92,6 +106,7 @@ class Payment
      */
     public function __construct()
     {
+        $this->paymentOrder = 1;
         $this->amountDue = 0;
         $this->amountPaid = 0;
         $this->isDeferred = false;
@@ -301,6 +316,44 @@ class Payment
     public function setReminder(?User $user): Payment
     {
         $this->reminder = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPaymentOrder(): int
+    {
+        return (int)$this->paymentOrder;
+    }
+
+    /**
+     * @param int|null $paymentOrder
+     * @return Payment
+     */
+    public function setPaymentOrder(?int $paymentOrder): Payment
+    {
+        $this->paymentOrder = $paymentOrder;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPolicyId(): int
+    {
+        return $this->policyId;
+    }
+
+    /**
+     * @param int $policyId
+     * @return Payment
+     */
+    public function setPolicyId(int $policyId): Payment
+    {
+        $this->policyId = $policyId;
 
         return $this;
     }

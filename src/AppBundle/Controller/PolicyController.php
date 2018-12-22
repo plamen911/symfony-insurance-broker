@@ -488,8 +488,10 @@ class PolicyController extends Controller
     private function validatePayments(Policy $policy)
     {
         $totalDue = 0;
-        foreach ($policy->getPayments() as $payment) {
+        foreach ($policy->getPayments() as $i => $payment) {
             $totalDue += (float)$payment->getAmountDue();
+            $payment->setPaymentOrder($i + 1);
+            $policy->getPayments()->set($i, $payment);
         }
 
         if (round($policy->getTotal(), 2) !== round($totalDue, 2)) {

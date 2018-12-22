@@ -11,13 +11,16 @@
 {% endblock %}
 
 {% block body %}
-    <h3>Просрочени плащания (общо 543 316,93 лв.)</h3>
+    <h4>Просрочени плащания</h4>
+    {% include 'report/partials/table.html.twig' with {'payments': overdue_payments} only %}
 
+    <h4>Плащания до 1 седмица</h4>
+    {% include 'report/partials/table.html.twig' with {'payments': payments_after_one_week} only %}
 
-    <h3>Плащания до 1 седмица (общо 12 336,76 лв.)</h3>
+    <h4>Плащания до 2 седмици</h4>
+    {% include 'report/partials/table.html.twig' with {'payments': payments_after_two_weeks} only %}
 
-    <h3>Плащания до 2 седмици (общо 7 107,34 лв.)</h3>
-
-    <h3>Плащания до 3 седмици (общо 9 420,20 лв.)</h3>
+    <h4>Плащания до 3 седмици</h4>
+    {% include 'report/partials/table.html.twig' with {'payments': payments_after_three_weeks} only %}
 
 {% endblock %}
