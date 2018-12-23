@@ -6,8 +6,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\User;
 use AppBundle\Repository\PaymentRepository;
-use AppBundle\Service\Pusher\RealTimeServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -17,9 +15,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class ReportService implements ReportServiceInterface
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-
     /** @var User $user */
     private $user;
 
@@ -28,13 +23,11 @@ class ReportService implements ReportServiceInterface
 
     /**
      * ReportService constructor.
-     * @param EntityManagerInterface $em
      * @param TokenStorageInterface $tokenStorage
      * @param PaymentRepository $paymentRepo
      */
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, PaymentRepository $paymentRepo)
+    public function __construct(TokenStorageInterface $tokenStorage, PaymentRepository $paymentRepo)
     {
-        $this->em = $em;
         $this->user = $tokenStorage->getToken()->getUser();
         $this->paymentRepo = $paymentRepo;
     }
@@ -55,8 +48,7 @@ class ReportService implements ReportServiceInterface
             $payment->setRemindedAt(null);
             $payment->setReminder(null);
         }
-        $this->em->merge($payment);
-        $this->em->flush();
+        $this->paymentRepo->save($payment);
 
         return $payment;
     }

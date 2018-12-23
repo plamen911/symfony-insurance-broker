@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\TypeOfCar;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * TypeOfCarRepository
  *
@@ -11,4 +15,41 @@ namespace AppBundle\Repository;
  */
 class TypeOfCarRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param TypeOfCar $typeOfCar
+     * @return TypeOfCar
+     */
+    public function save(TypeOfCar $typeOfCar)
+    {
+        if (null === $typeOfCar->getId()) {
+            $this->em->persist($typeOfCar);
+        }
+        $this->em->flush();
+
+        return $typeOfCar;
+    }
+
+    /**
+     * @param TypeOfCar $typeOfCar
+     */
+    public function delete(TypeOfCar $typeOfCar)
+    {
+        $this->em->remove($typeOfCar);
+        $this->em->flush();
+    }
 }

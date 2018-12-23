@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\TypeOfPolicy;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * TypeOfPolicyRepository
  *
@@ -11,4 +15,41 @@ namespace AppBundle\Repository;
  */
 class TypeOfPolicyRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param TypeOfPolicy $typeOfPolicy
+     * @return TypeOfPolicy
+     */
+    public function save(TypeOfPolicy $typeOfPolicy)
+    {
+        if (null === $typeOfPolicy->getId()) {
+            $this->em->persist($typeOfPolicy);
+        }
+        $this->em->flush();
+
+        return $typeOfPolicy;
+    }
+
+    /**
+     * @param TypeOfPolicy $typeOfPolicy
+     */
+    public function delete(TypeOfPolicy $typeOfPolicy)
+    {
+        $this->em->remove($typeOfPolicy);
+        $this->em->flush();
+    }
 }

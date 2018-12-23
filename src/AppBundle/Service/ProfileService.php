@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\UserRepository;
 use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -18,26 +18,26 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class ProfileService implements ProfileServiceInterface
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-
     /** @var UserPasswordEncoder $encoder */
     private $encoder;
 
     /** @var User $user */
     private $user;
 
+    /** @var UserRepository $userRepo */
+    private $userRepo;
+
     /**
      * ReportService constructor.
-     * @param EntityManagerInterface $em
      * @param UserPasswordEncoderInterface $encoder
      * @param TokenStorageInterface $tokenStorage
+     * @param UserRepository $userRepo
      */
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
+    public function __construct(UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, UserRepository $userRepo)
     {
-        $this->em = $em;
         $this->encoder = $encoder;
         $this->user = $tokenStorage->getToken()->getUser();
+        $this->userRepo = $userRepo;
     }
 
     /**
@@ -53,8 +53,7 @@ class ProfileService implements ProfileServiceInterface
 
         $password = $this->encoder->encodePassword($user, $user->getPassword());
         $user->setPassword($password);
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->userRepo->save($user);
 
         return $user;
     }
@@ -71,7 +70,7 @@ class ProfileService implements ProfileServiceInterface
         }
 
         $user->setUpdatedAt(new \DateTime());
-        $this->em->flush();
+        $this->userRepo->save($user);
 
         return $user;
     }

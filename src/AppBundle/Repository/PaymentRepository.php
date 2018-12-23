@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Policy;
+use AppBundle\Entity\Payment;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * PaymentRepository
@@ -13,6 +15,44 @@ use AppBundle\Entity\Policy;
  */
 class PaymentRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Payment $payment
+     * @return Payment
+     */
+    public function save(Payment $payment)
+    {
+        if (null === $payment->getId()) {
+            $this->em->persist($payment);
+        }
+        $this->em->flush();
+
+        return $payment;
+    }
+
+    /**
+     * @param Payment $payment
+     */
+    public function delete(Payment $payment)
+    {
+        $this->em->remove($payment);
+        $this->em->flush();
+    }
+
     /**
      * @param \DateTime $startDate
      * @param \DateTime $endDate

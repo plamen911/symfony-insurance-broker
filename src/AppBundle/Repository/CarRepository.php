@@ -5,6 +5,8 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Car;
 use AppBundle\Service\Cyr2Lat;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * CarRepository
@@ -14,6 +16,44 @@ use AppBundle\Service\Cyr2Lat;
  */
 class CarRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Car $car
+     * @return Car
+     */
+    public function save(Car $car)
+    {
+        if (null === $car->getId()) {
+            $this->em->persist($car);
+        }
+        $this->em->flush();
+
+        return $car;
+    }
+
+    /**
+     * @param Car $car
+     */
+    public function delete(Car $car)
+    {
+        $this->em->remove($car);
+        $this->em->flush();
+    }
+
     /**
      * @param string $keyword
      * @return Car[]|null

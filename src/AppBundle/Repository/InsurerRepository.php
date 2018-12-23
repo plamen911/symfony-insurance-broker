@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Insurer;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * InsurerRepository
  *
@@ -11,4 +15,41 @@ namespace AppBundle\Repository;
  */
 class InsurerRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Insurer $insurer
+     * @return Insurer
+     */
+    public function save(Insurer $insurer)
+    {
+        if (null === $insurer->getId()) {
+            $this->em->persist($insurer);
+        }
+        $this->em->flush();
+
+        return $insurer;
+    }
+
+    /**
+     * @param Insurer $insurer
+     */
+    public function delete(Insurer $insurer)
+    {
+        $this->em->remove($insurer);
+        $this->em->flush();
+    }
 }

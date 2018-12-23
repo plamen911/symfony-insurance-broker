@@ -64,13 +64,11 @@ services:
 
     AppBundle\Service\ReportService:
         arguments:
-            - "@doctrine.orm.entity_manager"
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Payment')"
 
     AppBundle\Service\PolicyService:
         arguments:
-            - "@doctrine.orm.entity_manager"
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Policy')"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
@@ -78,10 +76,15 @@ services:
 
     AppBundle\Service\CarService:
         arguments:
-            - "@doctrine.orm.entity_manager"
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Car')"
             - '@AppBundle\Service\Aws\UploadInterface'
+
+    AppBundle\Service\ProfileService:
+        arguments:
+            - "@security.password_encoder"
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:User')"
 
     Pusher\Pusher:
         arguments:

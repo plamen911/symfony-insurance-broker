@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Client;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * ClientRepository
@@ -13,6 +15,44 @@ use AppBundle\Entity\Client;
  */
 class ClientRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Client $client
+     * @return Client
+     */
+    public function save(Client $client)
+    {
+        if (null === $client->getId()) {
+            $this->em->persist($client);
+        }
+        $this->em->flush();
+
+        return $client;
+    }
+
+    /**
+     * @param Client $client
+     */
+    public function delete(Client $client)
+    {
+        $this->em->remove($client);
+        $this->em->flush();
+    }
+
     /**
      * @param string $keyword
      * @return Client[]|null

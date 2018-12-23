@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * UserRepository
  *
@@ -11,4 +15,41 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param User $user
+     * @return User
+     */
+    public function save(User $user)
+    {
+        if (null === $user->getId()) {
+            $this->em->persist($user);
+        }
+        $this->em->flush();
+
+        return $user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function delete(User $user)
+    {
+        $this->em->remove($user);
+        $this->em->flush();
+    }
 }

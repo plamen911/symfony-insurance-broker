@@ -23,9 +23,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class PolicyService implements PolicyServiceInterface
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-
     /** @var User $currentUser */
     private $currentUser;
 
@@ -40,15 +37,13 @@ class PolicyService implements PolicyServiceInterface
 
     /**
      * ReportService constructor.
-     * @param EntityManagerInterface $em
      * @param TokenStorageInterface $tokenStorage
      * @param PolicyRepository $policyRepo
      * @param TypeOfPolicyRepository $typeOfPolicyRepo
      * @param UploadInterface $uploadService
      */
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, UploadInterface $uploadService)
+    public function __construct(TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, UploadInterface $uploadService)
     {
-        $this->em = $em;
         $this->currentUser = $tokenStorage->getToken()->getUser();
         $this->policyRepo = $policyRepo;
         $this->typeOfPolicyRepo = $typeOfPolicyRepo;
@@ -81,8 +76,7 @@ class PolicyService implements PolicyServiceInterface
         $policy->setBalance($policy->getBalanceTotal());
         $policy->setAuthor($this->currentUser);
         $policy->setUpdater($this->currentUser);
-        $this->em->persist($policy);
-        $this->em->flush();
+        $this->policyRepo->save($policy);
 
         return $policy;
     }
@@ -105,7 +99,7 @@ class PolicyService implements PolicyServiceInterface
         $policy->setBalance($policy->getBalanceTotal());
         $policy->setUpdatedAt(new \DateTime());
         $policy->setUpdater($this->currentUser);
-        $this->em->flush();
+        $this->policyRepo->save($policy);
 
         return $policy;
     }
@@ -115,8 +109,7 @@ class PolicyService implements PolicyServiceInterface
      */
     public function deletePolicy(Policy $policy)
     {
-        $this->em->remove($policy);
-        $this->em->flush();
+        $this->policyRepo->delete($policy);
     }
 
     /**

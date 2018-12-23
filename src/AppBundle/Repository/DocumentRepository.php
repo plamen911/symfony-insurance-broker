@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Document;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 /**
  * DocumentRepository
  *
@@ -11,4 +15,41 @@ namespace AppBundle\Repository;
  */
 class DocumentRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Document $document
+     * @return Document
+     */
+    public function save(Document $document)
+    {
+        if (null === $document->getId()) {
+            $this->em->persist($document);
+        }
+        $this->em->flush();
+
+        return $document;
+    }
+
+    /**
+     * @param Document $document
+     */
+    public function delete(Document $document)
+    {
+        $this->em->remove($document);
+        $this->em->flush();
+    }
 }

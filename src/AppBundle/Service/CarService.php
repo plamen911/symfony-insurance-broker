@@ -8,7 +8,6 @@ use AppBundle\Entity\Document;
 use AppBundle\Entity\User;
 use AppBundle\Repository\CarRepository;
 use AppBundle\Service\Aws\UploadInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -20,9 +19,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class CarService implements CarServiceInterface
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
-
     /** @var User $currentUser */
     private $currentUser;
 
@@ -34,14 +30,12 @@ class CarService implements CarServiceInterface
 
     /**
      * ReportService constructor.
-     * @param EntityManagerInterface $em
      * @param TokenStorageInterface $tokenStorage
      * @param CarRepository $carRepo
      * @param UploadInterface $uploadService
      */
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, CarRepository $carRepo, UploadInterface $uploadService)
+    public function __construct(TokenStorageInterface $tokenStorage, CarRepository $carRepo, UploadInterface $uploadService)
     {
-        $this->em = $em;
         $this->currentUser = $tokenStorage->getToken()->getUser();
         $this->carRepo = $carRepo;
         $this->uploadService = $uploadService;
@@ -58,8 +52,7 @@ class CarService implements CarServiceInterface
 
         $car->setAuthor($this->currentUser);
         $car->setUpdater($this->currentUser);
-        $this->em->persist($car);
-        $this->em->flush();
+        $this->carRepo->save($car);
 
         return $car;
     }
@@ -76,7 +69,7 @@ class CarService implements CarServiceInterface
 
         $car->setUpdatedAt(new \DateTime());
         $car->setUpdater($this->currentUser);
-        $this->em->flush();
+        $this->carRepo->save($car);
 
         return $car;
     }
@@ -93,8 +86,7 @@ class CarService implements CarServiceInterface
             }
         }
 
-        $this->em->remove($car);
-        $this->em->flush();
+        $this->carRepo->delete($car);
     }
 
     /**
