@@ -3,11 +3,19 @@ Insurance Broker App
 
 A Symfony project created on December 7, 2018, 3:32 pm. for the [PHP MVC Frameworks - Symfony - November 2018](https://softuni.bg/trainings/2198/php-mvc-frameworks-symfony-november-2018) course @ [SoftUni](https://softuni.bg) 
 
----
-
 ### About
 
 This app is intended to assist insurance brokers to manage their car insurance policies and notify clients for coming payments.
+
+---
+
+### Demo
+
+https://insurance.lynxlake.org/login
+
+Username: admin@admin.com
+
+Password: 111111
 
 ---
 
