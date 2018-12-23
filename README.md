@@ -1,9 +1,27 @@
-.checkout
+Insurance Broker App
 =========
 
-A Symfony project created on December 7, 2018, 3:32 pm.
+A Symfony project created on December 7, 2018, 3:32 pm. for the [PHP MVC Frameworks - Symfony - November 2018](https://softuni.bg/trainings/2198/php-mvc-frameworks-symfony-november-2018) course @ [SoftUni](https://softuni.bg) 
 
-In order to configure S3 file upload, add these parameters in app/config/parameters.yml
+---
+
+#### About
+
+This app is intended to assist insurance brokers to manage their car insurance policies and notify clients for coming payments
+
+---
+
+#### Installation
+
+From terminal run these commands
+
+```
+git clone https://github.com/plamen911/symfony-insurance-broker.git
+cd symfony-insurance-broker/
+composer install
+```
+
+In order to configure [Amazon S3](https://s3.console.aws.amazon.com) file upload, you will be asked to set your credentials:
 
 ```
 aws_key: YOUR_AWS_KEY
@@ -13,7 +31,7 @@ aws_bucket_name: YOUR_AWS_BUCKET_NAME
 aws_base_url: YOUR_AWS_BASE_URL
 ```
 
-...and to configure Pusher real time messaging service set these:
+...and to configure [Pusher](https://pusher.com/) real time messaging service set these:
 
 ```
 pusher_app_id: YOUR_PUSHER_APP_ID
@@ -22,8 +40,8 @@ pusher_secret: YOUR_PUSHER_SECRET
 pusher_cluster: YOUR_PUSHER_CLUSTER
 ```
 
+Run fixtures to populate database with basic data
+
 ```
-composer install
 ./bin/console doctrine:fixtures:load
 ```
-
