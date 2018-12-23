@@ -5,15 +5,15 @@ A Symfony project created on December 7, 2018, 3:32 pm. for the [PHP MVC Framewo
 
 ---
 
-#### About
+### About
 
-This app is intended to assist insurance brokers to manage their car insurance policies and notify clients for coming payments
+This app is intended to assist insurance brokers to manage their car insurance policies and notify clients for coming payments.
 
 ---
 
-#### Installation
+### Installation
 
-From terminal run these commands
+From terminal run these commands:
 
 ```
 git clone https://github.com/plamen911/symfony-insurance-broker.git
@@ -40,8 +40,10 @@ pusher_secret: YOUR_PUSHER_SECRET
 pusher_cluster: YOUR_PUSHER_CLUSTER
 ```
 
-Run fixtures to populate database with basic data
+...and finally, run fixtures to populate database with basic data
 
 ```
 ./bin/console doctrine:fixtures:load
 ```
+
+That's all! Enjoy!
