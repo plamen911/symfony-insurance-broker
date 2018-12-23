@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
@@ -17,10 +18,15 @@ class SecurityController extends Controller
     /**
      * @Route("/login", name="security_login")
      * @param AuthenticationUtils $authenticationUtils
+     * @param Security $security
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function loginAction(AuthenticationUtils $authenticationUtils)
+    public function loginAction(AuthenticationUtils $authenticationUtils, Security $security)
     {
+        if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('policy_index');
+        }
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
