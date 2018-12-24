@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Car;
 
 use AppBundle\Entity\Car;
 use AppBundle\Entity\Document;
