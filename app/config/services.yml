@@ -58,29 +58,29 @@ services:
 
     AppBundle\Service\Pusher\RealTimeServiceInterface: '@AppBundle\Service\Pusher\PusherService'
 
-    AppBundle\Service\TypeOfPolicyService:
+    AppBundle\Service\TypeOfPolicy\TypeOfPolicyService:
         arguments:
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
 
-    AppBundle\Service\ReportService:
+    AppBundle\Service\Report\ReportService:
         arguments:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Payment')"
 
-    AppBundle\Service\PolicyService:
+    AppBundle\Service\Policy\PolicyService:
         arguments:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Policy')"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
             - '@AppBundle\Service\Aws\UploadInterface'
 
-    AppBundle\Service\CarService:
+    AppBundle\Service\Car\CarService:
         arguments:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Car')"
             - '@AppBundle\Service\Aws\UploadInterface'
 
-    AppBundle\Service\ProfileService:
+    AppBundle\Service\Profile\ProfileService:
         arguments:
             - "@security.password_encoder"
             - "@security.token_storage"
@@ -97,3 +97,17 @@ services:
         arguments:
             - '@Pusher\Pusher'
             - '%pusher_channel%'
+
+    AppBundle\Service\Client\ClientService:
+        arguments:
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Client')"
+
+    AppBundle\Service\Document\DocumentService:
+        arguments:
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Document')"
+            - '@AppBundle\Service\Aws\UploadInterface'
+
+    AppBundle\Service\Role\RoleService:
+        arguments:
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Role')"

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Policy;
 
 use AppBundle\Entity\Document;
 use AppBundle\Entity\Policy;
@@ -10,7 +10,6 @@ use AppBundle\Entity\User;
 use AppBundle\Repository\PolicyRepository;
 use AppBundle\Repository\TypeOfPolicyRepository;
 use AppBundle\Service\Aws\UploadInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 /**
  * Class PolicyService
- * @package AppBundle\Service
+ * @package AppBundle\Service\Policy
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class PolicyService implements PolicyServiceInterface

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Cyr2Lat;
 
 /**
  * Class Cyr2Lat
- * @package AppBundle\Service
+ * @package AppBundle\Service\Cyr2Lat
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class Cyr2Lat implements Cyr2LatInterface

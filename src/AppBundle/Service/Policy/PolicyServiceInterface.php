@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Policy;
 
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface PolicyServiceInterface
- * @package AppBundle\Service
+ * @package AppBundle\Service\Policy
  */
 interface PolicyServiceInterface
 {

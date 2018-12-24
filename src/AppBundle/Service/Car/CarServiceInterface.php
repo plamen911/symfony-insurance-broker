@@ -8,10 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface CarServiceInterface
- * @package AppBundle\Service
+ * @package AppBundle\Service\Car
  */
 interface CarServiceInterface
 {
+    /**
+     * @param string $keyword
+     * @return Car[]|null
+     */
+    public function findByKeyword(string $keyword);
+
     /**
      * @param Request $request
      * @param Car $car

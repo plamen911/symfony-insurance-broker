@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Profile;
 
 use AppBundle\Entity\User;
 use AppBundle\Repository\UserRepository;
@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class ProfileService
- * @package AppBundle\Service
+ * @package AppBundle\Service\Profile
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class ProfileService implements ProfileServiceInterface

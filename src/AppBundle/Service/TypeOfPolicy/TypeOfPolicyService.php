@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\TypeOfPolicy;
 
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Repository\TypeOfPolicyRepository;
 
 /**
  * Class TypeOfPolicyService
- * @package AppBundle\Service
+ * @package AppBundle\Service\TypeOfPolicy
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class TypeOfPolicyService implements TypeOfPolicyServiceInterface
@@ -25,7 +25,7 @@ class TypeOfPolicyService implements TypeOfPolicyServiceInterface
     }
 
     /**
-     * @return TypeOfPolicy[]
+     * @return TypeOfPolicy[]|null
      */
     public function getAll()
     {

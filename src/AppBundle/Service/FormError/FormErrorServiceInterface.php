@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\FormError;
 
 use Symfony\Component\Form\FormInterface;
 
 /**
  * Interface FormErrorsServiceInterface
- * @package AppBundle\Service
+ * @package AppBundle\Service\FormError
  */
 interface FormErrorServiceInterface
 {

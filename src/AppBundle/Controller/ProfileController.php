@@ -5,8 +5,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\ProfileType;
-use AppBundle\Service\FormErrorServiceInterface;
-use AppBundle\Service\ProfileServiceInterface;
+use AppBundle\Service\FormError\FormErrorServiceInterface;
+use AppBundle\Service\Profile\ProfileServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;

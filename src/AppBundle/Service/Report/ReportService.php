@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Report;
 
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\User;
@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 /**
  * Class ReportService
- * @package AppBundle\Service
+ * @package AppBundle\Service\Report
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class ReportService implements ReportServiceInterface

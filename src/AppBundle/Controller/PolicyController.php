@@ -11,11 +11,10 @@ use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Form\CarType;
 use AppBundle\Form\PolicyType;
 use AppBundle\Service\Aws\UploadInterface;
-use AppBundle\Service\CarServiceInterface;
-use AppBundle\Service\FormErrorServiceInterface;
-use AppBundle\Service\PolicyServiceInterface;
-use AppBundle\Service\TypeOfPolicyServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\Car\CarServiceInterface;
+use AppBundle\Service\Document\DocumentServiceInterface;
+use AppBundle\Service\FormError\FormErrorServiceInterface;
+use AppBundle\Service\Policy\PolicyServiceInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -42,8 +41,6 @@ class PolicyController extends Controller
 {
     use DataTablesTrait;
 
-    /** @var EntityManagerInterface $em */
-    private $em;
     /** @var UploadInterface $uploadService */
     private $uploadService;
 
@@ -53,19 +50,28 @@ class PolicyController extends Controller
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
+    /** @var DocumentServiceInterface $documentService */
+    private $documentService;
+
+    /** @var CarServiceInterface $carService */
+    private $carService;
+
     /**
      * PolicyController constructor.
-     * @param EntityManagerInterface $em
+     *
      * @param UploadInterface $uploadService
      * @param FormErrorServiceInterface $formErrorsService
-     * @param TypeOfPolicyServiceInterface $policyService
+     * @param PolicyServiceInterface $policyService
+     * @param DocumentServiceInterface $documentService
+     * @param CarServiceInterface $carService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService, PolicyServiceInterface $policyService)
+    public function __construct(UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService, PolicyServiceInterface $policyService, DocumentServiceInterface $documentService, CarServiceInterface $carService)
     {
-        $this->em = $em;
         $this->uploadService = $uploadService;
         $this->formErrorService = $formErrorsService;
         $this->policyService = $policyService;
+        $this->documentService = $documentService;
+        $this->carService = $carService;
     }
 
     /**
@@ -376,9 +382,7 @@ class PolicyController extends Controller
     public function deleteDocument(Policy $policy, Document $document)
     {
         try {
-            $this->uploadService->delete(basename($document->getFileUrl()));
-            $this->em->remove($document);
-            $this->em->flush();
+            $this->documentService->deleteDocument($document);
             $this->addFlash('success', 'Документът бе успешно изтрит.');
 
         } catch (Exception $ex) {
@@ -397,7 +401,7 @@ class PolicyController extends Controller
     {
         $q = $request->query->get('term');
         /** @var Car[]|null $cars */
-        $cars = $this->em->getRepository(Car::class)->findByKeyword((string)$q);
+        $cars = $this->carService->findByKeyword((string)$q);
 
         $data = [];
         if ($cars) {

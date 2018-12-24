@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\FormError;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormInterface;
 
 /**
  * Class ErrorMessageService
- * @package AppBundle\Service
+ * @package AppBundle\Service\FormError
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class FormErrorService implements FormErrorServiceInterface

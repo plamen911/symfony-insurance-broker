@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProfileType;
 use AppBundle\Form\UserType;
-use AppBundle\Service\FormErrorServiceInterface;
-use AppBundle\Service\ProfileServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\FormError\FormErrorServiceInterface;
+use AppBundle\Service\Profile\ProfileServiceInterface;
+use AppBundle\Service\Role\RoleServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -38,31 +37,26 @@ class UserController extends Controller
 {
     use DataTablesTrait;
 
-    /** @var EntityManagerInterface $em */
-    private $em;
-
-    /** @var UserPasswordEncoder $encoder */
-    private $encoder;
-
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
     /** @var ProfileServiceInterface $profileService */
     private $profileService;
 
+    /** @var RoleServiceInterface $roleService */
+    private $roleService;
+
     /**
      * UserController constructor.
-     * @param EntityManagerInterface $em
-     * @param UserPasswordEncoderInterface $encoder
      * @param FormErrorServiceInterface $formErrorService
      * @param ProfileServiceInterface $profileService
+     * @param RoleServiceInterface $roleService
      */
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, FormErrorServiceInterface $formErrorService, ProfileServiceInterface $profileService)
+    public function __construct(FormErrorServiceInterface $formErrorService, ProfileServiceInterface $profileService, RoleServiceInterface $roleService)
     {
-        $this->em = $em;
-        $this->encoder = $encoder;
         $this->formErrorService = $formErrorService;
         $this->profileService = $profileService;
+        $this->roleService = $roleService;
     }
 
     /**
@@ -234,18 +228,13 @@ class UserController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-
-            $userRole = $this->em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_ADMIN']);
+            $userRole = $this->roleService->findOneBy(['name' => 'ROLE_ADMIN']);
             $user->addRole($userRole);
-
-            $this->em->persist($user);
-            $this->em->flush();
+            $this->profileService->newProfile($user);
 
             $token = new UsernamePasswordToken(
                 $user,
-                $password,
+                $user->getPassword(),
                 'main',
                 $user->getRoles()
             );

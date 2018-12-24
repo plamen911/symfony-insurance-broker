@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Report;
 
 use AppBundle\Entity\Payment;
 
 /**
  * Interface ReportServiceInterface
- * @package AppBundle\Service
+ * @package AppBundle\Service\Report
  */
 interface ReportServiceInterface
 {

@@ -5,8 +5,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
 use AppBundle\Form\ClientType;
-use AppBundle\Service\FormErrorServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\Client\ClientServiceInterface;
+use AppBundle\Service\FormError\FormErrorServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,20 +23,21 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OwnerController extends Controller
 {
-    /** @var EntityManagerInterface $em */
-    private $em;
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
+    /** @var ClientServiceInterface $clientService */
+    private $clientService;
+
     /**
      * OwnerController constructor.
-     * @param EntityManagerInterface $em
      * @param FormErrorServiceInterface $formErrorsService
+     * @param ClientServiceInterface $clientService
      */
-    public function __construct(EntityManagerInterface $em, FormErrorServiceInterface $formErrorsService)
+    public function __construct(FormErrorServiceInterface $formErrorsService, ClientServiceInterface $clientService)
     {
-        $this->em = $em;
         $this->formErrorService = $formErrorsService;
+        $this->clientService = $clientService;
     }
 
     /**
@@ -46,13 +47,9 @@ class OwnerController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $clients = $em->getRepository(ClientType::class)->findAll();
-
-        return $this->render('owner/index.html.twig', array(
-            'clients' => $clients,
-        ));
+        return $this->render('owner/index.html.twig', [
+            'clients' => $this->clientService->findAll()
+        ]);
     }
 
     /**
@@ -71,9 +68,7 @@ class OwnerController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->em->persist($owner);
-            $this->em->flush();
-
+            $this->clientService->newClient($owner);
             $this->addFlash('success', 'Собственикът на МПС бе успешно добавен.');
 
             return $this->redirectToRoute('owner_show', ['id' => $owner->getId()]);
@@ -121,9 +116,7 @@ class OwnerController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $owner->setUpdatedAt(new \DateTime());
-            $this->em->flush();
-
+            $this->clientService->editClient($owner);
             $this->addFlash('success', 'Данните бяха успешно записани.');
 
             return $this->redirectToRoute('owner_edit', ['id' => $owner->getId()]);
@@ -141,6 +134,9 @@ class OwnerController extends Controller
      * Deletes a client entity.
      *
      * @Route("/{id}", name="owner_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param Client $client
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction(Request $request, Client $client)
     {
@@ -150,9 +146,7 @@ class OwnerController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($client);
-            $em->flush();
+            $this->clientService->deleteClient($client);
         }
 
         return $this->redirectToRoute('owner_index');
@@ -170,7 +164,6 @@ class OwnerController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('owner_delete', array('id' => $client->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

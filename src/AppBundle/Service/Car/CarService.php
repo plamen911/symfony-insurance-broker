@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 /**
  * Class CarService
- * @package AppBundle\Service
+ * @package AppBundle\Service\Car
  * @author Plamen Markov <plamen@lynxlake.org>
  */
 class CarService implements CarServiceInterface
@@ -39,6 +39,15 @@ class CarService implements CarServiceInterface
         $this->currentUser = $tokenStorage->getToken()->getUser();
         $this->carRepo = $carRepo;
         $this->uploadService = $uploadService;
+    }
+
+    /**
+     * @param string $keyword
+     * @return Car[]|null
+     */
+    public function findByKeyword(string $keyword)
+    {
+        return $this->carRepo->findByKeyword($keyword);
     }
 
     /**

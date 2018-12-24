@@ -8,10 +8,10 @@ use AppBundle\Entity\Client;
 use AppBundle\Entity\Document;
 use AppBundle\Form\CarType;
 use AppBundle\Form\ClientType;
-use AppBundle\Service\Aws\UploadInterface;
-use AppBundle\Service\CarServiceInterface;
-use AppBundle\Service\FormErrorServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\Car\CarServiceInterface;
+use AppBundle\Service\Client\ClientServiceInterface;
+use AppBundle\Service\Document\DocumentServiceInterface;
+use AppBundle\Service\FormError\FormErrorServiceInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,31 +35,32 @@ class CarController extends Controller
 {
     use DataTablesTrait;
 
-    /** @var EntityManagerInterface $em */
-    private $em;
-
-    /** @var UploadInterface $uploadService */
-    private $uploadService;
-
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
     /** @var CarServiceInterface $carService */
     private $carService;
 
+    /** @var ClientServiceInterface $clientService */
+    private $clientService;
+
+    /** @var DocumentServiceInterface $documentService */
+    private $documentService;
+
     /**
-     * PolicyController constructor.
-     * @param EntityManagerInterface $em
-     * @param UploadInterface $uploadService
+     * CarController constructor.
+     *
      * @param FormErrorServiceInterface $formErrorsService
      * @param CarServiceInterface $carService
+     * @param ClientServiceInterface $clientService
+     * @param DocumentServiceInterface $documentService
      */
-    public function __construct(EntityManagerInterface $em, UploadInterface $uploadService, FormErrorServiceInterface $formErrorsService, CarServiceInterface $carService)
+    public function __construct(FormErrorServiceInterface $formErrorsService, CarServiceInterface $carService, ClientServiceInterface $clientService, DocumentServiceInterface $documentService)
     {
-        $this->em = $em;
-        $this->uploadService = $uploadService;
         $this->formErrorService = $formErrorsService;
         $this->carService = $carService;
+        $this->clientService = $clientService;
+        $this->documentService = $documentService;
     }
 
     /**
@@ -238,9 +239,7 @@ class CarController extends Controller
     public function deleteDocument(Request $request, Car $car, Document $document)
     {
         try {
-            $this->uploadService->delete(basename($document->getFileUrl()));
-            $this->em->remove($document);
-            $this->em->flush();
+            $this->documentService->deleteDocument($document);
             $this->addFlash('success', 'Документът бе успешно изтрит.');
 
         } catch (Exception $ex) {
@@ -264,7 +263,7 @@ class CarController extends Controller
     {
         try {
             $representative->removeRepresentativeCar($car);
-            $this->em->flush();
+            $this->clientService->editClient($representative);
             $this->addFlash('success', 'Пълномощникът бе успешно премахнат.');
 
         } catch (Exception $ex) {
@@ -302,8 +301,7 @@ class CarController extends Controller
                 $message = 'Пълномощникът бе успешно добавен.';
                 $car->setRepresentative($client);
             }
-            $this->em->persist($client);
-            $this->em->flush();
+            $this->clientService->newClient($client);
 
             $this->addFlash('success', $message);
             if (!empty($refUrl)) {
@@ -327,8 +325,7 @@ class CarController extends Controller
                 $car->setRepresentative($client);
             }
 
-            $this->em->persist($client);
-            $this->em->flush();
+            $this->clientService->newClient($client);
 
             $this->addFlash('success', $message);
             if (!empty($refUrl)) {
@@ -356,7 +353,7 @@ class CarController extends Controller
     {
         $q = $request->query->get('term');
         /** @var Client[]|null $owners */
-        $owners = $this->em->getRepository(Client::class)->findByKeyword((string)$q);
+        $owners = $this->clientService->findByKeyword((string)$q);
 
         $data = [];
         if ($owners) {

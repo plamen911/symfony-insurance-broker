@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Payment;
 use AppBundle\Service\Pusher\RealTimeServiceInterface;
-use AppBundle\Service\ReportServiceInterface;
+use AppBundle\Service\Report\ReportServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

@@ -1,15 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: apple
- * Date: 2018-12-24
- * Time: 09:32
- */
+declare(strict_types=1);
 
 namespace AppBundle\Service\Document;
 
+use AppBundle\Entity\Document;
 
+/**
+ * Interface DocumentServiceInterface
+ * @package AppBundle\Service\Document
+ */
 interface DocumentServiceInterface
 {
-
+    /**
+     * @param Document $document
+     */
+    public function deleteDocument(Document $document);
 }

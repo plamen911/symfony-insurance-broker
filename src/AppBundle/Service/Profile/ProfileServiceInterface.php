@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Profile;
 
 use AppBundle\Entity\User;
 use Exception;
@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * Interface ProfileServiceInterface
- * @package AppBundle\Service
+ * @package AppBundle\Service\Profile
  */
 interface ProfileServiceInterface
 {
