@@ -54,13 +54,13 @@ class GreenCardType extends AbstractType
                 ]
             ])
             ->add('amountDue', NumberType::class, [
-                'label' => 'Вноска',
+                'label' => 'Дължимо',
                 'label_attr' => [
                     'class' => 'sr-only'
                 ],
                 'attr' => [
                     'class' => 'mr-2',
-                    'placeholder' => 'Вноска',
+                    'placeholder' => 'Дължимо',
                 ]
             ]);
     }

@@ -3,7 +3,8 @@
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('policy_list', {'typeOfPolicy': policyType.id}) }}">Списък</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('policy_list', {'typeOfPolicy': policyType.id}) }}">Списък</a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">Нова полица {{ policyType.name }} - Избор на МПС</li>
         </ol>
     </nav>
@@ -26,8 +27,7 @@
                             {{ form_widget(form_autocomplete) }}
                         </div>
                         <div class="col">
-                            <button type="submit" class="btn btn-dark"><i class="fas fa-car"></i> Избери
-                            </button>
+                            <button type="submit" class="btn btn-dark"><i class="fas fa-car"></i> Избери</button>
                         </div>
                     </div>
                     {{ form_end(form_autocomplete) }}
@@ -72,7 +72,8 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ path('policy_list', {'typeOfPolicy': policyType.id}) }}" title="Назад" class="btn btn-secondary"><i class="fas fa-undo-alt"></i>
+                    <a href="{{ path('policy_list', {'typeOfPolicy': policyType.id}) }}" title="Назад"
+                       class="btn btn-secondary"><i class="fas fa-undo-alt"></i>
                         Отмяна</a>
                     <button type="submit" class="btn btn-dark float-right"><i
                                 class="fas fa-plus-circle"></i> Добави
