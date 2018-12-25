@@ -1,33 +1,50 @@
 (function ($, toastr) {
   'use strict'
-  var $collectionHolder
+  var $paymentsHolder
+  var $greenCardsHolder
 
   // setup an "add a payment" link
   var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
-  var $newLinkLi = $('<li class="form-inline"></li>').append($addPaymentButton)
+  var $newPaymentLinkLi = $('<li class="form-inline"></li>').append($addPaymentButton)
+
+  // setup an "add a green card" link
+  var $addGreenCardButton = $('<button type="button" class="add_green_card_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави зелена карта</button>')
+  var $newGreenCardLinkLi = $('<li class="form-inline"></li>').append($addGreenCardButton)
 
   $(function () {
     // Get the ul that holds the collection of payments
-    $collectionHolder = $('ul.payments')
+    $paymentsHolder = $('ul.payments')
+    $greenCardsHolder = $('ul.green-cards')
 
     // add a delete link to all of the existing tag form li elements
-    $collectionHolder.find('li').each(function (i) {
+    $paymentsHolder.find('li').each(function (i) {
       if (i > 0) {
         addPaymentFormDeleteLink($(this))
       }
     })
 
+    $greenCardsHolder.find('li').each(function (i) {
+      if (i > 0) {
+        addGreenCardFormDeleteLink($(this))
+      }
+    })
+
     // add the "add a payment" anchor and li to the payments ul
-    $collectionHolder.append($newLinkLi)
+    $paymentsHolder.append($newPaymentLinkLi)
+    $greenCardsHolder.append($newGreenCardLinkLi)
 
     // count the current form inputs we have (e.g. 2), use that as the new
     // index when inserting a new item (e.g. 2)
-    $collectionHolder.data('index', $collectionHolder.find('li').length - 1)
-    // $collectionHolder.data('index', $collectionHolder.find(':input').length)
+    $paymentsHolder.data('index', $paymentsHolder.find('li').length - 1)
+    $greenCardsHolder.data('index', $greenCardsHolder.find('li').length - 1)
 
-    $addPaymentButton.on('click', function (e) {
+    $addPaymentButton.on('click', function () {
       // add a new payment form (see next code block)
-      addPaymentForm($collectionHolder, $newLinkLi)
+      addPaymentForm($paymentsHolder, $newPaymentLinkLi)
+    })
+
+    $addGreenCardButton.on('click', function () {
+      addGreenCardForm($greenCardsHolder, $newGreenCardLinkLi)
     })
 
     $('#calc-payments').on('click', function (e) {
@@ -40,12 +57,12 @@
     })
   })
 
-  function addPaymentForm ($collectionHolder, $newLinkLi) {
+  function addPaymentForm ($paymentsHolder, $newPaymentLinkLi) {
     // Get the data-prototype explained earlier
-    var prototype = $collectionHolder.data('prototype')
+    var prototype = $paymentsHolder.data('prototype')
 
     // get the new index
-    var index = $collectionHolder.data('index')
+    var index = $paymentsHolder.data('index')
 
     var newForm = prototype
     // You need this only if you didn't set 'label' => false in your payments field in TaskType
@@ -58,11 +75,11 @@
     newForm = newForm.replace(/__name__/g, index)
 
     // increase the index with one for the next item
-    $collectionHolder.data('index', index + 1)
+    $paymentsHolder.data('index', index + 1)
 
     // Display the form in the page in an li, before the "Add a payment" link li
     var $newFormLi = $('<li class="form-inline mb-1"></li>').append(newForm)
-    $newLinkLi.before($newFormLi)
+    $newPaymentLinkLi.before($newFormLi)
 
     window.setTimeout(function () {
       attachJsDatepicker()
@@ -72,6 +89,17 @@
     addPaymentFormDeleteLink($newFormLi)
   }
 
+  function addGreenCardForm ($greenCardsHolder, $newGreenCardLinkLi) {
+    var prototype = $greenCardsHolder.data('prototype')
+    var index = $greenCardsHolder.data('index')
+    var newForm = prototype
+    newForm = newForm.replace(/__name__/g, index)
+    $greenCardsHolder.data('index', index + 1)
+    var $newFormLi = $('<li class="form-inline mb-1"></li>').append(newForm)
+    $newGreenCardLinkLi.before($newFormLi)
+    addGreenCardFormDeleteLink($newFormLi)
+  }
+
   function addPaymentFormDeleteLink ($paymentFormLi) {
     var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
     $paymentFormLi.append($removeFormButton)
@@ -79,6 +107,14 @@
     $removeFormButton.on('click', function (e) {
       // remove the li for the payment form
       $paymentFormLi.remove()
+    })
+  }
+
+  function addGreenCardFormDeleteLink ($greenCardFormLi) {
+    var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
+    $greenCardFormLi.append($removeFormButton)
+    $removeFormButton.on('click', function (e) {
+      $greenCardFormLi.remove()
     })
   }
 

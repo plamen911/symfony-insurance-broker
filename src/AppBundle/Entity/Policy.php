@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="policies")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PolicyRepository")
- * @UniqueEntity(fields="idNumber", message="Вече има полица с този номер.")
+ * @UniqueEntity(fields="idNumber", message="Вече има издадена полица с този номер.")
  */
 class Policy
 {
@@ -227,23 +227,23 @@ class Policy
     private $payments;
 
     /**
-     * @var ArrayCollection|Bill[]
+     * @var ArrayCollection|GreenCard[]
      *
-     * @ORM\OneToMany(targetEntity="Bill", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GreenCard", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=false)
      */
     private $greenCards;
 
     /**
      * @var ArrayCollection|Bill[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=false)
      */
     private $bills;
 
     /**
      * @var ArrayCollection|Sticker[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=false)
      */
     private $stickers;
 
@@ -817,7 +817,7 @@ class Policy
     }
 
     /**
-     * @return Bill[]|ArrayCollection
+     * @return GreenCard[]|ArrayCollection
      */
     public function getGreenCards()
     {
@@ -825,7 +825,7 @@ class Policy
     }
 
     /**
-     * @param Bill[]|ArrayCollection $greenCards
+     * @param GreenCard[]|ArrayCollection $greenCards
      * @return Policy
      */
     public function setGreenCards($greenCards): Policy
@@ -838,10 +838,10 @@ class Policy
     }
 
     /**
-     * @param Bill $greenCard
+     * @param GreenCard $greenCard
      * @return $this
      */
-    public function addGreenCard(Bill $greenCard)
+    public function addGreenCard(GreenCard $greenCard)
     {
         if (!$this->greenCards->contains($greenCard)) {
             $this->greenCards->add($greenCard);
@@ -852,10 +852,10 @@ class Policy
     }
 
     /**
-     * @param Bill $greenCard
+     * @param GreenCard $greenCard
      * @return Policy
      */
-    public function removeGreenCard(Bill $greenCard)
+    public function removeGreenCard(GreenCard $greenCard)
     {
         if ($this->greenCards->contains($greenCard)) {
             $this->greenCards->removeElement($greenCard);

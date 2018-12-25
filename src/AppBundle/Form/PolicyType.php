@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\User;
@@ -110,7 +111,16 @@ class PolicyType extends AbstractType
                    ]);
 
             } else {
-                $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулирана?']);
+                $form
+                    ->add('isCancelled', CheckboxType::class, ['label' => 'Анулирана?'])
+                    ->add('greenCards', CollectionType::class, [
+                        'entry_type' => GreenCardType::class,
+                        'entry_options' => ['label' => false],
+                        'by_reference' => false,
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                    ]);
+                ;
             }
 
             if (null !== $policy->getCar()) {

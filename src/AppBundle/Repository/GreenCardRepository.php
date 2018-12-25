@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Repository;
+
+use AppBundle\Entity\GreenCard;
 
 /**
  * GreenCardRepository
@@ -10,4 +13,21 @@ namespace AppBundle\Repository;
  */
 class GreenCardRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param GreenCard $greenCard
+     * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function isValidAndVacant(GreenCard $greenCard)
+    {
+        return 0 < (int)$this->createQueryBuilder('g')
+                ->select('count(g.id)')
+                ->where('g.idNumber = :idNumber')
+                ->andWhere('g.policyId IS NULL OR g.policyId = 0')
+                ->setParameter('idNumber', $greenCard->getIdNumber())
+                ->getQuery()
+                ->getSingleScalarResult();
+    }
+
+
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Class GreenCard
@@ -12,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="green_cards")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GreenCardRepository")
+ * @UniqueEntity(fields="idNumber", message="Вече има издадена зелена карта с този номер.")
  */
 class GreenCard
 {
@@ -28,13 +31,14 @@ class GreenCard
      * @var string
      *
      * @ORM\Column(name="id_number", type="string", length=191, unique=true)
+     * @Assert\NotBlank(message="Зелена карта No е задължително поле.")
      */
     private $idNumber;
 
     /**
      * @var string|null
      *
-     * @ORM\Column(name="price", type="decimal", precision=10, scale=2, nullable=true)
+     * @ORM\Column(name="price", type="decimal", precision=10, scale=2)
      */
     private $price;
 
@@ -58,6 +62,13 @@ class GreenCard
      * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="policy_id", type="integer", nullable=true)
+     */
+    private $policyId;
 
     /**
      * @var Policy|null
@@ -93,7 +104,7 @@ class GreenCard
      *
      * @param string $idNumber
      *
-     * @return Bill
+     * @return GreenCard
      */
     public function setIdNumber($idNumber)
     {
@@ -117,7 +128,7 @@ class GreenCard
      *
      * @param string|null $price
      *
-     * @return Bill
+     * @return GreenCard
      */
     public function setPrice($price = null)
     {
@@ -141,7 +152,7 @@ class GreenCard
      *
      * @param string $tax
      *
-     * @return Bill
+     * @return GreenCard
      */
     public function setTax($tax)
     {
@@ -165,7 +176,7 @@ class GreenCard
      *
      * @param string $amountDue
      *
-     * @return Bill
+     * @return GreenCard
      */
     public function setAmountDue($amountDue)
     {
@@ -194,7 +205,7 @@ class GreenCard
 
     /**
      * @param \DateTime $createdAt
-     * @return Bill
+     * @return GreenCard
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -213,11 +224,30 @@ class GreenCard
 
     /**
      * @param Policy|null $policy
-     * @return Bill
+     * @return GreenCard
      */
     public function setPolicy(?Policy $policy)
     {
         $this->policy = $policy;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPolicyId(): ?int
+    {
+        return $this->policyId;
+    }
+
+    /**
+     * @param int|null $policyId
+     * @return GreenCard
+     */
+    public function setPolicyId(?int $policyId): GreenCard
+    {
+        $this->policyId = $policyId;
 
         return $this;
     }

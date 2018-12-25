@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace AppBundle\Service\Policy;
 
 use AppBundle\Entity\Document;
+use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Entity\User;
+use AppBundle\Repository\GreenCardRepository;
 use AppBundle\Repository\PolicyRepository;
 use AppBundle\Repository\TypeOfPolicyRepository;
 use AppBundle\Service\Aws\UploadInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +34,9 @@ class PolicyService implements PolicyServiceInterface
     /** @var TypeOfPolicyRepository $typeOfPolicyRepo */
     private $typeOfPolicyRepo;
 
+    /** @var GreenCardRepository $greenCardRepo */
+    private $greenCardRepo;
+
     /** @var UploadInterface $uploadService */
     private $uploadService;
 
@@ -39,13 +45,15 @@ class PolicyService implements PolicyServiceInterface
      * @param TokenStorageInterface $tokenStorage
      * @param PolicyRepository $policyRepo
      * @param TypeOfPolicyRepository $typeOfPolicyRepo
+     * @param GreenCardRepository $greenCardRepo
      * @param UploadInterface $uploadService
      */
-    public function __construct(TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, UploadInterface $uploadService)
+    public function __construct(TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, GreenCardRepository $greenCardRepo, UploadInterface $uploadService)
     {
         $this->currentUser = $tokenStorage->getToken()->getUser();
         $this->policyRepo = $policyRepo;
         $this->typeOfPolicyRepo = $typeOfPolicyRepo;
+        $this->greenCardRepo = $greenCardRepo;
         $this->uploadService = $uploadService;
     }
 
@@ -88,16 +96,21 @@ class PolicyService implements PolicyServiceInterface
      */
     public function editPolicy(Request $request, Policy $policy)
     {
-        $this->validatePayments($policy);
-        $this->processUpload($request, $policy);
+        $this
+            ->validatePayments($policy)
+            ->validateGreenCards($policy)
+            ->processUpload($request, $policy);
 
-        $policy->getCar()->setUpdatedAt(new \DateTime());
-        $policy->getCar()->setUpdater($this->currentUser);
+        $policy
+            ->getCar()->setUpdatedAt(new \DateTime())
+            ->setUpdater($this->currentUser);
 
-        $policy->setPaid($policy->getPaidTotal());
-        $policy->setBalance($policy->getBalanceTotal());
-        $policy->setUpdatedAt(new \DateTime());
-        $policy->setUpdater($this->currentUser);
+        $policy
+            ->setPaid($policy->getPaidTotal())
+            ->setBalance($policy->getBalanceTotal())
+            ->setUpdatedAt(new \DateTime())
+            ->setUpdater($this->currentUser);
+
         $this->policyRepo->save($policy);
 
         return $policy;
@@ -122,6 +135,7 @@ class PolicyService implements PolicyServiceInterface
 
     /**
      * @param Policy $policy
+     * @return PolicyService
      * @throws Exception
      */
     private function validatePayments(Policy $policy)
@@ -153,6 +167,39 @@ class PolicyService implements PolicyServiceInterface
         if (round($policy->getTotal(), 2) !== round($totalDue, 2)) {
             throw new Exception('Общо дължима премия (' . $policy->getTotal() . ') е различна от сумата на вноските (' . $totalDue . ').');
         }
+
+        return $this;
+    }
+
+    /**
+     * @param Policy $policy
+     * @return PolicyService
+     * @throws Exception
+     */
+    private function validateGreenCards(Policy $policy)
+    {
+        foreach ($policy->getGreenCards() as $i => $greenCard) {
+            if (empty($greenCard->getIdNumber())) {
+                throw new Exception('Липсва номер на залена карта ' . ($i + 1) . '.');
+            }
+
+            $existingGreenCard = $this->greenCardRepo->findOneBy(['idNumber' => $greenCard->getIdNumber()]);
+            if (null === $existingGreenCard) {
+                throw new Exception($greenCard->getIdNumber() . ' е невалиден номер на зелена карта.');
+            }
+
+            if (null === $greenCard->getId()) {
+                $policy->removeGreenCard($greenCard);
+                /** @var GreenCard $existingGreenCard */
+                $existingGreenCard->setPolicy($greenCard->getPolicy());
+                $existingGreenCard->setPrice($greenCard->getPrice());
+                $existingGreenCard->setTax($greenCard->getTax());
+                $existingGreenCard->setAmountDue($greenCard->getAmountDue());
+                $policy->addGreenCard($existingGreenCard);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -160,9 +207,9 @@ class PolicyService implements PolicyServiceInterface
      *
      * @param Request $request
      * @param Policy $policy
-     * @return Policy
+     * @return PolicyService
      */
-    private function processUpload(Request $request, Policy $policy): Policy
+    private function processUpload(Request $request, Policy $policy): PolicyService
     {
         if (null !== $request->files->get('documents')) {
             /** @var UploadedFile $file */
@@ -181,6 +228,6 @@ class PolicyService implements PolicyServiceInterface
             }
         }
 
-        return $policy;
+        return $this;
     }
 }

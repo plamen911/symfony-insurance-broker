@@ -1,0 +1,21 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Зелени карти</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <ul class="green-cards pl-0 mb-0" data-prototype="{{ form_widget(form.greenCards.vars.prototype)|e('html_attr') }}">
+                {% for key, greenCard in form.greenCards %}
+                    <li class="form-inline mb-1">
+                        <div id="policy_greenCards_{{ key }}">
+                            {{ form_row(greenCard.idNumber) }}
+                            {{ form_row(greenCard.price) }}
+                            {{ form_row(greenCard.tax) }}
+                            {{ form_row(greenCard.amountDue) }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
