@@ -46,6 +46,13 @@ class Sticker
     private $createdAt;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="policy_id", type="integer", nullable=true)
+     */
+    private $policyId;
+
+    /**
      * @var Policy|null
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Policy", inversedBy="stickers")
      * @ORM\JoinColumn(name="policy_id", referencedColumnName="id")
@@ -149,5 +156,24 @@ class Sticker
     public function setPolicy(?Policy $policy): void
     {
         $this->policy = $policy;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPolicyId(): ?int
+    {
+        return $this->policyId;
+    }
+
+    /**
+     * @param int|null $policyId
+     * @return Sticker
+     */
+    public function setPolicyId(?int $policyId): Sticker
+    {
+        $this->policyId = $policyId;
+
+        return $this;
     }
 }

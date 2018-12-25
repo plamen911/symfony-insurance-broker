@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\User;
@@ -82,6 +81,7 @@ class PolicyType extends AbstractType
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
+                'label' => false
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -119,8 +119,24 @@ class PolicyType extends AbstractType
                         'by_reference' => false,
                         'allow_add' => true,
                         'allow_delete' => true,
+                        'label' => false
+                    ])
+                    ->add('stickers', CollectionType::class, [
+                        'entry_type' => StickerType::class,
+                        'entry_options' => ['label' => false],
+                        'by_reference' => false,
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                        'label' => false
+                    ])
+                    ->add('bills', CollectionType::class, [
+                        'entry_type' => BillType::class,
+                        'entry_options' => ['label' => false],
+                        'by_reference' => false,
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                        'label' => false
                     ]);
-                ;
             }
 
             if (null !== $policy->getCar()) {

@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Repository;
+
+use AppBundle\Entity\Sticker;
 
 /**
  * StickerRepository
@@ -10,4 +13,19 @@ namespace AppBundle\Repository;
  */
 class StickerRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param Sticker $sticker
+     * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function isValidAndVacant(Sticker $sticker)
+    {
+        return 0 < (int)$this->createQueryBuilder('s')
+                ->select('count(s.id)')
+                ->where('s.idNumber = :idNumber')
+                ->andWhere('s.policyId IS NULL OR s.policyId = 0')
+                ->setParameter('idNumber', $sticker->getIdNumber())
+                ->getQuery()
+                ->getSingleScalarResult();
+    }
 }

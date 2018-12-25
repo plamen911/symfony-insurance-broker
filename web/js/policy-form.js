@@ -2,19 +2,28 @@
   'use strict'
   var $paymentsHolder
   var $greenCardsHolder
+  var $stickersHolder
+  var $billsHolder
 
   // setup an "add a payment" link
   var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
   var $newPaymentLinkLi = $('<li class="form-inline"></li>').append($addPaymentButton)
 
-  // setup an "add a green card" link
   var $addGreenCardButton = $('<button type="button" class="add_green_card_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави зелена карта</button>')
   var $newGreenCardLinkLi = $('<li class="form-inline"></li>').append($addGreenCardButton)
+
+  var $addStickerButton = $('<button type="button" class="add_sticker_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави стикер</button>')
+  var $newStickerLinkLi = $('<li class="form-inline"></li>').append($addStickerButton)
+
+  var $addBillButton = $('<button type="button" class="add_bill_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави сметка</button>')
+  var $newBillLinkLi = $('<li class="form-inline"></li>').append($addBillButton)
 
   $(function () {
     // Get the ul that holds the collection of payments
     $paymentsHolder = $('ul.payments')
     $greenCardsHolder = $('ul.green-cards')
+    $stickersHolder = $('ul.stickers')
+    $billsHolder = $('ul.bills')
 
     // add a delete link to all of the existing tag form li elements
     $paymentsHolder.find('li').each(function (i) {
@@ -29,14 +38,30 @@
       }
     })
 
+    $stickersHolder.find('li').each(function (i) {
+      if (i > 0) {
+        addStickerFormDeleteLink($(this))
+      }
+    })
+
+    $billsHolder.find('li').each(function (i) {
+      if (i > 0) {
+        addBillFormDeleteLink($(this))
+      }
+    })
+
     // add the "add a payment" anchor and li to the payments ul
     $paymentsHolder.append($newPaymentLinkLi)
     $greenCardsHolder.append($newGreenCardLinkLi)
+    $stickersHolder.append($newStickerLinkLi)
+    $billsHolder.append($newBillLinkLi)
 
     // count the current form inputs we have (e.g. 2), use that as the new
     // index when inserting a new item (e.g. 2)
     $paymentsHolder.data('index', $paymentsHolder.find('li').length - 1)
     $greenCardsHolder.data('index', $greenCardsHolder.find('li').length - 1)
+    $stickersHolder.data('index', $stickersHolder.find('li').length - 1)
+    $billsHolder.data('index', $billsHolder.find('li').length - 1)
 
     $addPaymentButton.on('click', function () {
       // add a new payment form (see next code block)
@@ -45,6 +70,14 @@
 
     $addGreenCardButton.on('click', function () {
       addGreenCardForm($greenCardsHolder, $newGreenCardLinkLi)
+    })
+
+    $addStickerButton.on('click', function () {
+      addStickerForm($stickersHolder, $newStickerLinkLi)
+    })
+
+    $addBillButton.on('click', function () {
+      addBillForm($billsHolder, $newBillLinkLi)
     })
 
     $('#calc-payments').on('click', function (e) {
@@ -100,11 +133,33 @@
     addGreenCardFormDeleteLink($newFormLi)
   }
 
+  function addStickerForm ($stickersHolder, $newStickerLinkLi) {
+    var prototype = $stickersHolder.data('prototype')
+    var index = $stickersHolder.data('index')
+    var newForm = prototype
+    newForm = newForm.replace(/__name__/g, index)
+    $stickersHolder.data('index', index + 1)
+    var $newFormLi = $('<li class="form-inline mb-1"></li>').append(newForm)
+    $newStickerLinkLi.before($newFormLi)
+    addStickerFormDeleteLink($newFormLi)
+  }
+
+  function addBillForm ($billsHolder, $newBillLinkLi) {
+    var prototype = $billsHolder.data('prototype')
+    var index = $billsHolder.data('index')
+    var newForm = prototype
+    newForm = newForm.replace(/__name__/g, index)
+    $billsHolder.data('index', index + 1)
+    var $newFormLi = $('<li class="form-inline mb-1"></li>').append(newForm)
+    $newBillLinkLi.before($newFormLi)
+    addBillFormDeleteLink($newFormLi)
+  }
+
   function addPaymentFormDeleteLink ($paymentFormLi) {
     var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
     $paymentFormLi.append($removeFormButton)
 
-    $removeFormButton.on('click', function (e) {
+    $removeFormButton.on('click', function () {
       // remove the li for the payment form
       $paymentFormLi.remove()
     })
@@ -113,8 +168,24 @@
   function addGreenCardFormDeleteLink ($greenCardFormLi) {
     var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
     $greenCardFormLi.append($removeFormButton)
-    $removeFormButton.on('click', function (e) {
+    $removeFormButton.on('click', function () {
       $greenCardFormLi.remove()
+    })
+  }
+
+  function addStickerFormDeleteLink ($stickerFormLi) {
+    var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
+    $stickerFormLi.append($removeFormButton)
+    $removeFormButton.on('click', function () {
+      $stickerFormLi.remove()
+    })
+  }
+
+  function addBillFormDeleteLink ($billFormLi) {
+    var $removeFormButton = $('<button type="button" class="btn btn-danger btn-sm ml-2"><i class="far fa-trash-alt"></i></button>')
+    $billFormLi.append($removeFormButton)
+    $removeFormButton.on('click', function () {
+      $billFormLi.remove()
     })
   }
 

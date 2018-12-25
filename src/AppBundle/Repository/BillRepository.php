@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace AppBundle\Repository;
+
+use AppBundle\Entity\Bill;
 
 /**
  * BillRepository
@@ -10,4 +13,19 @@ namespace AppBundle\Repository;
  */
 class BillRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param Bill $bill
+     * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function isValidAndVacant(Bill $bill)
+    {
+        return 0 < (int)$this->createQueryBuilder('b')
+                ->select('count(b.id)')
+                ->where('b.idNumber = :idNumber')
+                ->andWhere('b.policyId IS NULL OR b.policyId = 0')
+                ->setParameter('idNumber', $bill->getIdNumber())
+                ->getQuery()
+                ->getSingleScalarResult();
+    }
 }

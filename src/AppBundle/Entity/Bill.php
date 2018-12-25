@@ -53,6 +53,13 @@ class Bill
     private $createdAt;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="policy_id", type="integer", nullable=true)
+     */
+    private $policyId;
+
+    /**
      * @var Policy|null
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Policy", inversedBy="bills")
      * @ORM\JoinColumn(name="policy_id", referencedColumnName="id")
@@ -181,5 +188,24 @@ class Bill
     public function setPolicy(?Policy $policy): void
     {
         $this->policy = $policy;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPolicyId(): ?int
+    {
+        return $this->policyId;
+    }
+
+    /**
+     * @param int|null $policyId
+     * @return Bill
+     */
+    public function setPolicyId(?int $policyId): Bill
+    {
+        $this->policyId = $policyId;
+
+        return $this;
     }
 }

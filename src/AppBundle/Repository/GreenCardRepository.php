@@ -28,6 +28,4 @@ class GreenCardRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->getSingleScalarResult();
     }
-
-
 }

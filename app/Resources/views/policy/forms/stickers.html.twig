@@ -1,0 +1,19 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Стикери</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <ul class="stickers pl-0 mb-0" data-prototype="{{ form_widget(form.stickers.vars.prototype)|e('html_attr') }}">
+                {% for key, sticker in form.stickers %}
+                    <li class="form-inline mb-1">
+                        <div id="policy_stickers_{{ key }}">
+                            {{ form_row(sticker.idNumber) }}
+                            {{ form_row(sticker.isCancelled) }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

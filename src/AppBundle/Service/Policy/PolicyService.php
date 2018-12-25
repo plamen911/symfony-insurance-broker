@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace AppBundle\Service\Policy;
 
+use AppBundle\Entity\Bill;
 use AppBundle\Entity\Document;
 use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Policy;
+use AppBundle\Entity\Sticker;
 use AppBundle\Entity\TypeOfPolicy;
 use AppBundle\Entity\User;
+use AppBundle\Repository\BillRepository;
 use AppBundle\Repository\GreenCardRepository;
 use AppBundle\Repository\PolicyRepository;
+use AppBundle\Repository\StickerRepository;
 use AppBundle\Repository\TypeOfPolicyRepository;
 use AppBundle\Service\Aws\UploadInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +40,12 @@ class PolicyService implements PolicyServiceInterface
     /** @var GreenCardRepository $greenCardRepo */
     private $greenCardRepo;
 
+    /** @var StickerRepository $stickerRepo */
+    private $stickerRepo;
+
+    /** @var BillRepository $billRepo */
+    private $billRepo;
+
     /** @var UploadInterface $uploadService */
     private $uploadService;
 
@@ -46,14 +55,18 @@ class PolicyService implements PolicyServiceInterface
      * @param PolicyRepository $policyRepo
      * @param TypeOfPolicyRepository $typeOfPolicyRepo
      * @param GreenCardRepository $greenCardRepo
+     * @param StickerRepository $stickerRepo
+     * @param BillRepository $billRepo
      * @param UploadInterface $uploadService
      */
-    public function __construct(TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, GreenCardRepository $greenCardRepo, UploadInterface $uploadService)
+    public function __construct(TokenStorageInterface $tokenStorage, PolicyRepository $policyRepo, TypeOfPolicyRepository $typeOfPolicyRepo, GreenCardRepository $greenCardRepo, StickerRepository $stickerRepo, BillRepository $billRepo, UploadInterface $uploadService)
     {
         $this->currentUser = $tokenStorage->getToken()->getUser();
         $this->policyRepo = $policyRepo;
         $this->typeOfPolicyRepo = $typeOfPolicyRepo;
         $this->greenCardRepo = $greenCardRepo;
+        $this->stickerRepo = $stickerRepo;
+        $this->billRepo = $billRepo;
         $this->uploadService = $uploadService;
     }
 
@@ -99,10 +112,13 @@ class PolicyService implements PolicyServiceInterface
         $this
             ->validatePayments($policy)
             ->validateGreenCards($policy)
+            ->validateStickers($policy)
+            ->validateBills($policy)
             ->processUpload($request, $policy);
 
         $policy
-            ->getCar()->setUpdatedAt(new \DateTime())
+            ->getCar()
+            ->setUpdatedAt(new \DateTime())
             ->setUpdater($this->currentUser);
 
         $policy
@@ -196,6 +212,65 @@ class PolicyService implements PolicyServiceInterface
                 $existingGreenCard->setTax($greenCard->getTax());
                 $existingGreenCard->setAmountDue($greenCard->getAmountDue());
                 $policy->addGreenCard($existingGreenCard);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Policy $policy
+     * @return $this
+     * @throws Exception
+     */
+    private function validateStickers(Policy $policy)
+    {
+        foreach ($policy->getStickers() as $i => $sticker) {
+            if (empty($sticker->getIdNumber())) {
+                throw new Exception('Липсва номер на стикер ' . ($i + 1) . '.');
+            }
+
+            $existingSticker = $this->stickerRepo->findOneBy(['idNumber' => $sticker->getIdNumber()]);
+            if (null === $existingSticker) {
+                throw new Exception($sticker->getIdNumber() . ' е невалиден номер на стикер.');
+            }
+
+            if (null === $sticker->getId()) {
+                $policy->removeSticker($sticker);
+                /** @var Sticker $existingSticker */
+                $existingSticker->setPolicy($sticker->getPolicy());
+                $existingSticker->setIsCancelled($sticker->getIsCancelled());
+                $policy->addSticker($existingSticker);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Policy $policy
+     * @return $this
+     * @throws Exception
+     */
+    private function validateBills(Policy $policy)
+    {
+        foreach ($policy->getBills() as $i => $bill) {
+            if (empty($bill->getIdNumber())) {
+                throw new Exception('Липсва номер на сметка ' . ($i + 1) . '.');
+            }
+
+            $existingBill = $this->billRepo->findOneBy(['idNumber' => $bill->getIdNumber()]);
+            if (null === $existingBill) {
+                throw new Exception($bill->getIdNumber() . ' е невалиден номер на сметка.');
+            }
+
+            if (null === $bill->getId()) {
+                $policy->removeBill($bill);
+                /** @var Bill $existingBill */
+                $existingBill->setPolicy($bill->getPolicy());
+                $existingBill->setPrice($bill->getPrice());
+                $existingBill->setAmountDue($bill->getAmountDue());
+                $policy->addBill($existingBill);
             }
         }
 

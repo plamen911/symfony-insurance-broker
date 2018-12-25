@@ -73,6 +73,8 @@ services:
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Policy')"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:TypeOfPolicy')"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:GreenCard')"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Sticker')"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Bill')"
             - '@AppBundle\Service\Aws\UploadInterface'
 
     AppBundle\Service\Car\CarService:

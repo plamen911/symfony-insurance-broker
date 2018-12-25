@@ -1,0 +1,20 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Сметки</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <ul class="bills pl-0 mb-0" data-prototype="{{ form_widget(form.bills.vars.prototype)|e('html_attr') }}">
+                {% for key, bill in form.bills %}
+                    <li class="form-inline mb-1">
+                        <div id="policy_bills_{{ key }}">
+                            {{ form_row(bill.idNumber) }}
+                            {{ form_row(bill.price) }}
+                            {{ form_row(bill.amountDue) }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
