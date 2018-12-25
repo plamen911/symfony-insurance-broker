@@ -227,6 +227,27 @@ class Policy
     private $payments;
 
     /**
+     * @var ArrayCollection|Bill[]
+     *
+     * @ORM\OneToMany(targetEntity="Bill", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $greenCards;
+
+    /**
+     * @var ArrayCollection|Bill[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $bills;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="policy", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $stickers;
+
+    /**
      * Policy constructor.
      * @throws \Exception
      */
@@ -248,6 +269,9 @@ class Policy
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->payments = new ArrayCollection();
+        $this->greenCards = new ArrayCollection();
+        $this->bills = new ArrayCollection();
+        $this->stickers = new ArrayCollection();
     }
 
     /**
@@ -787,6 +811,153 @@ class Policy
         if ($this->payments->contains($payment)) {
             $this->payments->removeElement($payment);
             $payment->setPolicy(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Bill[]|ArrayCollection
+     */
+    public function getGreenCards()
+    {
+        return $this->greenCards;
+    }
+
+    /**
+     * @param Bill[]|ArrayCollection $greenCards
+     * @return Policy
+     */
+    public function setGreenCards($greenCards): Policy
+    {
+        foreach ($greenCards as $greenCard) {
+            $this->addGreenCard($greenCard);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $greenCard
+     * @return $this
+     */
+    public function addGreenCard(Bill $greenCard)
+    {
+        if (!$this->greenCards->contains($greenCard)) {
+            $this->greenCards->add($greenCard);
+            $greenCard->setPolicy($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $greenCard
+     * @return Policy
+     */
+    public function removeGreenCard(Bill $greenCard)
+    {
+        if ($this->greenCards->contains($greenCard)) {
+            $this->greenCards->removeElement($greenCard);
+            $greenCard->setPolicy(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Bill[]|ArrayCollection
+     */
+    public function getBills()
+    {
+        return $this->bills;
+    }
+
+    /**
+     * @param Bill[]|ArrayCollection $bills
+     * @return Policy
+     */
+    public function setBills($bills): Policy
+    {
+        foreach ($bills as $bill) {
+            $this->addBill($bill);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $bill
+     * @return Policy
+     */
+    public function addBill(Bill $bill)
+    {
+        if (!$this->bills->contains($bill)) {
+            $this->bills->add($bill);
+            $bill->setPolicy($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $bill
+     * @return Policy
+     */
+    public function removeBill(Bill $bill)
+    {
+        if ($this->bills->contains($bill)) {
+            $this->bills->removeElement($bill);
+            $bill->setPolicy(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getStickers()
+    {
+        return $this->stickers;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $stickers
+     * @return Policy
+     */
+    public function setStickers($stickers): Policy
+    {
+        foreach ($stickers as $sticker) {
+            $this->addSticker($sticker);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return Policy
+     */
+    public function addSticker(Sticker $sticker)
+    {
+        if (!$this->stickers->contains($sticker)) {
+            $this->stickers->add($sticker);
+            $sticker->setPolicy($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return Policy
+     */
+    public function removeSticker(Sticker $sticker)
+    {
+        if ($this->stickers->contains($sticker)) {
+            $this->stickers->removeElement($sticker);
+            $sticker->setPolicy(null);
         }
 
         return $this;
