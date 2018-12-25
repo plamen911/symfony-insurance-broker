@@ -29,7 +29,7 @@ class BillType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Сметка No',
                 ]
             ])
@@ -39,7 +39,7 @@ class BillType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Цена сметка',
                 ]
             ])
@@ -49,7 +49,7 @@ class BillType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Дължимо',
                 ]
             ]);

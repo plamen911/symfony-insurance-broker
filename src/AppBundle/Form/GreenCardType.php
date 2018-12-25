@@ -29,7 +29,7 @@ class GreenCardType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Зелена карта No',
                 ]
             ])
@@ -39,7 +39,7 @@ class GreenCardType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Цена З.К.',
                 ]
             ])
@@ -49,7 +49,7 @@ class GreenCardType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Данък',
                 ]
             ])
@@ -59,7 +59,7 @@ class GreenCardType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Дължимо',
                 ]
             ]);

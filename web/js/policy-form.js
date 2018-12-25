@@ -6,16 +6,16 @@
   var $billsHolder
 
   // setup an "add a payment" link
-  var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
+  var $addPaymentButton = $('<button type="button" class="add_payment_link btn btn-sm btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави плащане</button>')
   var $newPaymentLinkLi = $('<li class="form-inline"></li>').append($addPaymentButton)
 
-  var $addGreenCardButton = $('<button type="button" class="add_green_card_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави зелена карта</button>')
+  var $addGreenCardButton = $('<button type="button" class="add_green_card_link btn btn-sm btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави зелена карта</button>')
   var $newGreenCardLinkLi = $('<li class="form-inline"></li>').append($addGreenCardButton)
 
-  var $addStickerButton = $('<button type="button" class="add_sticker_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави стикер</button>')
+  var $addStickerButton = $('<button type="button" class="add_sticker_link btn btn-sm btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави стикер</button>')
   var $newStickerLinkLi = $('<li class="form-inline"></li>').append($addStickerButton)
 
-  var $addBillButton = $('<button type="button" class="add_bill_link btn btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави сметка</button>')
+  var $addBillButton = $('<button type="button" class="add_bill_link btn btn-sm btn-warning my-2"><i class="fas fa-plus-circle"></i> Добави сметка</button>')
   var $newBillLinkLi = $('<li class="form-inline"></li>').append($addBillButton)
 
   $(function () {

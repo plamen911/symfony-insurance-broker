@@ -29,7 +29,7 @@ class PaymentType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => false,
                 'attr' => [
-                    'class' => 'js-datepicker mr-2',
+                    'class' => 'form-control-sm js-datepicker mr-2',
                     'placeholder' => 'Дата на падежа',
                 ],
                 'format' => 'dd.MM.yyyy',
@@ -44,7 +44,7 @@ class PaymentType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Вноска',
                 ]
             ])
@@ -52,7 +52,7 @@ class PaymentType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => false,
                 'attr' => [
-                    'class' => 'js-datepicker mr-2',
+                    'class' => 'form-control-sm js-datepicker mr-2',
                     'placeholder' => 'Дата на плащане',
                 ],
                 'format' => 'dd.MM.yyyy',
@@ -68,7 +68,7 @@ class PaymentType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
-                    'class' => 'mr-2',
+                    'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Платена сума',
                     'required' => false
                 ]
