@@ -39,13 +39,6 @@ class Bill
     private $price;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="amount_due", type="decimal", precision=10, scale=2)
-     */
-    private $amountDue;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -73,7 +66,7 @@ class Bill
     public function __construct()
     {
         $this->createdAt = new \DateTime();
-        $this->amountDue = 0;
+        $this->price = 0;
     }
 
     /**
@@ -132,30 +125,6 @@ class Bill
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * Set amountDue.
-     *
-     * @param string $amountDue
-     *
-     * @return Bill
-     */
-    public function setAmountDue($amountDue)
-    {
-        $this->amountDue = (float)$amountDue;
-
-        return $this;
-    }
-
-    /**
-     * Get amountDue.
-     *
-     * @return string
-     */
-    public function getAmountDue()
-    {
-        return $this->amountDue;
     }
 
     /**

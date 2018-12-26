@@ -59,6 +59,7 @@ class GreenCardType extends AbstractType
                     'class' => 'sr-only'
                 ],
                 'attr' => [
+                    'readonly' => true,
                     'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Дължимо',
                 ]

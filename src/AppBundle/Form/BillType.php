@@ -42,16 +42,6 @@ class BillType extends AbstractType
                     'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Цена сметка',
                 ]
-            ])
-            ->add('amountDue', NumberType::class, [
-                'label' => 'Дължимо',
-                'label_attr' => [
-                    'class' => 'sr-only'
-                ],
-                'attr' => [
-                    'class' => 'form-control-sm mr-2',
-                    'placeholder' => 'Дължимо',
-                ]
             ]);
     }/**
      * {@inheritdoc}
