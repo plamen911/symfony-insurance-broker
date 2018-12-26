@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Sticker</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sticker.id }}</td>
+            </tr>
+            <tr>
+                <th>Idnumber</th>
+                <td>{{ sticker.idNumber }}</td>
+            </tr>
+            <tr>
+                <th>Iscancelled</th>
+                <td>{% if sticker.isCancelled %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Createdat</th>
+                <td>{% if sticker.createdAt %}{{ sticker.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Policyid</th>
+                <td>{{ sticker.policyId }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('sticker_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('sticker_edit', { 'id': sticker.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

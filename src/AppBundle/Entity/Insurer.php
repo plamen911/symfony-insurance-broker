@@ -73,6 +73,13 @@ class Insurer
     private $policies;
 
     /**
+     * @var ArrayCollection|Sticker[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="insurer")
+     */
+    private $stickers;
+
+    /**
      * @var ArrayCollection|TypeOfPolicy[]
      *
      * @ORM\ManyToMany(targetEntity="TypeOfPolicy", inversedBy="insurers")
@@ -91,6 +98,7 @@ class Insurer
         $this->isDeleted = false;
         $this->policyTypes = new ArrayCollection();
         $this->policies = new ArrayCollection();
+        $this->stickers = new ArrayCollection();
         $this->amountGf = 0;
     }
 
@@ -273,6 +281,41 @@ class Insurer
     {
         $this->policies->add($policy);
         $policy->setIdNumber($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getStickers()
+    {
+        return $this->stickers;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $stickers
+     * @return Insurer
+     */
+    public function setStickers($stickers): Insurer
+    {
+        foreach ($stickers as $sticker) {
+            $this->addSticker($sticker);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return $this
+     */
+    public function addSticker(Sticker $sticker)
+    {
+        if (!$this->policies->contains($sticker)) {
+            $this->policies->add($sticker);
+            $sticker->setInsurer($this);
+        }
 
         return $this;
     }

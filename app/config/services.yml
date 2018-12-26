@@ -114,3 +114,8 @@ services:
     AppBundle\Service\Role\RoleService:
         arguments:
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Role')"
+
+    AppBundle\Service\Sticker\StickerService:
+        arguments:
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Sticker')"

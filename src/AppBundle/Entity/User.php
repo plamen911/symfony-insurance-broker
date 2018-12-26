@@ -129,10 +129,23 @@ class User implements AdvancedUserInterface
     private $updatedCars;
 
     /**
+     * @var ArrayCollection|Sticker[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="author")
+     */
+    private $createdStickers;
+
+    /**
      * @var ArrayCollection|Payment[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment", mappedBy="reminder")
      */
     private $reminders;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="agent")
+     */
+    private $stickers;
 
     /**
      * User constructor.
@@ -147,6 +160,8 @@ class User implements AdvancedUserInterface
         $this->createdCars = new ArrayCollection();
         $this->updatedCars = new ArrayCollection();
         $this->reminders = new ArrayCollection();
+        $this->stickers = new ArrayCollection();
+        $this->createdStickers = new ArrayCollection();
         $this->setEnabled(true);
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -703,6 +718,76 @@ class User implements AdvancedUserInterface
         if (!$this->reminders->contains($payment)) {
             $this->reminders->add($payment);
             $payment->setReminder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getStickers()
+    {
+        return $this->stickers;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $stickers
+     * @return User
+     */
+    public function setStickers($stickers): User
+    {
+        foreach ($stickers as $sticker) {
+            $this->addSticker($sticker);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return $this
+     */
+    public function addSticker(Sticker $sticker)
+    {
+        if (!$this->stickers->contains($sticker)) {
+            $this->stickers->add($sticker);
+            $sticker->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getCreatedStickers()
+    {
+        return $this->createdStickers;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $createdStickers
+     * @return User
+     */
+    public function setCreatedStickers($createdStickers): User
+    {
+        foreach ($createdStickers as $sticker) {
+            $this->addSticker($sticker);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return $this
+     */
+    public function addCreatedSticker(Sticker $sticker)
+    {
+        if (!$this->createdStickers->contains($sticker)) {
+            $this->createdStickers->add($sticker);
+            $sticker->setAuthor($this);
         }
 
         return $this;
