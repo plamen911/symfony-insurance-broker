@@ -32,19 +32,82 @@ class CarType extends AbstractType
                 'class' => TypeOfCar::class,
                 'choice_label' => 'name',
                 'placeholder' => '- избери -',
-                'label' => 'Вид МПС'
+                'label' => 'Вид МПС',
+                'attr' => [
+                    'class' => 'form-control-sm'
+                ]
             ])
-            ->add('idNumber', TextType::class, ['label' => 'Рег. No', 'attr' => ['placeholder' => 'Рег. No']])
-            ->add('carMake', TextType::class, ['label' => 'Марка', 'attr' => ['placeholder' => 'Марка']])
-            ->add('carModel', TextType::class, ['label' => 'Модел', 'attr' => ['placeholder' => 'Модел']])
-            ->add('idFrame', TextType::class, ['label' => 'Рама No', 'attr' => ['placeholder' => 'Рама No']])
+            ->add('idNumber', TextType::class, [
+                'label' => 'Рег. No',
+                'attr' => [
+                    'placeholder' => 'Рег. No',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('carMake', TextType::class, [
+                'label' => 'Марка',
+                'attr' => [
+                    'placeholder' => 'Марка',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('carModel', TextType::class, [
+                'label' => 'Модел',
+                'attr' => [
+                    'placeholder' => 'Модел',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('idFrame', TextType::class, [
+                'label' => 'Рама No',
+                'attr' => [
+                    'placeholder' => 'Рама No',
+                    'class' => 'form-control-sm'
+                ]
+            ])
             ->add('isRightSteeringWheel', null, ['label' => 'Десен волан?'])
-            ->add('engineVol', TextType::class, ['label' => 'Двиг. обем (см3)', 'attr' => ['placeholder' => 'Двиг. обем (куб.см)']])
-            ->add('newWeight', NumberType::class, ['label' => 'Полезен товар (тон)', 'attr' => ['placeholder' => 'Полезен товар (тон)']])
-            ->add('grossWeight', NumberType::class, ['label' => 'Общо тегло (тон)', 'attr' => ['placeholder' => 'Общо тегло (тон)']])
-            ->add('color', TextType::class, ['label' => 'Цвят', 'attr' => ['placeholder' => 'Цвят']])
-            ->add('yearMade', TextType::class, ['label' => 'Год. на произв.', 'attr' => ['placeholder' => 'Год. на произв.']])
-            ->add('notes', TextareaType::class, ['label' => 'Бележки', 'attr' => ['placeholder' => 'Бележки']]);
+            ->add('engineVol', TextType::class, [
+                'label' => 'Двиг. обем (см3)',
+                'attr' => [
+                    'placeholder' => 'Двиг. обем (куб.см)',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('newWeight', NumberType::class, [
+                'label' => 'Полезен товар (тон)',
+                'attr' => [
+                    'placeholder' => 'Полезен товар (тон)',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('grossWeight', NumberType::class, [
+                'label' => 'Общо тегло (тон)',
+                'attr' => [
+                    'placeholder' => 'Общо тегло (тон)',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('color', TextType::class, [
+                'label' => 'Цвят',
+                'attr' => [
+                    'placeholder' => 'Цвят',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('yearMade', TextType::class, [
+                'label' => 'Год. на произв.',
+                'attr' => [
+                    'placeholder' => 'Год. на произв.',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('notes', TextareaType::class, [
+                'label' => 'Бележки',
+                'attr' => [
+                    'placeholder' => 'Бележки',
+                    'class' => 'form-control-sm'
+                ]
+            ]);
 
         if (null === $options['block_name']) {
             $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {

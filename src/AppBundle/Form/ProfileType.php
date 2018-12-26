@@ -51,10 +51,17 @@ class ProfileType extends AbstractType
             ->add('full_name', TextType::class, [
                 'label' => 'Име, презиме, фамилия',
                 'attr' => [
-                    'placeholder' => 'Име, презиме, фамилия'
+                    'placeholder' => 'Име, презиме, фамилия',
+                    'class' => 'form-control-sm'
                 ]
             ])
-            ->add('email', EmailType::class, ['label' => 'И-мейл', 'attr' => ['placeholder' => 'И-мейл']]);
+            ->add('email', EmailType::class, [
+                'label' => 'И-мейл',
+                'attr' => [
+                    'placeholder' => 'И-мейл',
+                    'class' => 'form-control-sm'
+                ]
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($currentUser) {
             /** @var User $user */
@@ -67,13 +74,15 @@ class ProfileType extends AbstractType
                         'first_options' => [
                             'label' => 'Парола',
                             'attr' => [
-                                'placeholder' => 'Парола'
+                                'placeholder' => 'Парола',
+                                'class' => 'form-control-sm'
                             ],
                         ],
                         'second_options' => [
                             'label' => 'Повтори парола',
                             'attr' => [
-                                'placeholder' => 'Повтори парола'
+                                'placeholder' => 'Повтори парола',
+                                'class' => 'form-control-sm'
                             ]
                         ],
                     ]
@@ -83,14 +92,16 @@ class ProfileType extends AbstractType
                     'mapped' => false,
                     'label' => 'Стара парола',
                     'attr' => [
-                        'placeholder' => 'Стара парола'
+                        'placeholder' => 'Стара парола',
+                        'class' => 'form-control-sm'
                     ]
                 ])
                     ->add('new_password', PasswordType::class, [
                         'mapped' => false,
                         'label' => 'Нова парола',
                         'attr' => [
-                            'placeholder' => 'Нова парола'
+                            'placeholder' => 'Нова парола',
+                            'class' => 'form-control-sm'
                         ],
                         'constraints' => [
 

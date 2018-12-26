@@ -25,20 +25,83 @@ class ClientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName', TextType::class, ['label' => 'Име', 'attr' => ['placeholder' => 'Име']])
-            ->add('middleName', TextType::class, ['label' => 'Презиме', 'attr' => ['placeholder' => 'Презиме']])
-            ->add('lastName', TextType::class, ['label' => 'Фамилия', 'attr' => ['placeholder' => 'Фамилия']])
-            ->add('idNumber', TextType::class, ['label' => 'ЕГН/ЕИК/БУЛСТАТ',
-                'attr' => ['placeholder' => 'ЕГН/ЕИК/БУЛСТАТ']])
-            ->add('city', TextType::class, ['label' => 'Населено място (гр./с.)',
-                'attr' => ['placeholder' => 'Населено място (гр./с.)']])
-            ->add('street', TextType::class, ['label' => 'Адрес (ул./жк.) ',
-                'attr' => ['placeholder' => 'Адрес (ул./жк.) ']])
-            ->add('phone', TelType::class, ['label' => 'Телефон', 'attr' => ['placeholder' => 'Телефон']])
-            ->add('phone2', TelType::class, ['label' => 'Телефон 2', 'attr' => ['placeholder' => 'Телефон 2']])
-            ->add('email', EmailType::class, ['label' => 'И-мейл', 'attr' => ['placeholder' => 'И-мейл']])
-            ->add('email2', EmailType::class, ['label' => 'И-мейл 2', 'attr' => ['placeholder' => 'И-мейл 2']])
-            ->add('notes', TextareaType::class, ['label' => 'Бележки', 'attr' => ['placeholder' => 'Бележки']]);
+            ->add('firstName', TextType::class, [
+                'label' => 'Име',
+                'attr' => [
+                    'placeholder' => 'Име',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('middleName', TextType::class, [
+                'label' => 'Презиме',
+                'attr' => [
+                    'placeholder' => 'Презиме',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => 'Фамилия',
+                'attr' => [
+                    'placeholder' => 'Фамилия',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('idNumber', TextType::class, [
+                'label' => 'ЕГН/ЕИК/БУЛСТАТ',
+                'attr' => [
+                    'placeholder' => 'ЕГН/ЕИК/БУЛСТАТ',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Населено място (гр./с.)',
+                'attr' => [
+                    'placeholder' => 'Населено място (гр./с.)',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('street', TextType::class, [
+                'label' => 'Адрес (ул./жк.)',
+                'attr' => [
+                    'placeholder' => 'Адрес (ул./жк.)',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('phone', TelType::class, [
+                'label' => 'Телефон',
+                'attr' => [
+                    'placeholder' => 'Телефон',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('phone2', TelType::class, [
+                'label' => 'Телефон 2',
+                'attr' => [
+                    'placeholder' => 'Телефон 2',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'И-мейл',
+                'attr' => [
+                    'placeholder' => 'И-мейл',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('email2', EmailType::class, [
+                'label' => 'И-мейл 2',
+                'attr' => [
+                    'placeholder' => 'И-мейл 2',
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('notes', TextareaType::class, [
+                'label' => 'Бележки',
+                'attr' => [
+                    'placeholder' => 'Бележки',
+                    'class' => 'form-control-sm'
+                ]
+            ]);
     }/**
      * {@inheritdoc}
      */

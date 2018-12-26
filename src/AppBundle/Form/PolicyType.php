@@ -39,31 +39,67 @@ class PolicyType extends AbstractType
             ->add('issuedAt', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => false,
-                'attr' => ['class' => 'js-datepicker'],
+                'attr' => ['class' => 'form-control-sm js-datepicker'],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата на издаване'
             ])
             ->add('startsAt', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => false,
-                'attr' => ['class' => 'js-datepicker'],
+                'attr' => ['class' => 'form-control-sm js-datepicker'],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Валидна от'
             ])
             ->add('expiresAt', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => false,
-                'attr' => ['class' => 'js-datepicker'],
+                'attr' => ['class' => 'form-control-sm js-datepicker'],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Изтича на'
             ])
-            ->add('amount', NumberType::class, ['label' => 'Цена Г.О.'])
-            ->add('taxes', NumberType::class, ['label' => 'Данък %', 'attr' => ['readonly' => true]])
-            ->add('amountGf', NumberType::class, ['label' => 'Г.Ф.', 'attr' => ['readonly' => true]])
-            ->add('officeCommission', NumberType::class, ['label' => '% на офиса'])
-            ->add('clientCommission', NumberType::class, ['label' => '% на клиента'])
-            ->add('total', NumberType::class, ['label' => 'Общо дължима премия', 'attr' => ['readonly' => true]])
-            ->add('notes', TextareaType::class, ['label' => 'Бележки'])
+            ->add('amount', NumberType::class, [
+                'label' => 'Цена Г.О.',
+                'attr' => ['class' => 'form-control-sm']
+            ])
+            ->add('taxes', NumberType::class, [
+                'label' => 'Данък %',
+                'attr' => [
+                    'readonly' => true,
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('amountGf', NumberType::class, [
+                'label' => 'Г.Ф.',
+                'attr' => [
+                    'readonly' => true,
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('officeCommission', NumberType::class, [
+                'label' => '% на офиса',
+                'attr' => [
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('clientCommission', NumberType::class, [
+                'label' => '% на клиента',
+                'attr' => [
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('total', NumberType::class, [
+                'label' => 'Общо дължима премия',
+                'attr' => [
+                    'readonly' => true,
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('notes', TextareaType::class, [
+                'label' => 'Бележки',
+                'attr' => [
+                    'class' => 'form-control-sm'
+                ]
+            ])
             ->add('currency', ChoiceType::class, [
                     'choices' => [
                         'лв.' => 'BGN',
@@ -72,7 +108,10 @@ class PolicyType extends AbstractType
                         '£' => 'GBP',
                     ],
                     'empty_data' => null,
-                    'label' => 'Валута'
+                    'label' => 'Валута',
+                    'attr' => [
+                        'class' => 'form-control-sm'
+                    ]
                 ]
             )
             ->add('payments', CollectionType::class, [
@@ -100,14 +139,25 @@ class PolicyType extends AbstractType
                        'class' => Insurer::class,
                        'choice_label' => 'long_name',
                        'placeholder' => '- избери -',
-                       'label' => 'Застраховател'
+                       'label' => 'Застраховател',
+                       'attr' => [
+                           'class' => 'form-control-sm'
+                       ]
                    ])
-                   ->add('idNumber', TextType::class, ['label' => 'Застр. полица No'])
+                   ->add('idNumber', TextType::class, [
+                       'label' => 'Застр. полица No',
+                       'attr' => [
+                           'class' => 'form-control-sm'
+                       ]
+                   ])
                    ->add('agent', EntityType::class, [
                        'class' => User::class,
                        'choice_label' => 'full_name',
                        'placeholder' => '- избери -',
-                       'label' => 'Агент'
+                       'label' => 'Агент',
+                       'attr' => [
+                           'class' => 'form-control-sm'
+                       ]
                    ]);
 
             } else {
