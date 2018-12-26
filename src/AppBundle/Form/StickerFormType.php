@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -29,9 +31,6 @@ class StickerFormType extends AbstractType
         $builder
             ->add('idNumber', TextType::class, [
                 'label' => 'Стикер No',
-                'label_attr' => [
-                    'class' => 'sr-only'
-                ],
                 'attr' => [
                     'class' => 'form-control-sm mr-2',
                     'placeholder' => 'Стикер No',
@@ -63,7 +62,7 @@ class StickerFormType extends AbstractType
                     'placeholder' => 'Дата на получаване'
                 ],
                 'format' => 'dd.MM.yyyy',
-                'label' => 'Дата на получаване от застрахователя'
+                'label' => 'Дата на получаване от застр.'
             ])
             ->add('givenAt', DateType::class, [
                 'widget' => 'single_text',
@@ -74,8 +73,16 @@ class StickerFormType extends AbstractType
                 ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата на предаване на агента'
-            ])
-            ->add('isCancelled', CheckboxType::class, ['label' => 'Анулиран?']);
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var Sticker $sticker */
+            $sticker = $event->getData();
+            $form = $event->getForm();
+            if ($sticker && null !== $sticker->getId()) {
+                $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулиран?']);
+            }
+        });
     }
 
     /**

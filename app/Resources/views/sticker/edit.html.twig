@@ -16,7 +16,18 @@
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     <div class="row">
         <div class="col-md-6">
-            {{ form_widget(form) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.idNumber) }}
+                    {{ form_row(form.insurer) }}
+                    {{ form_row(form.agent) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.receivedAt) }}
+                    {{ form_row(form.givenAt) }}
+                    {{ form_row(form.isCancelled) }}
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <a href="{{ path('sticker_index') }}" class="btn btn-secondary"><i

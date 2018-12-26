@@ -154,21 +154,22 @@ class StickerController extends Controller
     public function newAction(Request $request)
     {
         $sticker = new Sticker();
-        $form = $this->createForm('AppBundle\Form\StickerType', $sticker);
+        $form = $this->createForm(StickerFormType::class, $sticker);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($sticker);
-            $em->flush();
+        $this->formErrorService->checkErrors($form);
 
-            return $this->redirectToRoute('sticker_show', array('id' => $sticker->getId()));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->stickerService->newSticker($sticker);
+            $this->addFlash('success', 'Стикерът бе успешно въведен.');
+
+            return $this->redirectToRoute('sticker_edit', ['id' => $sticker->getId()]);
         }
 
-        return $this->render('sticker/new.html.twig', array(
+        return $this->render('sticker/new.html.twig', [
             'sticker' => $sticker,
-            'form' => $form->createView(),
-        ));
+            'form' => $form->createView()
+        ]);
     }
 
     /**

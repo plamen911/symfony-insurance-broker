@@ -150,7 +150,7 @@ class CarController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->carService->newCar($request, $car);
-            $this->addFlash('success', 'МПС бе успешно създадено.');
+            $this->addFlash('success', 'МПС бе успешно въведено.');
 
             return $this->redirectToRoute('car_edit', ['id' => $car->getId()]);
         }

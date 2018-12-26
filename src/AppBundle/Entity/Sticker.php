@@ -63,7 +63,7 @@ class Sticker
      * @var \DateTime
      *
      * @ORM\Column(name="received_at", type="datetime")
-     * @Assert\NotBlank(message="Дата на получаване е задължително поле.")
+     * @Assert\NotBlank(message="Дата на получаване е задължителна.")
      */
     private $receivedAt;
 
@@ -222,9 +222,9 @@ class Sticker
     }
 
     /**
-     * @return Insurer
+     * @return Insurer|null
      */
-    public function getInsurer(): Insurer
+    public function getInsurer(): ?Insurer
     {
         return $this->insurer;
     }
@@ -260,18 +260,18 @@ class Sticker
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getReceivedAt(): \DateTime
+    public function getReceivedAt(): ?\DateTime
     {
         return $this->receivedAt;
     }
 
     /**
-     * @param \DateTime $receivedAt
+     * @param \DateTime|null $receivedAt
      * @return Sticker
      */
-    public function setReceivedAt(\DateTime $receivedAt): Sticker
+    public function setReceivedAt(?\DateTime $receivedAt): Sticker
     {
         $this->receivedAt = $receivedAt;
 

@@ -1,16 +1,40 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Нов стикер{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sticker_index') }}">Списък</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Нов стикер</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Sticker creation</h1>
-
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+    <h3>Въвеждане на стикер</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.idNumber) }}
+                    {{ form_row(form.insurer) }}
+                    {{ form_row(form.agent) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.receivedAt) }}
+                    {{ form_row(form.givenAt) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ path('sticker_index') }}" class="btn btn-secondary"><i
+                                class="fas fa-undo-alt"></i> Отмени</a>
+                    <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Въведи</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{ form_end(form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('sticker_index') }}">Back to the list</a>
-        </li>
-    </ul>
 {% endblock %}
