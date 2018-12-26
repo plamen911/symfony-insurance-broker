@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Sticker;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * StickerRepository
@@ -13,6 +15,44 @@ use AppBundle\Entity\Sticker;
  */
 class StickerRepository extends \Doctrine\ORM\EntityRepository
 {
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /**
+     * CarRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+
+        $this->em = $em;
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return Sticker
+     */
+    public function save(Sticker $sticker)
+    {
+        if (null === $sticker->getId()) {
+            $this->em->persist($sticker);
+        }
+        $this->em->flush();
+
+        return $sticker;
+    }
+
+    /**
+     * @param Sticker $sticker
+     */
+    public function delete(Sticker $sticker)
+    {
+        $this->em->remove($sticker);
+        $this->em->flush();
+    }
+
     /**
      * @param Sticker $sticker
      * @return bool

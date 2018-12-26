@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Sticker;
 use AppBundle\Service\FormError\FormErrorServiceInterface;
 use AppBundle\Service\Sticker\StickerServiceInterface;
@@ -148,6 +147,9 @@ class StickerController extends Controller
      * Creates a new sticker entity.
      *
      * @Route("/new", methods={"GET", "POST"}, name="sticker_new")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function newAction(Request $request)
     {
