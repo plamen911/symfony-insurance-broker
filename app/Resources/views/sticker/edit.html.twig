@@ -1,21 +1,37 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Стикер {{ sticker.idNumber }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sticker_index') }}">Списък</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Стикер {{ sticker.idNumber }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h1>Sticker edit</h1>
-
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('sticker_index') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+    <h3>Редактиране на стикер</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_widget(form) }}
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ path('sticker_index') }}" class="btn btn-secondary"><i
+                                class="fas fa-undo-alt"></i> Отмени</a>
+                    <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Съхрани</button>
+                    <a href="#"
+                       data-href="{{ path('sticker_delete', {'id': sticker.id}) }}"
+                       data-toggle="modal"
+                       data-target="#confirm-delete"
+                       data-message="Сигурни ли сте, че искате да изтриете този стикер?"
+                       title="Моля, потвърдете"
+                       class="btn btn-danger float-right mr-2"><i class="far fa-trash-alt"></i> Изтрий</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
 {% endblock %}

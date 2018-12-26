@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}МПС {{ car.carType.name }} {{ car.idNumber }}{% endblock %}
+
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('car_index') }}">Списък</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ car.carType.name }} {{ car.idNumber }}</li>
+            <li class="breadcrumb-item active" aria-current="page">МПС {{ car.carType.name }} {{ car.idNumber }}</li>
         </ol>
     </nav>
 {% endblock %}

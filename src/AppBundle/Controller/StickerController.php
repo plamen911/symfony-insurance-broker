@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Sticker;
+use AppBundle\Form\StickerFormType;
 use AppBundle\Service\FormError\FormErrorServiceInterface;
 use AppBundle\Service\Sticker\StickerServiceInterface;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 //
@@ -172,77 +172,45 @@ class StickerController extends Controller
     }
 
     /**
-     * Finds and displays a sticker entity.
-     *
-     * @Route("/{id}", methods={"GET"} name="sticker_show")
-     */
-    public function showAction(Sticker $sticker)
-    {
-        $deleteForm = $this->createDeleteForm($sticker);
-
-        return $this->render('sticker/show.html.twig', array(
-            'sticker' => $sticker,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing sticker entity.
      *
-     * @Route("/{id}/edit", name="sticker_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", methods={"GET", "POST"}, name="sticker_edit", requirements={"id": "\d+"})
+     * @param Request $request
+     * @param Sticker $sticker
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction(Request $request, Sticker $sticker)
     {
-        $deleteForm = $this->createDeleteForm($sticker);
-        $editForm = $this->createForm('AppBundle\Form\StickerType', $sticker);
-        $editForm->handleRequest($request);
+        $form = $this->createForm(StickerFormType::class, $sticker);
+        $form->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        $this->formErrorService->checkErrors($form);
 
-            return $this->redirectToRoute('sticker_edit', array('id' => $sticker->getId()));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->stickerService->editSticker($request, $sticker);
+            $this->addFlash('success', 'Данните за стикера бяха успешно записани.');
+
+            return $this->redirectToRoute('sticker_edit', ['id' => $sticker->getId()]);
         }
 
-        return $this->render('sticker/edit.html.twig', array(
+        return $this->render('sticker/edit.html.twig', [
             'sticker' => $sticker,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+            'form' => $form->createView()
+        ]);
     }
 
     /**
      * Deletes a sticker entity.
      *
-     * @Route("/{id}", methods={"DELETE"}, name="sticker_delete")
+     * @Route("/{id}", methods={"DELETE"}, name="sticker_delete", requirements={"id": "\d+"})
+     * @param Sticker $sticker
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteAction(Request $request, Sticker $sticker)
+    public function deleteAction(Sticker $sticker)
     {
-        $form = $this->createDeleteForm($sticker);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($sticker);
-            $em->flush();
-        }
+        $this->stickerService->deleteSticker($sticker);
+        $this->addFlash('success', 'Стикерът бе успешно изтрит.');
 
         return $this->redirectToRoute('sticker_index');
-    }
-
-    /**
-     * Creates a form to delete a sticker entity.
-     *
-     * @param Sticker $sticker The sticker entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Sticker $sticker)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('sticker_delete', array('id' => $sticker->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }
