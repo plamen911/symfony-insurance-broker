@@ -10,6 +10,17 @@
         <ul class="navbar-nav mr-auto">
             {% if app.user %}
                 {% set current_route = app.request.attributes.get('_route') %}
+                <li class="nav-item dropdown{{ current_route starts with 'sticker_' or current_route starts with 'bill_' or current_route starts with 'green_card_' ? ' active' : '' }}">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Инвентар
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="reportDropdown">
+                        <a class="dropdown-item"
+                           href="{{ path('sticker_index') }}">Стикери</a>
+                    </div>
+                </li>
+
                 <li class="nav-item dropdown{{ current_route starts with 'report_' ? ' active' : '' }}">
                     <a class="nav-link dropdown-toggle" href="#" id="reportDropdown"
                        role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
