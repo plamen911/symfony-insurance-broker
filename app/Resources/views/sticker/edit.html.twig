@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Стикер {{ sticker.idNumber }}{% endblock %}
+{% block title %}Стикер No {{ sticker.idNumber }}{% endblock %}
 
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('sticker_index') }}">Списък</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Стикер {{ sticker.idNumber }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Стикер No {{ sticker.idNumber }}</li>
         </ol>
     </nav>
 {% endblock %}
