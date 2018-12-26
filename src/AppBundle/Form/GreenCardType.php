@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\GreenCard;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -53,14 +54,14 @@ class GreenCardType extends AbstractType
                     'placeholder' => 'Данък',
                 ]
             ])
-            ->add('amountDue', NumberType::class, [
+            ->add('amountDue', HiddenType::class, [
                 'label' => 'Дължимо',
                 'label_attr' => [
                     'class' => 'sr-only'
                 ],
                 'attr' => [
                     'readonly' => true,
-                    'class' => 'form-control-sm mr-2',
+                    'class' => 'form-control-sm mr-2 green-cards-amount-due',
                     'placeholder' => 'Дължимо',
                 ]
             ]);

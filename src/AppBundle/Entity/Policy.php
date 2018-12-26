@@ -112,6 +112,20 @@ class Policy
     /**
      * @var float|null
      *
+     * @ORM\Column(name="green_card_total", type="decimal", precision=10, scale=2, nullable=true)
+     */
+    private $greenCardTotal;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="bill_total", type="decimal", precision=10, scale=2, nullable=true)
+     */
+    private $billTotal;
+
+    /**
+     * @var float|null
+     *
      * @ORM\Column(name="total", type="decimal", precision=10, scale=2, nullable=true)
      */
     private $total;
@@ -262,6 +276,8 @@ class Policy
         $this->amountGf = 11.5;
         $this->officeCommission = 0;
         $this->clientCommission = 0;
+        $this->greenCardTotal = 0;
+        $this->billTotal = 0;
         $this->total = 0;
         $this->paid = 0;
         $this->balance = 0;
@@ -1039,5 +1055,43 @@ class Policy
     public function getBalanceTotal()
     {
         return $this->getTotal() - $this->getPaidTotal();
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getGreenCardTotal(): ?float
+    {
+        return (float)$this->greenCardTotal;
+    }
+
+    /**
+     * @param float|null $greenCardTotal
+     * @return Policy
+     */
+    public function setGreenCardTotal(?float $greenCardTotal): Policy
+    {
+        $this->greenCardTotal = (float)$greenCardTotal;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getBillTotal(): ?float
+    {
+        return (float)$this->billTotal;
+    }
+
+    /**
+     * @param float|null $billTotal
+     * @return Policy
+     */
+    public function setBillTotal(?float $billTotal): Policy
+    {
+        $this->billTotal = (float)$billTotal;
+
+        return $this;
     }
 }

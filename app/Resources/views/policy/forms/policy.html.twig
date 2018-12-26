@@ -11,14 +11,14 @@
                     {{ form_row(form.agent) }}
                 {% else %}
                     <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item px-0 pt-0">
-                            <strong>No:</strong> {{ policy.idNumber }}
+                        <li class="list-group-item px-0 py-1">
+                            No: {{ policy.idNumber }}
                         </li>
-                        <li class="list-group-item px-0">
-                            <strong>Застраховател:</strong> {{ policy.insurer.name }}
+                        <li class="list-group-item px-0 py-1">
+                            Застраховател: {{ policy.insurer.name }}
                         </li>
-                        <li class="list-group-item px-0">
-                            <strong>Агент:</strong> {{ policy.agent.fullName }}
+                        <li class="list-group-item px-0 py-1">
+                            Агент: {{ policy.agent.fullName }}
                         </li>
                     </ul>
                     {{ form_row(form.isCancelled) }}
@@ -32,9 +32,45 @@
                 {{ form_row(form.currency) }}
                 {{ form_row(form.officeCommission) }}
                 {{ form_row(form.clientCommission) }}
-                {{ form_row(form.amount) }}
+                <div class="bg-light rounded px-2">
+                    {{ form_row(form.amount) }}
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item px-0 py-1 bg-light">
+                            Данък
+                            <div id="policy_taxes_label" class="float-right">
+                                {{ policy.taxes|number_format(2) }} %
+                            </div>
+                        </li>
+                        <li class="list-group-item px-0 py-1 bg-light">
+                            Г.Ф.
+                            <div id="policy_amountGf_label" class="float-right">
+                                {{ policy.amountGf|number_format(2) }}
+                            </div>
+                        </li>
+                        <li class="list-group-item px-0 py-1 bg-light">
+                            Дължимо сметки
+                            <div id="policy_billTotal_label" class="float-right">
+                                {{ policy.billTotal|number_format(2) }}
+                            </div>
+                        </li>
+                        <li class="list-group-item px-0 py-1 bg-light">
+                            Дължимо З.К.
+                            <div id="policy_greenCardTotal_label" class="float-right">
+                                {{ policy.greenCardTotal|number_format(2) }}
+                            </div>
+                        </li>
+                        <li class="list-group-item px-0 py-1 bg-light">
+                            Дължима премия
+                            <div id="policy_total_label" class="float-right">
+                                {{ policy.total|number_format(2) }}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 {{ form_row(form.taxes) }}
                 {{ form_row(form.amountGf) }}
+                {{ form_row(form.billTotal) }}
+                {{ form_row(form.greenCardTotal) }}
                 {{ form_row(form.total) }}
             </div>
         </div>

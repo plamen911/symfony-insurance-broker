@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Car;
-use AppBundle\Service\Cyr2Lat;
+use AppBundle\Service\Cyr2Lat\Cyr2Lat;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 

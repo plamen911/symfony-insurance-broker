@@ -269,7 +269,6 @@ class PolicyService implements PolicyServiceInterface
                 /** @var Bill $existingBill */
                 $existingBill->setPolicy($bill->getPolicy());
                 $existingBill->setPrice($bill->getPrice());
-                $existingBill->setAmountDue($bill->getAmountDue());
                 $policy->addBill($existingBill);
             }
         }

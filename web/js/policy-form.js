@@ -33,21 +33,15 @@
     })
 
     $greenCardsHolder.find('li').each(function (i) {
-      if (i > 0) {
-        addGreenCardFormDeleteLink($(this))
-      }
+      addGreenCardFormDeleteLink($(this))
     })
 
     $stickersHolder.find('li').each(function (i) {
-      if (i > 0) {
-        addStickerFormDeleteLink($(this))
-      }
+      addStickerFormDeleteLink($(this))
     })
 
     $billsHolder.find('li').each(function (i) {
-      if (i > 0) {
-        addBillFormDeleteLink($(this))
-      }
+      addBillFormDeleteLink($(this))
     })
 
     // add the "add a payment" anchor and li to the payments ul
@@ -88,6 +82,26 @@
     $('#policy_amount').on('keyup', function (e) {
       calcTotalAmount()
     })
+
+    $(document.body).on('keyup', 'input[id^="policy_greenCards_"]', function () {
+      var idx = $(this).attr('id').split('_')[2]
+      var price = parseFloat($('#policy_greenCards_' + idx + '_price').val())
+      if (isNaN(price)) {
+        price = 0;
+      }
+      var tax = parseFloat($('#policy_greenCards_' + idx + '_tax').val())
+      if (isNaN(tax)) {
+        tax = 0;
+      }
+      var amountDue = (price + (price * tax / 100)).toFixed(2)
+      $('#policy_greenCards_' + idx + '_amountDue').val(amountDue)
+
+      calcTotalAmount()
+    })
+  })
+
+  $(document.body).on('keyup', 'input[id^="policy_bills_"]', function () {
+    calcTotalAmount()
   })
 
   function addPaymentForm ($paymentsHolder, $newPaymentLinkLi) {
@@ -162,6 +176,7 @@
     $removeFormButton.on('click', function () {
       // remove the li for the payment form
       $paymentFormLi.remove()
+      calcTotalAmount()
     })
   }
 
@@ -170,6 +185,7 @@
     $greenCardFormLi.append($removeFormButton)
     $removeFormButton.on('click', function () {
       $greenCardFormLi.remove()
+      calcTotalAmount()
     })
   }
 
@@ -186,10 +202,29 @@
     $billFormLi.append($removeFormButton)
     $removeFormButton.on('click', function () {
       $billFormLi.remove()
+      calcTotalAmount()
     })
   }
 
   function calcTotalAmount () {
+    var greenCardTotal = 0
+    $('.green-cards-amount-due').each(function () {
+      var amountDue = parseFloat($(this).val())
+      if (isNaN(amountDue)) {
+        amountDue = 0;
+      }
+      greenCardTotal += amountDue
+    })
+
+    var billTotal = 0
+    $('.bills-amount-due').each(function () {
+      var amountDue = parseFloat($(this).val())
+      if (isNaN(amountDue)) {
+        amountDue = 0;
+      }
+      billTotal += amountDue
+    })
+
     var policyAmount = $('#policy_amount').val()
     var policyTaxes = $('#policy_taxes').val()
     var amountGf = $('#policy_amountGf').val()
@@ -198,10 +233,13 @@
     policyTaxes = (!policyTaxes || isNaN(policyTaxes)) ? 0 : parseFloat(policyTaxes)
     amountGf = (!amountGf || isNaN(amountGf)) ? 0 : parseFloat(amountGf)
 
-    var policyTotal = +policyAmount + (policyTaxes * policyAmount / 100) + +amountGf
-    policyTotal = parseFloat(policyTotal.toFixed(2))
+    var policyTotal = +policyAmount + (policyTaxes * policyAmount / 100) + +amountGf + +greenCardTotal + +billTotal
 
-    $('#policy_total').val(policyTotal)
+    $('#policy_total').val(policyTotal.toFixed(2))
+    $('#policy_total_label').html(policyTotal.toFixed(2))
+
+    $('#policy_greenCardTotal').val(greenCardTotal.toFixed(2))
+    $('#policy_greenCardTotal_label').html(greenCardTotal.toFixed(2))
   }
 
   function calcClientPayments () {
@@ -226,7 +264,7 @@
     if (paymentsCount > 0) {
       var paymentAmount = parseFloat((policyTotal / paymentsCount).toFixed(2))
       var firstPaymentAmount = parseFloat((policyTotal - (paymentAmount * (paymentsCount - 1))).toFixed(2))
-      $('input[id$="_amountDue"]').each(function (i) {
+      $('input[id$="_amountDue"]', '.payments').each(function (i) {
         if (i === 0) {
           $(this).val(firstPaymentAmount)
         } else {

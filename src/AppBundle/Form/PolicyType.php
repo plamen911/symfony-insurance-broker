@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -61,14 +62,14 @@ class PolicyType extends AbstractType
                 'label' => 'Цена Г.О.',
                 'attr' => ['class' => 'form-control-sm']
             ])
-            ->add('taxes', NumberType::class, [
+            ->add('taxes', HiddenType::class, [
                 'label' => 'Данък %',
                 'attr' => [
                     'readonly' => true,
                     'class' => 'form-control-sm'
                 ]
             ])
-            ->add('amountGf', NumberType::class, [
+            ->add('amountGf', HiddenType::class, [
                 'label' => 'Г.Ф.',
                 'attr' => [
                     'readonly' => true,
@@ -87,8 +88,22 @@ class PolicyType extends AbstractType
                     'class' => 'form-control-sm'
                 ]
             ])
-            ->add('total', NumberType::class, [
-                'label' => 'Общо дължима премия',
+            ->add('billTotal', HiddenType::class, [
+                'label' => 'Дължимо сметки',
+                'attr' => [
+                    'readonly' => true,
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('greenCardTotal', HiddenType::class, [
+                'label' => 'Дължимо З.К.',
+                'attr' => [
+                    'readonly' => true,
+                    'class' => 'form-control-sm'
+                ]
+            ])
+            ->add('total', HiddenType::class, [
+                'label' => 'Дължима премия',
                 'attr' => [
                     'readonly' => true,
                     'class' => 'form-control-sm'
