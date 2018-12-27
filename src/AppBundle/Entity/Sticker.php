@@ -82,7 +82,7 @@ class Sticker
     private $createdAt;
 
     /**
-     * @var User
+     * @var User|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="createdStickers")
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")

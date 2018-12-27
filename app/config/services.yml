@@ -119,3 +119,8 @@ services:
         arguments:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Sticker')"
+
+    AppBundle\Service\Insurer\InsurerService:
+        arguments:
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Insurer')"

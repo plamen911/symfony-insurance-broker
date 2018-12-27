@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace AppBundle\Service\Sticker;
 
+use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use AppBundle\Repository\StickerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -65,5 +67,24 @@ class StickerService implements StickerServiceInterface
     public function deleteSticker(Sticker $sticker)
     {
         $this->stickerRepo->delete($sticker);
+    }
+
+    /**
+     * @param Insurer $insurer
+     * @param array $range
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getExistingByInsurerAndByRange(Insurer $insurer, array $range)
+    {
+        return $this->stickerRepo->getExistingByInsurerAndByRange($insurer, $range);
+    }
+
+    /**
+     * @param Sticker $sticker
+     * @return Sticker
+     */
+    public function save(Sticker $sticker)
+    {
+        return $this->stickerRepo->save($sticker);
     }
 }

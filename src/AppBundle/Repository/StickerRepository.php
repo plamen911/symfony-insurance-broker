@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Sticker;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
@@ -67,5 +69,21 @@ class StickerRepository extends \Doctrine\ORM\EntityRepository
                 ->setParameter('idNumber', $sticker->getIdNumber())
                 ->getQuery()
                 ->getSingleScalarResult();
+    }
+
+    /**
+     * @param Insurer $insurer
+     * @param array $range
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getExistingByInsurerAndByRange(Insurer $insurer, array $range)
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.insurer', 'i')
+            ->where('i.id != :insurerId AND s.idNumber IN (:range)')
+            ->setParameter('insurerId', $insurer->getId())
+            ->setParameter('range', $range, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+            ->getQuery()
+            ->getResult();
     }
 }

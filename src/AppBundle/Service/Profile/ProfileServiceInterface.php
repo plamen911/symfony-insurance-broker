@@ -34,4 +34,10 @@ interface ProfileServiceInterface
      * @throws Exception
      */
     public function changePassword(FormInterface $form, User $user);
+
+    /**
+     * @param mixed $id
+     * @return object|null|User
+     */
+    public function find($id);
 }

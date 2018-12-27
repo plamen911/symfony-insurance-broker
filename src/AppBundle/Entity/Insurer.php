@@ -80,6 +80,20 @@ class Insurer
     private $stickers;
 
     /**
+     * @var ArrayCollection|GreenCard[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GreenCard", mappedBy="insurer")
+     */
+    private $greenCards;
+
+    /**
+     * @var ArrayCollection|Bill[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="insurer")
+     */
+    private $bills;
+
+    /**
      * @var ArrayCollection|TypeOfPolicy[]
      *
      * @ORM\ManyToMany(targetEntity="TypeOfPolicy", inversedBy="insurers")
@@ -99,6 +113,8 @@ class Insurer
         $this->policyTypes = new ArrayCollection();
         $this->policies = new ArrayCollection();
         $this->stickers = new ArrayCollection();
+        $this->greenCards = new ArrayCollection();
+        $this->bills = new ArrayCollection();
         $this->amountGf = 0;
     }
 
@@ -335,6 +351,77 @@ class Insurer
     public function setAmountGf(?float $amountGf): Insurer
     {
         $this->amountGf = $amountGf;
+
+        return $this;
+    }
+
+    /**
+     * @return GreenCard[]|ArrayCollection
+     */
+    public function getGreenCards()
+    {
+        return $this->greenCards;
+    }
+
+    /**
+     * @param GreenCard[]|ArrayCollection $greenCards
+     * @return Insurer
+     */
+    public function setGreenCards($greenCards): Insurer
+    {
+        foreach ($greenCards as $greenCard) {
+            $this->addGreenCard($greenCard);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param GreenCard $greenCard
+     * @return Insurer
+     */
+    public function addGreenCard(GreenCard $greenCard)
+    {
+        if (!$this->greenCards->contains($greenCard)) {
+            $this->greenCards->add($greenCard);
+            $greenCard->setInsurer($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Bill[]|ArrayCollection
+     */
+    public function getBills()
+    {
+        return $this->bills;
+    }
+
+    /**
+     * @param Bill[]|ArrayCollection $bills
+     * @return Insurer
+     */
+    public function setBills($bills): Insurer
+    {
+        foreach ($bills as $bill) {
+            $this->addBill($bill);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $bill
+     * @return $this
+     */
+    public function addBill(Bill $bill)
+    {
+        if (!$this->bills->contains($bill)) {
+            $this->bills->add($bill);
+            $bill->setInsurer($this);
+        }
 
         return $this;
     }

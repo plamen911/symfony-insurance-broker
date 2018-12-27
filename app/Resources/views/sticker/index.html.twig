@@ -13,12 +13,14 @@
 {% block body %}
     <h3>Списък стикери</h3>
     <div id="stickers" class="table-responsive">Зареждане...</div>
-    <ul class="list-unstyled mb-0">
-        <li>
+    <div class="row">
+        <div class="col-md-12">
             <a href="{{ path('sticker_new') }}" class="btn btn-dark"><i
                         class="fas fa-plus-circle"></i> Нов стикер</a>
-        </li>
-    </ul>
+            <a href="{{ path('quick_input', {'type': 'sticker'}) }}" class="btn btn-secondary"><i
+                        class="fas fa-plus-circle"></i> Бързо въвеждане</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

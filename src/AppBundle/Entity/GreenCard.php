@@ -64,6 +64,46 @@ class GreenCard
     private $createdAt;
 
     /**
+     * @var Insurer
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Insurer", inversedBy="greenCards")
+     * @ORM\JoinColumn(name="insurer_id", referencedColumnName="id")
+     * @Assert\NotBlank(message="Застраховател е задължит. поле.")
+     */
+    private $insurer;
+
+    /**
+     * @var User|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="greenCards")
+     * @ORM\JoinColumn(name="agent_id", referencedColumnName="id", nullable=true)
+     */
+    private $agent;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="received_at", type="datetime")
+     * @Assert\NotBlank(message="Дата на получаване е задължителна.")
+     */
+    private $receivedAt;
+
+    /**
+     * @var User|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="createdGreenCards")
+     * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
+     */
+    private $author;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="given_at", type="datetime", nullable=true)
+     */
+    private $givenAt;
+
+    /**
      * @var int|null
      *
      * @ORM\Column(name="policy_id", type="integer", nullable=true)
@@ -248,6 +288,95 @@ class GreenCard
     public function setPolicyId(?int $policyId): GreenCard
     {
         $this->policyId = $policyId;
+
+        return $this;
+    }
+
+    /**
+     * @return Insurer
+     */
+    public function getInsurer(): Insurer
+    {
+        return $this->insurer;
+    }
+
+    /**
+     * @param Insurer $insurer
+     */
+    public function setInsurer(Insurer $insurer): void
+    {
+        $this->insurer = $insurer;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getAgent(): ?User
+    {
+        return $this->agent;
+    }
+
+    /**
+     * @param User|null $agent
+     */
+    public function setAgent(?User $agent): void
+    {
+        $this->agent = $agent;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getReceivedAt(): ?\DateTime
+    {
+        return $this->receivedAt;
+    }
+
+    /**
+     * @param \DateTime|null $receivedAt
+     * @return GreenCard
+     */
+    public function setReceivedAt(?\DateTime $receivedAt): GreenCard
+    {
+        $this->receivedAt = $receivedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param User|null $author
+     * @return GreenCard
+     */
+    public function setAuthor(?User $author): GreenCard
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getGivenAt(): ?\DateTime
+    {
+        return $this->givenAt;
+    }
+
+    /**
+     * @param \DateTime|null $givenAt
+     * @return GreenCard
+     */
+    public function setGivenAt(?\DateTime $givenAt): GreenCard
+    {
+        $this->givenAt = $givenAt;
 
         return $this;
     }

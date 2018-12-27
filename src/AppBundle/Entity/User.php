@@ -129,12 +129,6 @@ class User implements AdvancedUserInterface
     private $updatedCars;
 
     /**
-     * @var ArrayCollection|Sticker[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="author")
-     */
-    private $createdStickers;
-
-    /**
      * @var ArrayCollection|Payment[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment", mappedBy="reminder")
      */
@@ -146,6 +140,38 @@ class User implements AdvancedUserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="agent")
      */
     private $stickers;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="author")
+     */
+    private $createdStickers;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GreenCard", mappedBy="agent")
+     */
+    private $greenCards;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="author")
+     */
+    private $createdGreenCards;
+
+    /**
+     * @var ArrayCollection|Sticker[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="agent")
+     */
+    private $bills;
+
+    /**
+     * @var ArrayCollection|Bill[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Bill", mappedBy="author")
+     */
+    private $createdBills;
 
     /**
      * User constructor.
@@ -160,8 +186,12 @@ class User implements AdvancedUserInterface
         $this->createdCars = new ArrayCollection();
         $this->updatedCars = new ArrayCollection();
         $this->reminders = new ArrayCollection();
-        $this->stickers = new ArrayCollection();
         $this->createdStickers = new ArrayCollection();
+        $this->stickers = new ArrayCollection();
+        $this->createdGreenCards = new ArrayCollection();
+        $this->greenCards = new ArrayCollection();
+        $this->createdBills = new ArrayCollection();
+        $this->bills = new ArrayCollection();
         $this->setEnabled(true);
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -788,6 +818,146 @@ class User implements AdvancedUserInterface
         if (!$this->createdStickers->contains($sticker)) {
             $this->createdStickers->add($sticker);
             $sticker->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getCreatedGreenCards()
+    {
+        return $this->createdGreenCards;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $createdGreenCards
+     * @return User
+     */
+    public function setCreatedGreenCards($createdGreenCards): User
+    {
+        foreach ($createdGreenCards as $greenCard) {
+            $this->addCreatedGreenCard($greenCard);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param GreenCard $greenCard
+     * @return User
+     */
+    public function addCreatedGreenCard(GreenCard $greenCard)
+    {
+        if (!$this->createdGreenCards->contains($greenCard)) {
+            $this->createdGreenCards->add($greenCard);
+            $greenCard->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getGreenCards()
+    {
+        return $this->greenCards;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $greenCards
+     * @return User
+     */
+    public function setGreenCards($greenCards): User
+    {
+        foreach ($greenCards as $greenCard) {
+            $this->addGreenCard($greenCard);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param GreenCard $greenCard
+     * @return User
+     */
+    public function addGreenCard(GreenCard $greenCard)
+    {
+        if (!$this->greenCards->contains($greenCard)) {
+            $this->greenCards->add($greenCard);
+            $greenCard->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getBills()
+    {
+        return $this->bills;
+    }
+
+    /**
+     * @param Sticker[]|ArrayCollection $bills
+     * @return User
+     */
+    public function setBills($bills): User
+    {
+        foreach ($bills as $bill) {
+            $this->addBill($bill);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $bill
+     * @return User
+     */
+    public function addBill(Bill $bill)
+    {
+        if (!$this->bills->contains($bill)) {
+            $this->bills->add($bill);
+            $bill->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Bill[]|ArrayCollection
+     */
+    public function getCreatedBills()
+    {
+        return $this->createdBills;
+    }
+
+    /**
+     * @param Bill[]|ArrayCollection $createdBills
+     * @return User
+     */
+    public function setCreatedBills($createdBills): User
+    {
+        foreach ($createdBills as $createdBill) {
+            $this->addCreatedBill($createdBill);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Bill $bill
+     * @return User
+     */
+    private function addCreatedBill(Bill $bill)
+    {
+        if (!$this->createdBills->contains($bill)) {
+            $this->createdBills->add($bill);
+            $bill->setAuthor($this);
         }
 
         return $this;

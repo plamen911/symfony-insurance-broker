@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Бързо въвеждане на стикери{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ backUrl }}">Списък</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Бързо въвеждане</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <h3>Бързо въвеждане на {{ label }}</h3>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'quick-input-form'}}) }}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td valign="bottom" style="width: 47%">{{ form_row(form.startIdNumber) }}</td>
+                                <td class="px-2 pt-3 text-center">до</td>
+                                <td valign="bottom" style="width: 47%">{{ form_row(form.endIdNumber) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.insurer) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.agent) }}
+                    {{ form_row(form.givenAt) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ backUrl }}" class="btn btn-secondary"><i
+                                class="fas fa-undo-alt"></i> Отмени</a>
+                    <button type="submit" class="btn btn-dark float-right"><i class="fa fa-check"></i> Въведи</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+    <!-- modal -->
+    <div class="modal fade bd-example-modal-xl" id="suggestedModal" tabindex="-1" role="dialog" aria-labelledby="suggestedLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="suggestedLabel">Бързо въвеждане на {{ label }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="suggestedBody">
+                    <p>Сигурни ли сте, че искате да въведете нови {{ label }} със следните номера?</p>
+                    <div id="suggestion-list" style="overflow: auto; max-height: 20rem"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i
+                                class="far fa-window-close"></i> Затвори</button>
+                    <a id="submit-suggested" class="btn btn-dark text-white"><i
+                                class="fa fa-check"></i> Да, въведи</a>
+                    <form id="suggested-form" name="suggested" method="post" action="{{ path('quick_input_suggest_save', {'type': type}) }}" style="display: none">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('suggested') }}"/>
+                        <input type="hidden" id="suggested_numbers" name="suggested[numbers]"/>
+                        <input type="hidden" id="suggested_insurer" name="suggested[insurer]"/>
+                        <input type="hidden" id="suggested_agent" name="suggested[agent]"/>
+                        <input type="hidden" id="suggested_givenAt" name="suggested[givenAt]"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+      (function ($, toastr) {
+        'use strict'
+        $(function () {
+          toggleGivenAt()
+
+          $('#quick-input-form').on('submit', function (e) {
+            e.preventDefault()
+            suggestNumbers(
+              $('#form_startIdNumber').val(),
+              $('#form_endIdNumber').val(),
+              $('#form_insurer').val(),
+              $('#form_agent').val(),
+              $('#form_givenAt').val()
+            )
+          })
+
+          $('#submit-suggested').on('click', function (e) {
+            e.preventDefault()
+            var suggested = []
+            $('span[id^="num_"]').each(function () {
+              suggested.push($(this).attr('id').split('_')[1])
+            })
+            $('#suggested_numbers').val(suggested.join(','))
+            $('#suggested_insurer').val($('#form_insurer').val())
+            $('#suggested_agent').val($('#form_agent').val())
+            $('#suggested_givenAt').val($('#form_givenAt').val())
+            $('#suggested-form').submit()
+          })
+
+          $('#form_agent').on('change', function () {
+            toggleGivenAt()
+          })
+        })
+        
+        function suggestNumbers (startIdNumber, endIdNumber, insurer, agent, givenAt) {
+          if (!startIdNumber || !endIdNumber) {
+            toastr.error('Моля, въведете началния и последния номер (вкл.).', 'Липсващи данни')
+            return
+          }
+          if (!insurer) {
+            toastr.error('Моля, изберете застраховател.', 'Липсващи данни')
+            return
+          }
+
+          $.ajax({
+            type: 'post',
+            url: '{{ path('quick_input_suggest', {'type': type}) }}',
+            dataType: 'json',
+            data: {
+              startIdNumber: startIdNumber,
+              endIdNumber: endIdNumber
+            },
+            success: function (res) {
+              $('#suggestedModal').modal('show')
+              var $suggestionList = $('#suggestion-list')
+              $suggestionList.empty()
+              res.suggested.split(',').forEach(function (idNumber) {
+                $suggestionList.append(
+                  $('<span id="num_' + idNumber + '" class="bg-light border rounded p-1 h6 mr-2 float-left">')
+                    .append(idNumber)
+                    .append($('<a href="#" class="text-danger">')
+                      .append(' ')
+                      .append($('<i class="far fa-minus-square"></i>'))
+                      .on('click', function (e) {
+                        e.preventDefault()
+                        $('#num_' + idNumber).remove()
+                      })
+                    )
+                )
+              })
+            }, // End success
+            error: function (err) {
+              toastr.error(parseAjaxError(err), 'Грешка!')
+            }
+          })
+        }
+
+        function toggleGivenAt () {
+          if (!$('#form_agent').val()) {
+            $('#form_givenAt').closest('.form-group').css('display', 'none')
+          } else {
+            $('#form_givenAt').closest('.form-group').css('display', 'block')
+          }
+        }
+      })(jQuery, toastr)
+    </script>
+{% endblock %}

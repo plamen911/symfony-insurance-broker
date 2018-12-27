@@ -97,4 +97,13 @@ class ProfileService implements ProfileServiceInterface
 
         return false;
     }
+
+    /**
+     * @param mixed $id
+     * @return object|null|User
+     */
+    public function find($id)
+    {
+        return $this->userRepo->find($id);
+    }
 }

@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace AppBundle\Service\Sticker;
 
+use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Sticker;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -30,4 +32,17 @@ interface StickerServiceInterface
      * @param Sticker $sticker
      */
     public function deleteSticker(Sticker $sticker);
+
+    /**
+     * @param Insurer $insurer
+     * @param array $range
+     * @return Sticker[]|ArrayCollection
+     */
+    public function getExistingByInsurerAndByRange(Insurer $insurer, array $range);
+
+    /**
+     * @param Sticker $sticker
+     * @return Sticker
+     */
+    public function save(Sticker $sticker);
 }
