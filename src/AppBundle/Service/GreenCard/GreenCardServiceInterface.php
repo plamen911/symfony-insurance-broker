@@ -1,49 +1,49 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service\Sticker;
+namespace AppBundle\Service\GreenCard;
 
+use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
-use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Interface StickerServiceInterface
- * @package AppBundle\Service\Sticker
+ * Interface GreenCardServiceInterface
+ * @package AppBundle\Service\GreenCard
  */
-interface StickerServiceInterface
+interface GreenCardServiceInterface
 {
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param GreenCard $greenCard
+     * @return GreenCard
      * @throws \Exception
      */
-    public function newSticker(Sticker $sticker);
+    public function newGreenCard(GreenCard $greenCard);
 
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param GreenCard $greenCard
+     * @return GreenCard
      */
-    public function editSticker(Sticker $sticker);
+    public function editGreenCard(GreenCard $greenCard);
 
     /**
-     * @param Sticker $sticker
+     * @param GreenCard $greenCard
      */
-    public function deleteSticker(Sticker $sticker);
+    public function deleteGreenCard(GreenCard $greenCard);
 
     /**
      * @param Insurer $insurer
      * @param array $range
-     * @return Sticker[]|ArrayCollection
+     * @return GreenCard[]|ArrayCollection
      */
     public function getExistingByInsurerAndByRange(Insurer $insurer, array $range);
 
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param GreenCard $greenCard
+     * @return GreenCard
      */
-    public function save(Sticker $sticker);
+    public function save(GreenCard $greenCard);
 
     /**
      * @param Insurer $insurer

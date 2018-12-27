@@ -1,49 +1,49 @@
 <?php
 declare(strict_types=1);
 
-namespace AppBundle\Service\Sticker;
+namespace AppBundle\Service\Bill;
 
+use AppBundle\Entity\Bill;
 use AppBundle\Entity\Insurer;
-use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Interface StickerServiceInterface
- * @package AppBundle\Service\Sticker
+ * Interface BillServiceInterface
+ * @package AppBundle\Service\Bill
  */
-interface StickerServiceInterface
+interface BillServiceInterface
 {
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param Bill $bill
+     * @return Bill
      * @throws \Exception
      */
-    public function newSticker(Sticker $sticker);
+    public function newBill(Bill $bill);
 
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param Bill $bill
+     * @return Bill
      */
-    public function editSticker(Sticker $sticker);
+    public function editBill(Bill $bill);
 
     /**
-     * @param Sticker $sticker
+     * @param Bill $bill
      */
-    public function deleteSticker(Sticker $sticker);
+    public function deleteBill(Bill $bill);
 
     /**
      * @param Insurer $insurer
      * @param array $range
-     * @return Sticker[]|ArrayCollection
+     * @return Bill[]|ArrayCollection
      */
     public function getExistingByInsurerAndByRange(Insurer $insurer, array $range);
 
     /**
-     * @param Sticker $sticker
-     * @return Sticker
+     * @param Bill $bill
+     * @return Bill
      */
-    public function save(Sticker $sticker);
+    public function save(Bill $bill);
 
     /**
      * @param Insurer $insurer

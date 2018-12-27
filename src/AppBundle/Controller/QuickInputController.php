@@ -8,8 +8,10 @@ use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
 use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
+use AppBundle\Service\Bill\BillServiceInterface;
 use AppBundle\Service\CommonService;
 use AppBundle\Service\FormError\FormErrorServiceInterface;
+use AppBundle\Service\GreenCard\GreenCardServiceInterface;
 use AppBundle\Service\Insurer\InsurerServiceInterface;
 use AppBundle\Service\Profile\ProfileServiceInterface;
 use AppBundle\Service\Sticker\StickerServiceInterface;
@@ -38,9 +40,6 @@ class QuickInputController extends Controller
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
-    /** @var StickerServiceInterface $stickerService */
-    private $stickerService;
-
     /** @var CommonService $commonService */
     private $commonService;
 
@@ -53,14 +52,13 @@ class QuickInputController extends Controller
     /**
      * StickerController constructor.
      * @param FormErrorServiceInterface $formErrorService
-     * @param StickerServiceInterface $stickerService
      * @param CommonService $commonService
      * @param InsurerServiceInterface $insurerService
+     * @param ProfileServiceInterface $profileService
      */
-    public function __construct(FormErrorServiceInterface $formErrorService, StickerServiceInterface $stickerService, CommonService $commonService, InsurerServiceInterface $insurerService, ProfileServiceInterface $profileService)
+    public function __construct(FormErrorServiceInterface $formErrorService, CommonService $commonService, InsurerServiceInterface $insurerService, ProfileServiceInterface $profileService)
     {
         $this->formErrorService = $formErrorService;
-        $this->stickerService = $stickerService;
         $this->commonService = $commonService;
         $this->insurerService = $insurerService;
         $this->profileService = $profileService;
@@ -123,10 +121,13 @@ class QuickInputController extends Controller
      * @Route("/suggest/{type}/save", methods={"POST"}, name="quick_input_suggest_save", requirements={"type": "sticker|green-card|bill"})
      * @param Request $request
      * @param string $type
+     * @param StickerServiceInterface $stickerService
+     * @param GreenCardServiceInterface $greenCardService
+     * @param BillServiceInterface $billService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Exception
      */
-    public function saveSuggestedAction(Request $request, string $type)
+    public function saveSuggestedAction(Request $request, string $type, StickerServiceInterface $stickerService, GreenCardServiceInterface $greenCardService, BillServiceInterface $billService)
     {
         $suggested = $request->request->get('suggested') ?? null;
         $numbers = $suggested['numbers'] ?? null;
@@ -150,62 +151,28 @@ class QuickInputController extends Controller
 
         $agent = $this->profileService->find($agentId);
 
-        $existing = $this->stickerService->getExistingByInsurerAndByRange($insurer, $range);
-        $i = 0;
-        foreach ($range as $idNumber) {
-            if (empty($idNumber) || in_array($idNumber, $existing)) continue;
-
-            $i++;
-            if ('sticker' === $type) {
-                $sticker = new Sticker();
-                $sticker->setIdNumber($idNumber);
-                $sticker->setInsurer($insurer);
-                $sticker->setAgent($agent);
-                $sticker->setGivenAt((null === $agent) ? null : $givenAt);
-                $sticker->setReceivedAt(new \DateTime());
-                $sticker->setAuthor($this->getUser());
-                $this->stickerService->save($sticker);
-
-            } elseif ('green-card' === $type) {
-                $greenCard = new GreenCard();
-                $greenCard->setIdNumber($idNumber);
-                $greenCard->setInsurer($insurer);
-                $greenCard->setAgent($agent);
-                $greenCard->setGivenAt((null === $agent) ? null : $givenAt);
-                $greenCard->setReceivedAt(new \DateTime());
-                $greenCard->setAuthor($this->getUser());
-                // todo: save
-
-            } else {
-                $bill = new Bill();
-                $bill->setIdNumber($idNumber);
-                $bill->setInsurer($insurer);
-                $bill->setAgent($agent);
-                $bill->setGivenAt((null === $agent) ? null : $givenAt);
-                $bill->setReceivedAt(new \DateTime());
-                $bill->setAuthor($this->getUser());
-                // todo: save
-
-            }
-        }
-
         if ('sticker' === $type) {
-            $this->addFlash('success', 'Успешно бяха въведени ' . $i . ' стикера.');
+            $stickerService->saveSuggested($insurer, $agent, $givenAt, $range);
+            $this->addFlash('success', 'Стикерите бяха въведени успешно.');
             return $this->redirectToRoute('sticker_index');
 
         } elseif ('green-card' === $type) {
+            $greenCardService->saveSuggested($insurer, $agent, $givenAt, $range);
+            $this->addFlash('success', 'Зелените карти бяха въведени успешно.');
+            // return $this->redirectToRoute('green_card_index');
 
         } else {
-
+            $billService->saveSuggested($insurer, $agent, $givenAt, $range);
+            $this->addFlash('success', 'Сметките бяха въведени успешно.');
+            // return $this->redirectToRoute('bill_index');
         }
     }
-
 
     /**
      * @return \Symfony\Component\Form\FormInterface
      * @throws \Exception
      */
-    public function createQuickInputForm()
+    private function createQuickInputForm()
     {
         return $this->createFormBuilder()
             ->add('startIdNumber', TextType::class, [

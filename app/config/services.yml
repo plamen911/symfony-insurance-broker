@@ -124,3 +124,13 @@ services:
         arguments:
             - "@security.token_storage"
             - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Insurer')"
+
+    AppBundle\Service\GreenCard\GreenCardService:
+        arguments:
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:GreenCard')"
+
+    AppBundle\Service\Bill\BillService:
+        arguments:
+            - "@security.token_storage"
+            - "@=service('doctrine.orm.entity_manager').getRepository('AppBundle:Bill')"

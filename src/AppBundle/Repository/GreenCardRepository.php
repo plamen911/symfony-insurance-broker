@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\GreenCard;
+use AppBundle\Entity\Insurer;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
@@ -67,5 +69,22 @@ class GreenCardRepository extends \Doctrine\ORM\EntityRepository
                 ->setParameter('idNumber', $greenCard->getIdNumber())
                 ->getQuery()
                 ->getSingleScalarResult();
+    }
+
+    /**
+     * @param Insurer $insurer
+     * @param array $range
+     * @return GreenCard[]|ArrayCollection
+     */
+    public function getExistingByInsurerAndByRange(Insurer $insurer, array $range)
+    {
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.insurer', 'i')
+            ->where('g.idNumber IN (:range)')
+            // ->where('i.id != :insurerId AND g.idNumber IN (:range)')
+            // ->setParameter('insurerId', $insurer->getId())
+            ->setParameter('range', $range, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+            ->getQuery()
+            ->getResult();
     }
 }

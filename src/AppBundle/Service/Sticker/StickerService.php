@@ -8,7 +8,6 @@ use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use AppBundle\Repository\StickerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -50,11 +49,10 @@ class StickerService implements StickerServiceInterface
     }
 
     /**
-     * @param Request $request
      * @param Sticker $sticker
      * @return Sticker
      */
-    public function editSticker(Request $request, Sticker $sticker)
+    public function editSticker(Sticker $sticker)
     {
         $this->stickerRepo->save($sticker);
 
@@ -86,5 +84,33 @@ class StickerService implements StickerServiceInterface
     public function save(Sticker $sticker)
     {
         return $this->stickerRepo->save($sticker);
+    }
+
+    /**
+     * @param Insurer $insurer
+     * @param User $agent
+     * @param \DateTime $givenAt
+     * @param array $range
+     * @throws \Exception
+     */
+    public function saveSuggested(Insurer $insurer, User $agent, \DateTime $givenAt, array $range)
+    {
+        $existing = array_map(function ($sticker) {
+            /** @var Sticker $sticker */
+            return $sticker->getIdNumber();
+        }, $this->getExistingByInsurerAndByRange($insurer, $range));
+
+        foreach ($range as $idNumber) {
+            if (empty($idNumber) || in_array($idNumber, $existing)) continue;
+
+            $sticker = new Sticker();
+            $sticker->setIdNumber($idNumber);
+            $sticker->setInsurer($insurer);
+            $sticker->setAgent($agent);
+            $sticker->setGivenAt((null === $agent) ? null : $givenAt);
+            $sticker->setReceivedAt(new \DateTime());
+            $sticker->setAuthor($this->currentUser);
+            $this->save($sticker);
+        }
     }
 }

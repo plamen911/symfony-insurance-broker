@@ -188,7 +188,7 @@ class StickerController extends Controller
         $this->formErrorService->checkErrors($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->stickerService->editSticker($request, $sticker);
+            $this->stickerService->editSticker($sticker);
             $this->addFlash('success', 'Данните за стикера бяха успешно записани.');
 
             return $this->redirectToRoute('sticker_edit', ['id' => $sticker->getId()]);

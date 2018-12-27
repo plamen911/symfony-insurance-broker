@@ -80,8 +80,9 @@ class StickerRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.insurer', 'i')
-            ->where('i.id != :insurerId AND s.idNumber IN (:range)')
-            ->setParameter('insurerId', $insurer->getId())
+            ->where('s.idNumber IN (:range)')
+            // ->where('i.id != :insurerId AND s.idNumber IN (:range)')
+            // ->setParameter('insurerId', $insurer->getId())
             ->setParameter('range', $range, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
             ->getQuery()
             ->getResult();
