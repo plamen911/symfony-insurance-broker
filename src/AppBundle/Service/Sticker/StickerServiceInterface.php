@@ -47,11 +47,11 @@ interface StickerServiceInterface
 
     /**
      * @param Insurer $insurer
-     * @param User $agent
+     * @param User|null $agent
      * @param \DateTime $givenAt
      * @param array $range
      * @return int
      * @throws \Exception
      */
-    public function saveSuggested(Insurer $insurer, User $agent, \DateTime $givenAt, array $range);
+    public function saveSuggested(Insurer $insurer, ?User $agent, \DateTime $givenAt, array $range);
 }

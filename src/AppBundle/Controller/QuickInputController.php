@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Bill;
-use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
-use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use AppBundle\Service\Bill\BillServiceInterface;
 use AppBundle\Service\CommonService;
@@ -73,19 +70,18 @@ class QuickInputController extends Controller
      */
     public function quickInputAction(Request $request, string $type)
     {
-        $backUrl = $this->generateUrl('sticker_index');
-        $label = 'стикери';
+        if ('sticker' === $type) {
+            $label = 'стикери';
+            $backUrl = $this->generateUrl('sticker_index');
+        } elseif ('green-card' === $type) {
+            $label = 'зелени карти';
+            $backUrl = $this->generateUrl('sticker_index');
+        } else {
+            $label = 'сметки';
+            $backUrl = $this->generateUrl('bill_index');
+        }
 
         $form = $this->createQuickInputForm();
-        $form->handleRequest($request);
-
-        $this->formErrorService->checkErrors($form);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-
-        }
 
         return $this->render('quick-input/index.html.twig', [
             'backUrl' => $backUrl,
@@ -164,7 +160,7 @@ class QuickInputController extends Controller
         } else {
             $billService->saveSuggested($insurer, $agent, $givenAt, $range);
             $this->addFlash('success', 'Сметките бяха въведени успешно.');
-            // return $this->redirectToRoute('bill_index');
+            return $this->redirectToRoute('bill_index');
         }
     }
 
