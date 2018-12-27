@@ -148,15 +148,15 @@ class User implements AdvancedUserInterface
     private $createdStickers;
 
     /**
-     * @var ArrayCollection|Sticker[]
+     * @var ArrayCollection|GreenCard[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\GreenCard", mappedBy="agent")
      */
     private $greenCards;
 
     /**
-     * @var ArrayCollection|Sticker[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Sticker", mappedBy="author")
+     * @var ArrayCollection|GreenCard[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GreenCard", mappedBy="author")
      */
     private $createdGreenCards;
 
@@ -824,7 +824,7 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @return Sticker[]|ArrayCollection
+     * @return GreenCard[]|ArrayCollection
      */
     public function getCreatedGreenCards()
     {
@@ -832,7 +832,7 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param Sticker[]|ArrayCollection $createdGreenCards
+     * @param GreenCard[]|ArrayCollection $createdGreenCards
      * @return User
      */
     public function setCreatedGreenCards($createdGreenCards): User
@@ -859,7 +859,7 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @return Sticker[]|ArrayCollection
+     * @return GreenCard[]|ArrayCollection
      */
     public function getGreenCards()
     {
@@ -867,7 +867,7 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param Sticker[]|ArrayCollection $greenCards
+     * @param GreenCard[]|ArrayCollection $greenCards
      * @return User
      */
     public function setGreenCards($greenCards): User

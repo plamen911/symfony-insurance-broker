@@ -238,6 +238,8 @@
     $('#policy_total').val(policyTotal.toFixed(2))
     $('#policy_total_label').html(policyTotal.toFixed(2))
 
+    $('#policy_billTotal').val(billTotal.toFixed(2))
+    $('#policy_billTotal_label').html(billTotal.toFixed(2))
     $('#policy_greenCardTotal').val(greenCardTotal.toFixed(2))
     $('#policy_greenCardTotal_label').html(greenCardTotal.toFixed(2))
   }

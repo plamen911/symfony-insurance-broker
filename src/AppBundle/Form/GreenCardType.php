@@ -45,13 +45,13 @@ class GreenCardType extends AbstractType
                 ]
             ])
             ->add('tax', NumberType::class, [
-                'label' => 'Данък',
+                'label' => 'Данък, %',
                 'label_attr' => [
                     'class' => 'sr-only'
                 ],
                 'attr' => [
                     'class' => 'form-control-sm mr-2',
-                    'placeholder' => 'Данък',
+                    'placeholder' => 'Данък, %',
                 ]
             ])
             ->add('amountDue', HiddenType::class, [
