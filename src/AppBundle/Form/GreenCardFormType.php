@@ -74,15 +74,6 @@ class GreenCardFormType extends AbstractType
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата на предаване на агента'
             ]);
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var GreenCard $greenCard */
-            $bill = $event->getData();
-            $form = $event->getForm();
-            if ($greenCard && null !== $bill->getId()) {
-                $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулирана?']);
-            }
-        });
     }
 
     /**

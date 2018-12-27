@@ -293,9 +293,9 @@ class GreenCard
     }
 
     /**
-     * @return Insurer
+     * @return Insurer|null
      */
-    public function getInsurer(): Insurer
+    public function getInsurer(): ?Insurer
     {
         return $this->insurer;
     }

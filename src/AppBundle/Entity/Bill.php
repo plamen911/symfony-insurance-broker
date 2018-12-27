@@ -223,9 +223,9 @@ class Bill
     }
 
     /**
-     * @return Insurer
+     * @return Insurer|null
      */
-    public function getInsurer(): Insurer
+    public function getInsurer(): ?Insurer
     {
         return $this->insurer;
     }
@@ -261,9 +261,9 @@ class Bill
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getReceivedAt(): \DateTime
+    public function getReceivedAt(): ?\DateTime
     {
         return $this->receivedAt;
     }

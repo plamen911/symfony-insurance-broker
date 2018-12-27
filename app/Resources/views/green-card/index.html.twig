@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Списък сметки{% endblock %}
+{% block title %}Списък зелени карти{% endblock %}
 
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
@@ -11,13 +11,13 @@
 {% endblock %}
 
 {% block body %}
-    <h3>Списък сметки</h3>
-    <div id="bills" class="table-responsive">Зареждане...</div>
+    <h3>Списък зелени карти</h3>
+    <div id="green-cards" class="table-responsive">Зареждане...</div>
     <div class="row">
         <div class="col-md-12">
-            <a href="{{ path('bill_new') }}" class="btn btn-dark"><i
-                        class="fas fa-plus-circle"></i> Нова сметка</a>
-            <a href="{{ path('quick_input', {'type': 'bill'}) }}" class="btn btn-secondary"><i
+            <a href="{{ path('green_card_new') }}" class="btn btn-dark"><i
+                        class="fas fa-plus-circle"></i> Нова зелена карта</a>
+            <a href="{{ path('quick_input', {'type': 'green-card'}) }}" class="btn btn-secondary"><i
                         class="fas fa-plus-circle"></i> Бързо въвеждане</a>
         </div>
     </div>
@@ -32,7 +32,7 @@
     <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
     <script>
       $(function () {
-        $('#bills').initDataTables({{ datatable_settings(datatable) }}, {
+        $('#green-cards').initDataTables({{ datatable_settings(datatable) }}, {
           language: {
             url: 'https://cdn.datatables.net/plug-ins/1.10.15/i18n/Bulgarian.json'
           },

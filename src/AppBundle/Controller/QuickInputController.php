@@ -75,7 +75,7 @@ class QuickInputController extends Controller
             $backUrl = $this->generateUrl('sticker_index');
         } elseif ('green-card' === $type) {
             $label = 'зелени карти';
-            $backUrl = $this->generateUrl('sticker_index');
+            $backUrl = $this->generateUrl('green_card_index');
         } else {
             $label = 'сметки';
             $backUrl = $this->generateUrl('bill_index');
@@ -142,6 +142,7 @@ class QuickInputController extends Controller
         $insurer = $this->insurerService->find($insurerId);
         if (null === $insurer) {
             $this->addFlash('danger', 'Застрахователят не може да бъде намерен!');
+
             return $this->redirectToRoute('quick_input', ['type' => $type]);
         }
 
@@ -150,12 +151,14 @@ class QuickInputController extends Controller
         if ('sticker' === $type) {
             $stickerService->saveSuggested($insurer, $agent, $givenAt, $range);
             $this->addFlash('success', 'Стикерите бяха въведени успешно.');
+
             return $this->redirectToRoute('sticker_index');
 
         } elseif ('green-card' === $type) {
             $greenCardService->saveSuggested($insurer, $agent, $givenAt, $range);
             $this->addFlash('success', 'Зелените карти бяха въведени успешно.');
-            // return $this->redirectToRoute('green_card_index');
+
+            return $this->redirectToRoute('green_card_index');
         }
 
         $billService->saveSuggested($insurer, $agent, $givenAt, $range);
