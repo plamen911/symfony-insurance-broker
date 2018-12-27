@@ -194,15 +194,22 @@ class PolicyService implements PolicyServiceInterface
      */
     private function validateGreenCards(Policy $policy)
     {
+        $seenInNumbers = [];
         foreach ($policy->getGreenCards() as $i => $greenCard) {
             if (empty($greenCard->getIdNumber())) {
-                throw new Exception('Липсва номер на залена карта ' . ($i + 1) . '.');
+                throw new Exception('Липсва номер на зелена карта ' . ($i + 1) . '.');
             }
 
             $existingGreenCard = $this->greenCardRepo->findOneBy(['idNumber' => $greenCard->getIdNumber()]);
             if (null === $existingGreenCard) {
                 throw new Exception($greenCard->getIdNumber() . ' е невалиден номер на зелена карта.');
             }
+
+            if (in_array($greenCard->getIdNumber(), $seenInNumbers)) {
+                throw new Exception('Зелена карта ' . $greenCard->getIdNumber() . ' вече е добавена.');
+            }
+
+            $seenInNumbers[] = $greenCard->getIdNumber();
 
             if (null === $greenCard->getId()) {
                 $policy->removeGreenCard($greenCard);
@@ -225,6 +232,7 @@ class PolicyService implements PolicyServiceInterface
      */
     private function validateStickers(Policy $policy)
     {
+        $seenInNumbers = [];
         foreach ($policy->getStickers() as $i => $sticker) {
             if (empty($sticker->getIdNumber())) {
                 throw new Exception('Липсва номер на стикер ' . ($i + 1) . '.');
@@ -234,6 +242,12 @@ class PolicyService implements PolicyServiceInterface
             if (null === $existingSticker) {
                 throw new Exception($sticker->getIdNumber() . ' е невалиден номер на стикер.');
             }
+
+            if (in_array($sticker->getIdNumber(), $seenInNumbers)) {
+                throw new Exception('Стикер ' . $sticker->getIdNumber() . ' вече е добавен.');
+            }
+
+            $seenInNumbers[] = $sticker->getIdNumber();
 
             if (null === $sticker->getId()) {
                 $policy->removeSticker($sticker);
@@ -254,6 +268,7 @@ class PolicyService implements PolicyServiceInterface
      */
     private function validateBills(Policy $policy)
     {
+        $seenInNumbers = [];
         foreach ($policy->getBills() as $i => $bill) {
             if (empty($bill->getIdNumber())) {
                 throw new Exception('Липсва номер на сметка ' . ($i + 1) . '.');
@@ -263,6 +278,12 @@ class PolicyService implements PolicyServiceInterface
             if (null === $existingBill) {
                 throw new Exception($bill->getIdNumber() . ' е невалиден номер на сметка.');
             }
+
+            if (in_array($bill->getIdNumber(), $seenInNumbers)) {
+                throw new Exception('Сметка ' . $bill->getIdNumber() . ' вече е добавена.');
+            }
+
+            $seenInNumbers[] = $bill->getIdNumber();
 
             if (null === $bill->getId()) {
                 $policy->removeBill($bill);
