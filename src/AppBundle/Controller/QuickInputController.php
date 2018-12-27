@@ -156,12 +156,12 @@ class QuickInputController extends Controller
             $greenCardService->saveSuggested($insurer, $agent, $givenAt, $range);
             $this->addFlash('success', 'Зелените карти бяха въведени успешно.');
             // return $this->redirectToRoute('green_card_index');
-
-        } else {
-            $billService->saveSuggested($insurer, $agent, $givenAt, $range);
-            $this->addFlash('success', 'Сметките бяха въведени успешно.');
-            return $this->redirectToRoute('bill_index');
         }
+
+        $billService->saveSuggested($insurer, $agent, $givenAt, $range);
+        $this->addFlash('success', 'Сметките бяха въведени успешно.');
+
+        return $this->redirectToRoute('bill_index');
     }
 
     /**
