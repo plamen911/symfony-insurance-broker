@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Insurer;
-use AppBundle\Entity\Sticker;
 use AppBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,11 +17,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class StickerFormType
+ * Class GreenCardFormType
  * @package AppBundle\Form
  * @author Plamen Markov <plamen@lynxlake.org>
  */
-class StickerFormType extends AbstractType
+class GreenCardFormType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -30,10 +30,10 @@ class StickerFormType extends AbstractType
     {
         $builder
             ->add('idNumber', TextType::class, [
-                'label' => 'Стикер No',
+                'label' => 'Зелена карта No',
                 'attr' => [
                     'class' => 'form-control-sm mr-2',
-                    'placeholder' => 'Стикер No',
+                    'placeholder' => 'Зелена карта No',
                 ]
             ])
             ->add('insurer', EntityType::class, [
@@ -76,11 +76,11 @@ class StickerFormType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var Sticker $sticker */
-            $sticker = $event->getData();
+            /** @var GreenCard $greenCard */
+            $bill = $event->getData();
             $form = $event->getForm();
-            if ($sticker && null !== $sticker->getId()) {
-                $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулиран?']);
+            if ($greenCard && null !== $bill->getId()) {
+                $form->add('isCancelled', CheckboxType::class, ['label' => 'Анулирана?']);
             }
         });
     }
@@ -91,7 +91,7 @@ class StickerFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Sticker::class
+            'data_class' => GreenCard::class
         ]);
     }
 }
