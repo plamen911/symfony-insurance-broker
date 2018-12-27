@@ -91,6 +91,7 @@ class BillService implements BillServiceInterface
      * @param User $agent
      * @param \DateTime $givenAt
      * @param array $range
+     * @return int
      * @throws \Exception
      */
     public function saveSuggested(Insurer $insurer, User $agent, \DateTime $givenAt, array $range)
@@ -100,6 +101,7 @@ class BillService implements BillServiceInterface
             return $bill->getIdNumber();
         }, $this->getExistingByInsurerAndByRange($insurer, $range));
 
+        $count = 0;
         foreach ($range as $idNumber) {
             if (empty($idNumber) || in_array($idNumber, $existing)) continue;
 
@@ -111,6 +113,9 @@ class BillService implements BillServiceInterface
             $bill->setReceivedAt(new \DateTime());
             $bill->setAuthor($this->currentUser);
             $this->save($bill);
+            $count++;
         }
+
+        return $count;
     }
 }
