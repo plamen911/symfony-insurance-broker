@@ -10,7 +10,12 @@ namespace AppBundle\Service;
  */
 class CommonService
 {
-    public function generateCustomRange($startIdNumber = '', $endIdNumber = '')
+    /**
+     * @param string $startIdNumber
+     * @param string $endIdNumber
+     * @return array
+     */
+    public function generateCustomRange(string $startIdNumber = '', string $endIdNumber = '')
     {
         $ranges = [];
         if (empty($startIdNumber) || empty($endIdNumber)) {
