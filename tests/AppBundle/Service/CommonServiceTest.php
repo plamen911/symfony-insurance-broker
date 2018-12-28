@@ -14,10 +14,18 @@ use PHPUnit\Framework\TestCase;
  */
 class CommonServiceTest extends TestCase
 {
-    public function testGenerateCustomRange_add_correctInput_expectRangeArray()
+    /** @var CommonService $commonService */
+    private $commonService;
+
+    protected function setUp()
     {
-        $commonService = new CommonService();
-        $result = $commonService->generateCustomRange('TEST-0001', 'TEST-0004');
+        parent::setUp();
+        $this->commonService = new CommonService();
+    }
+
+    public function testGenerateCustomRange_with_correctInput_expectRangeArray()
+    {
+        $result = $this->commonService->generateCustomRange('TEST-0001', 'TEST-0004');
 
         // assert that result is array
         $this->assertTrue(is_array($result));
@@ -29,5 +37,15 @@ class CommonServiceTest extends TestCase
         $this->assertEquals('TEST-0002', $result[1]);
         // assert the last element of array
         $this->assertEquals('TEST-0004', $result[count($result) - 1]);
+    }
+
+    public function testGenerateCustomRange_with_incorrectInput_expectEmptyArray()
+    {
+        $result = $this->commonService->generateCustomRange('TEST-1', 'TEST-10');
+
+        // assert that result is array
+        $this->assertTrue(is_array($result));
+        // assert the length of array
+        $this->assertEquals(0, count($result));
     }
 }
