@@ -48,4 +48,14 @@ class CommonServiceTest extends TestCase
         // assert the length of array
         $this->assertEquals(0, count($result));
     }
+
+    public function testGenerateCustomRange_with_emptyInput_expectEmptyArray()
+    {
+        $result = $this->commonService->generateCustomRange('', '');
+
+        // assert that result is array
+        $this->assertTrue(is_array($result));
+        // assert the length of array
+        $this->assertEquals(0, count($result));
+    }
 }
