@@ -150,11 +150,11 @@ class Bill
     /**
      * Set price.
      *
-     * @param string $price
+     * @param float $price
      *
      * @return Bill
      */
-    public function setPrice($price)
+    public function setPrice(float $price)
     {
         $this->price = (float)$price;
 
@@ -164,11 +164,11 @@ class Bill
     /**
      * Get price.
      *
-     * @return string
+     * @return float
      */
     public function getPrice()
     {
-        return $this->price;
+        return (float)$this->price;
     }
 
     /**

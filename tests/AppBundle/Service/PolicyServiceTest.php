@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Entity\Bill;
+use AppBundle\Entity\GreenCard;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Policy;
 use AppBundle\Entity\TypeOfPolicy;
@@ -45,7 +47,6 @@ class PolicyServiceTest extends TestCase
         $user = $this->createUser();
         $tokenStorage = $this->createTokenStorage($user);
         $policyRepo = $this->createMock(PolicyRepository::class);
-
 
         $typeOfPolicy = new TypeOfPolicy();
         $typeOfPolicy->setIsDeleted(false);
@@ -199,6 +200,70 @@ class PolicyServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Общо дължима премия (' . $policy->getTotal() . ') е различна от сумата на вноските (' . $amountDue . ').');
         $this->policyService->newPolicy($request, $policy);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function test_calculate()
+    {
+        $greenCard1 = new GreenCard();
+        $greenCard1->setPrice(10);
+        $greenCard1->setTax(2);
+
+        $greenCard2 = new GreenCard();
+        $greenCard2->setPrice(10);
+        $greenCard2->setTax(2);
+
+        $policy = new Policy();
+        $policy->setAmount(100);
+        $policy->setTaxes(2);
+        $policy->setAmountGf(11.5);
+        $policy->addGreenCard($greenCard1);
+
+        $policy->calculate();
+        $this->assertEquals(10.2, $policy->getGreenCardTotal());
+
+        $policy->addGreenCard($greenCard2);
+        $policy->calculate();
+        $this->assertEquals(20.40, $policy->getGreenCardTotal());
+
+        $bill1 = new Bill();
+        $bill1->setPrice(10);
+        $policy->addBill($bill1);
+
+        $bill2 = new Bill();
+        $bill2->setPrice(10);
+        $policy->addBill($bill2);
+
+        $policy->calculate();
+        $this->assertEquals(20, $policy->getBillTotal());
+
+        $this->assertEquals(153.9, $policy->getTotal());
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function test_calculate_with_real_input()
+    {
+        $greenCard = new GreenCard();
+        $greenCard->setPrice(12);
+        $greenCard->setTax(2);
+
+        $bill = new Bill();
+        $bill->setPrice(10);
+
+        $policy = new Policy();
+        $policy->setAmount(100);
+        $policy->setTaxes(2);
+        $policy->setAmountGf(11.5);
+        $policy->addGreenCard($greenCard);
+        $policy->addBill($bill);
+
+        $policy->calculate();
+
+        $this->assertEquals(135.74, $policy->getTotal());
     }
 
     /**

@@ -96,6 +96,7 @@ class PolicyService implements PolicyServiceInterface
         $policy->setBalance($policy->getBalanceTotal());
         $policy->setAuthor($this->currentUser);
         $policy->setUpdater($this->currentUser);
+        $policy->calculate();
         $this->policyRepo->save($policy);
 
         return $policy;
@@ -127,6 +128,7 @@ class PolicyService implements PolicyServiceInterface
             ->setUpdatedAt(new \DateTime())
             ->setUpdater($this->currentUser);
 
+        $policy->calculate();
         $this->policyRepo->save($policy);
 
         return $policy;

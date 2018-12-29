@@ -1094,4 +1094,29 @@ class Policy
 
         return $this;
     }
+
+    /**
+     * @return Policy
+     */
+    public function calculate()
+    {
+        $greenCardTotal = 0.0;
+        foreach ($this->getGreenCards() as $greenCard) {
+            $amountDue = sprintf('%.2f', $greenCard->getPrice() + ($greenCard->getPrice() * $greenCard->getTax() / 100));
+            $greenCard->setAmountDue($amountDue);
+            $greenCardTotal += $greenCard->getAmountDue();
+        }
+        $this->setGreenCardTotal($greenCardTotal);
+
+        $billTotal = 0.0;
+        foreach ($this->getBills() as $bill) {
+            $billTotal += $bill->getPrice();
+        }
+        $this->setBillTotal($billTotal);
+
+        $total = sprintf('%.2f', $this->getAmount() + ($this->getTaxes() * $this->getAmount() / 100) + $this->getAmountGf() + $this->getGreenCardTotal() + $this->getBillTotal());
+        $this->setTotal($total);
+
+        return $this;
+    }
 }
