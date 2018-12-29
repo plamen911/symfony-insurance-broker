@@ -30,6 +30,8 @@ class BillController extends Controller
 {
     use DataTablesTrait;
 
+    const PER_PAGE = 25;
+
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
@@ -59,11 +61,13 @@ class BillController extends Controller
         // https://omines.github.io/datatables-bundle/
         $table = $this->createDataTable([
             'stateSave' => true,
-            'pageLength' => 25,
+            'pageLength' => self::PER_PAGE,
             'autoWidth' => true,
             'searching' => true,
         ])
-            ->add('idNumber', TextColumn::class, ['label' => 'Сметка No'])
+            ->add('idNumber', TextColumn::class, [
+                'label' => 'Сметка No'
+            ])
             ->add('insurerName', TextColumn::class, [
                 'field' => 'insurer.name',
                 'label' => 'Застраховател'
@@ -100,7 +104,7 @@ class BillController extends Controller
                 }
             ])
             ->add('createdBy', TextColumn::class, [
-                'field' => 'b.author',
+                'field' => 'author.fullName',
                 'label' => 'Добавена от',
                 'render' => function($value, $bill) {
                     /** @var Bill $bill */

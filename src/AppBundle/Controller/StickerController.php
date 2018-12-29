@@ -30,6 +30,8 @@ class StickerController extends Controller
 {
     use DataTablesTrait;
 
+    const PER_PAGE = 25;
+
     /** @var FormErrorServiceInterface $formErrorService */
     private $formErrorService;
 
@@ -59,11 +61,13 @@ class StickerController extends Controller
         // https://omines.github.io/datatables-bundle/
         $table = $this->createDataTable([
             'stateSave' => true,
-            'pageLength' => 25,
+            'pageLength' => self::PER_PAGE,
             'autoWidth' => true,
             'searching' => true,
         ])
-            ->add('idNumber', TextColumn::class, ['label' => 'Стикер No'])
+            ->add('idNumber', TextColumn::class, [
+                'label' => 'Стикер No'
+            ])
             ->add('insurerName', TextColumn::class, [
                 'field' => 'insurer.name',
                 'label' => 'Застраховател'
@@ -100,7 +104,7 @@ class StickerController extends Controller
                 }
             ])
             ->add('createdBy', TextColumn::class, [
-                'field' => 's.author',
+                'field' => 'author.fullName',
                 'label' => 'Добавен от',
                 'render' => function($value, $sticker) {
                     /** @var Sticker $sticker */
